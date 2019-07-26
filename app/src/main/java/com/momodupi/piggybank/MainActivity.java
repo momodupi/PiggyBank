@@ -1,11 +1,15 @@
 package com.momodupi.piggybank;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,11 +44,10 @@ import java.util.ArrayList;
 import static android.widget.GridView.*;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     String[] gridViewString = {
-            "Alram", "Android", "Mobile", "Website", "Profile", "WordPress",
+            "Restaurant", "Car", "Mobile", "Housing", "Electronics", "Foods",
     };
 
     int[] gridViewImageId = {
@@ -52,30 +56,41 @@ public class MainActivity extends AppCompatActivity
             R.mipmap.baseline_restaurant_black_48, R.mipmap.baseline_restaurant_black_48,
     };
 
+    private Toolbar mTopToolbar;
+    public String type_input = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         GridViewActivity tpyrgridview_act = new GridViewActivity(MainActivity.this, gridViewString, gridViewImageId);
         GridView tpyrgridview = (GridView) findViewById(R.id.type_grid);
         tpyrgridview.setAdapter(tpyrgridview_act);
 
-        tpyrgridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "press" + position + "!", Toast.LENGTH_SHORT).show();
-            }
-        });
 
+
+        final DatabaseHelper dbbasehelper = new DatabaseHelper(this, "book", null, 1);
+        final SQLiteDatabase sqliteDatabase = dbbasehelper.getWritableDatabase();
+
+        final ImageView type_imgview = (ImageView) findViewById(R.id.type_imageView);
+        type_imgview.setImageResource(R.mipmap.baseline_restaurant_black_48);
 
         final EditText num_text = (EditText) findViewById(R.id.input_edittext);
 
         final Button saveBtn = (Button) findViewById(R.id.input_btn);
         saveBtn.requestFocus();
+
+        tpyrgridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                type_imgview.setImageResource(gridViewImageId[position]);
+                type_input = gridViewString[position];
+                Toast.makeText(MainActivity.this, "press " + type_input + "!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +102,33 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 String str = num_text.getText().toString();
+                //Float amount = Float.parseFloat(str);
                 if (str != null) {
+
+                    ContentValues values = new ContentValues();
+                    values.put("book_type", type_input);
+                    values.put("book_date", "1111-11-11");
+                    values.put("book_time", "11-11-11");
+                    values.put("book_amount", str);
+                    sqliteDatabase.insert("book", null, values);
+                    //String sql = "insert into book (book_type, book_date, book_time, book_amount) values ('fruit', '2222-22-22', '22-22', str)";
+                    //sqliteDatabase.execSQL(sql);
+
+                    Cursor cursor = sqliteDatabase.query("book", new String[] { "book_type", "book_date", "book_time", "book_amount"},
+                            "book_date=?", new String[] { "1111-11-11" }, null, null, null);
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        String str_type = cursor.getString(0);
+                        String str_date = cursor.getString(1);
+                        String str_time = cursor.getString(2);
+                        float str_amount = cursor.getFloat(3);
+                        // do something useful with these
+                        cursor.moveToNext();
+                        Log.d("STATE", str_type + " ," + str_date + " ," + str_time + " ," + str_amount);
+                    }
+                    cursor.close();
+
+                    // 参数1：（String）表名
                     Toast.makeText(MainActivity.this, "press " + str + "!", Toast.LENGTH_SHORT).show();
                     num_text.setText(null);
                 }
@@ -97,7 +138,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
+        /*
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -105,17 +146,10 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        */
+        mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mTopToolbar);
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -140,28 +174,4 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }
