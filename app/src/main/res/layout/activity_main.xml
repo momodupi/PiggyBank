@@ -4,23 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
+    android:background="@color/colorPrimaryDark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity" >
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
-
-    </com.google.android.material.appbar.AppBarLayout>
 
 
     <GridView
@@ -43,12 +30,8 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,8 +42,8 @@
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:srcCompat="@mipmap/baseline_drive_eta_black_48"
-            android:contentDescription="TODO" />
+            android:contentDescription="TODO"
+            tools:srcCompat="@mipmap/baseline_drive_eta_black_48" />
 
         <EditText
             android:id="@+id/input_edittext"
@@ -69,15 +52,18 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:ems="10"
+            android:textColor="#ffffff"
+            android:textColorHint="@color/colorAccent"
             android:hint="@string/type_to_save"
-            android:inputType="numberDecimal"
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal" />
 
         <Button
             android:id="@+id/input_btn"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textColor="#7ab6d8"
             android:background="@android:color/transparent"
             android:text="@string/save" />
     </LinearLayout>
