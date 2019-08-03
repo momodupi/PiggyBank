@@ -1,5 +1,5 @@
 # PiggyBank
-An accounting apps.
+Saving from accounting!
 
 
 ## Acknowledge
