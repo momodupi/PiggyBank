@@ -47,13 +47,31 @@ import static android.widget.GridView.*;
 public class MainActivity extends AppCompatActivity {
 
     String[] gridViewString = {
-            "Restaurant", "Car", "Mobile", "Housing", "Electronics", "Foods",
+            "Restaurant", "Car Service", "Hotel", "Rent", "Electronics", "Fruits",
+            "Clothing", "Personal Care", "Courses", "Party",
+            "Fuel", "Software", "Season", "Airplane", "Railway", "Treatment",
+            "Supplement", "Water", "Tissue", "Movie", "Network",
+            "Game", "Tools", "Gym", "Drinks", "Cooking", "Shopping", "Books",
+            "Accidents", "Mobile Payment",
     };
 
     int[] gridViewImageId = {
-            R.mipmap.baseline_drive_eta_black_48, R.mipmap.baseline_drive_eta_black_48,
-            R.mipmap.baseline_restaurant_black_48, R.mipmap.baseline_restaurant_black_48,
-            R.mipmap.baseline_restaurant_black_48, R.mipmap.baseline_restaurant_black_48,
+            R.mipmap.restaurant, R.mipmap.carservice,
+            R.mipmap.hotel, R.mipmap.rent,
+            R.mipmap.light, R.mipmap.watermelon,
+            R.mipmap.clothes, R.mipmap.dispenser,
+            R.mipmap.classroom,
+            R.mipmap.party, R.mipmap.gas,
+            R.mipmap.software, R.mipmap.spice,
+            R.mipmap.airplane, R.mipmap.train,
+            R.mipmap.treatment, R.mipmap.supplement,
+            R.mipmap.water, R.mipmap.tissue,
+            R.mipmap.movie, R.mipmap.internethub,
+            R.mipmap.gamecontroller, R.mipmap.tools,
+            R.mipmap.dumbbell, R.mipmap.cocktail,
+            R.mipmap.cooking, R.mipmap.buying,
+            R.mipmap.book, R.mipmap.bang,
+            R.mipmap.mobilepayment,
     };
 
     private Toolbar mTopToolbar;
@@ -75,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         final SQLiteDatabase sqliteDatabase = dbbasehelper.getWritableDatabase();
 
         final ImageView type_imgview = (ImageView) findViewById(R.id.type_imageView);
-        type_imgview.setImageResource(R.mipmap.baseline_restaurant_black_48);
+        type_imgview.setImageResource(R.mipmap.decision);
 
         final EditText num_text = (EditText) findViewById(R.id.input_edittext);
 
@@ -128,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     cursor.close();
 
-                    // 参数1：（String）表名
                     Toast.makeText(MainActivity.this, "press " + str + "!", Toast.LENGTH_SHORT).show();
                     num_text.setText(null);
                 }

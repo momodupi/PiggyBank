@@ -14,11 +14,6 @@
         android:id="@+id/type_grid"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:numColumns="5"
         android:visibility="visible"
@@ -37,13 +32,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/type_imageView"
-            android:layout_width="20dp"
+        <FrameLayout
+            android:layout_width="10dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            tools:srcCompat="@mipmap/baseline_drive_eta_black_48" />
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/type_imageView"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="TODO"
+                tools:srcCompat="@mipmap/decision" />
+        </FrameLayout>
 
         <EditText
             android:id="@+id/input_edittext"

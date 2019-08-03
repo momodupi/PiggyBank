@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Node;
 
 public class GridViewActivity extends BaseAdapter {
     private Context mContext;
@@ -30,28 +33,29 @@ public class GridViewActivity extends BaseAdapter {
     }
 
     @Override
-    public long getItemId(int i) {
-        return 0;
+    public long getItemId(int pos) {
+        return pos;
     }
 
     @Override
-    public View getView(int i, View convertView, ViewGroup parent) {
-        View gridViewAndroid;
-        LayoutInflater inflater = (LayoutInflater) mContext
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public View getView(int pos, View convertView, ViewGroup parent) {
+        View gridView;
 
         if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            gridViewAndroid = new View(mContext);
-            gridViewAndroid = inflater.inflate(R.layout.type_grid, null);
-            TextView textViewAndroid = (TextView) gridViewAndroid.findViewById(R.id.gridtext);
-            ImageView imageViewAndroid = (ImageView) gridViewAndroid.findViewById(R.id.gridimage);
-            textViewAndroid.setText(gridViewString[i]);
-            imageViewAndroid.setImageResource(gridViewImageId[i]);
+            //gridView = new View(mContext);
+            gridView = inflater.inflate(R.layout.type_grid, null);
         } else {
-            gridViewAndroid = (View) convertView;
+            gridView = convertView;
         }
+        TextView textView = (TextView) gridView.findViewById(R.id.gridtext);
+        textView.setText(gridViewString[pos]);
 
-        return gridViewAndroid;
+        ImageView imageView = (ImageView) gridView.findViewById(R.id.gridimage);
+        imageView.setImageResource(gridViewImageId[pos]);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        return gridView;
     }
 }
