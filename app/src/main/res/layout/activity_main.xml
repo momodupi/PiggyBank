@@ -6,68 +6,77 @@
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
     android:background="@color/colorPrimaryDark"
+    android:id="@+id/backgroundlayout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-
-    <GridView
-        android:id="@+id/type_grid"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:gravity="center"
-        android:numColumns="5"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/btm_frame"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="250dp"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <FrameLayout
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        <GridView
+            android:id="@+id/type_grid"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:numColumns="5"
+            android:visibility="visible" />
 
-            <ImageView
-                android:id="@+id/type_imageView"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
+        <LinearLayout
+            android:id="@+id/btm_box"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription="TODO"
-                tools:srcCompat="@mipmap/decision" />
-        </FrameLayout>
+                android:visibility="visible">
 
-        <EditText
-            android:id="@+id/input_edittext"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:textColor="#ffffff"
-            android:textColorHint="@color/colorAccent"
-            android:hint="@string/type_to_save"
-            android:importantForAutofill="no"
-            android:inputType="numberDecimal" />
+                <Button
+                    android:id="@+id/type_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@mipmap/decision"
+                    android:contentDescription="TODO" />
 
-        <Button
-            android:id="@+id/input_btn"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textColor="#7ab6d8"
-            android:background="@android:color/transparent"
-            android:text="@string/save" />
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/input_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="@string/type_to_save"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/colorAccent" />
+
+            <Button
+                android:id="@+id/input_btn"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="@string/save"
+                android:textColor="#7ab6d8" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,13 +14,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table book (book_type varchar(32), book_date varchar(32), book_time varchar(32), book_amount real)";
+        String sql = "create table book (book_type varchar(32), book_time varchar(32), book_amount real)";
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // to do
+        //db.delete("book", null, null);
     }
 
 }
