@@ -11,6 +11,25 @@
     tools:context=".MainActivity">
 
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/message_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btm_frame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ListView
+            android:id="@+id/message_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:divider="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/btm_frame"
         android:layout_width="0dp"
@@ -43,20 +62,21 @@
                 android:layout_weight="1"
                 android:visibility="visible">
 
-                <Button
+                <ImageButton
                     android:id="@+id/type_button"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:background="@mipmap/decision"
-                    android:contentDescription="TODO" />
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@mipmap/decision" />
 
             </FrameLayout>
 
             <EditText
                 android:id="@+id/input_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="240dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
@@ -67,16 +87,24 @@
                 android:textColor="#ffffff"
                 android:textColorHint="@color/colorAccent" />
 
-            <Button
-                android:id="@+id/input_btn"
-                android:layout_width="30dp"
+            <FrameLayout
+                android:layout_width="10dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="@string/save"
-                android:textColor="#7ab6d8" />
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/save_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@mipmap/ellipsis" />
+            </FrameLayout>
 
         </LinearLayout>
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import org.w3c.dom.Node;
 
-public class GridViewActivity extends BaseAdapter {
+public class GridViewAdatper extends BaseAdapter {
     private Context mContext;
     private final String[] gridViewString;
     private final int[] gridViewImageId;
 
-    public GridViewActivity(Context context, String[] gridViewString, int[] gridViewImageId) {
+    public GridViewAdatper(Context context, String[] gridViewString, int[] gridViewImageId) {
         mContext = context;
         this.gridViewImageId = gridViewImageId;
         this.gridViewString = gridViewString;

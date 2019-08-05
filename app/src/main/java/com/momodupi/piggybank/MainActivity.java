@@ -1,94 +1,68 @@
 package com.momodupi.piggybank;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.core.view.GravityCompat;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-
 import android.view.MenuItem;
-
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.EditorInfo;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
-import static android.widget.GridView.*;
-
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    String[] gridViewString = {
-            "Restaurant", "Car Service", "Hotel", "Rent", "Electronics", "Fruits",
-            "Clothing", "Personal Care", "Courses", "Party",
-            "Fuel", "Software", "Season", "Airplane", "Railway", "Treatment",
-            "Supplement", "Water", "Tissue", "Movie", "Network",
-            "Game", "Tools", "Exercise", "Drinks", "Cooking", "Shopping", "Books",
-            "Accidents", "Mobile Payment", "Other"
-    };
 
-    int[] gridViewImageId = {
-            R.mipmap.restaurant, R.mipmap.carservice,
-            R.mipmap.hotel, R.mipmap.rent,
-            R.mipmap.light, R.mipmap.watermelon,
-            R.mipmap.clothes, R.mipmap.dispenser,
-            R.mipmap.classroom,
-            R.mipmap.party, R.mipmap.gas,
-            R.mipmap.software, R.mipmap.spice,
-            R.mipmap.airplane, R.mipmap.train,
-            R.mipmap.treatment, R.mipmap.supplement,
-            R.mipmap.water, R.mipmap.tissue,
-            R.mipmap.movie, R.mipmap.internethub,
-            R.mipmap.gamecontroller, R.mipmap.tools,
-            R.mipmap.dumbbell, R.mipmap.cocktail,
-            R.mipmap.cooking, R.mipmap.buying,
-            R.mipmap.book, R.mipmap.bang,
-            R.mipmap.mobilepayment, R.mipmap.decision
-    };
+    static Integer imgbtn_anim[] = {0,0,0};
 
     private Toolbar mTopToolbar;
     public String type_input = null;
+
+    private GridView typegridview;
+    private GridViewAdatper tpyrgridview_act;
+
+    private LinearLayout btm_frame;
+    private LinearLayout btm_box;
+
+    private DatabaseHelper dbbasehelper;
+    private SQLiteDatabase sqliteDatabase;
+
+    private ImageButton type_btn;
+    private EditText num_text;
+    private ImageButton saveBtn;
+
+    private Animation outAnimation;
+    private Animation inAnimation;
+
+    private MessageAdapter messageAdapter;
+    private ListView messagesView;
+
+    private AccountTypes accounttype;
 
 
     @Override
@@ -106,36 +80,47 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("nonvirgin", true);
         editor.apply();
 
-
-
-        GridViewActivity tpyrgridview_act = new GridViewActivity(MainActivity.this, gridViewString, gridViewImageId);
-        final GridView typegridview = (GridView) findViewById(R.id.type_grid);
+        accounttype = new AccountTypes();
+        tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
+        typegridview = (GridView) findViewById(R.id.type_grid);
         typegridview.setAdapter(tpyrgridview_act);
 
 
-        final LinearLayout btm_frame = findViewById(R.id.btm_frame);
-        final LinearLayout btm_box = findViewById(R.id.btm_box);
+        btm_frame = findViewById(R.id.btm_frame);
+        btm_box = findViewById(R.id.btm_box);
 
 
-        final DatabaseHelper dbbasehelper = new DatabaseHelper(this, "book", null, 1);
-        final SQLiteDatabase sqliteDatabase = dbbasehelper.getWritableDatabase();
+        dbbasehelper = new DatabaseHelper(this, "book", null, 1);
+        sqliteDatabase = dbbasehelper.getWritableDatabase();
 
-        final Button type_btn = (Button) findViewById(R.id.type_button);
-        type_btn.setBackgroundResource(R.mipmap.decision);
-
-
-        final EditText num_text = (EditText) findViewById(R.id.input_edittext);
+        type_btn = (ImageButton) findViewById(R.id.type_button);
+        type_btn.setImageResource(R.mipmap.decision);
 
 
-        final Button saveBtn = (Button) findViewById(R.id.input_btn);
+        num_text = (EditText) findViewById(R.id.input_edittext);
+
+
+        saveBtn = (ImageButton) findViewById(R.id.save_btn);
         saveBtn.requestFocus();
+        saveBtn.setImageResource(R.mipmap.ellipsis);
+        saveBtn.setTag(R.mipmap.ellipsis);
+
+        // Obtain a reference to the Activity Context
+
+        // Create the Animation objects.
+        outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        inAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
 
 
         typegridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                type_btn.setBackgroundResource(gridViewImageId[position]);
-                type_input = gridViewString[position];
+                //type_btn.setImageResource(gridViewImageId[position]);
+                type_input = accounttype.getTpyeString()[position];
+                imgbtn_anim[0] = R.id.type_button;
+                imgbtn_anim[1] = (Integer) type_btn.getTag();
+                imgbtn_anim[2] = accounttype.getTpyeIcon()[position];
+                type_btn.startAnimation(outAnimation);
                 Toast.makeText(MainActivity.this, "Select: " + type_input + "!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -160,24 +145,43 @@ public class MainActivity extends AppCompatActivity {
                     values.put("book_time", datetime);
                     values.put("book_amount", num_str);
 
+                    sendMessage(view, num_str, datetime, type_input, true);
+
                     sqliteDatabase.insert("book", null, values);
 
                     //String sql = "insert into book (book_type, book_date, book_time, book_amount) values ('fruit', '2222-22-22', '22-22', str)";
                     //sqliteDatabase.execSQL(sql);
                     /**/
-                    Cursor cursor = sqliteDatabase.query("book", new String[] { "book_type", "book_time", "book_amount"},
-                            "book_type=?", new String[] { "Restaurant" }, null, null, null);
-                    cursor = sqliteDatabase.rawQuery("select * from book",null);
+                    Cursor cursor = sqliteDatabase.query("book",
+                            new String[] { "book_type", "book_time", "book_amount"},
+                            "book_type=? AND book_time=? AND book_amount=?",
+                            new String[] { type_input, datetime, num_str },
+                            null, null, null);
+
+                    //cursor = sqliteDatabase.rawQuery("select * from book",null);
                     cursor.moveToFirst();
+
+                    String checktype = null;
+                    String checktime = null;
+                    float checknum = 0;
+
                     while (!cursor.isAfterLast()) {
-                        String str_type = cursor.getString(0);
-                        String str_time = cursor.getString(1);
-                        float str_amount = cursor.getFloat(2);
+                        checktype = cursor.getString(0);
+                        checktime = cursor.getString(1);
+                        checknum = cursor.getFloat(2);
                         // do something useful with these
                         cursor.moveToNext();
-                        Log.d("sqlite read", str_type + " ," + str_time + " ," + str_amount);
                     }
                     cursor.close();
+
+                    Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
+                    if ((checktype.equals(type_input))  && checktime.equals(datetime) && (checknum==Float.parseFloat(num_str))) {
+                        sendMessage(view, String.valueOf(checknum), checktime, checktype, false);
+                        Log.d("sqlite read", "message checked");
+                    }
+                    else {
+                        Log.d("sqlite read", "message wrong");
+                    }
 
                     num_text.setText(null);
                 }
@@ -188,8 +192,67 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        num_text.addTextChangedListener(new TextWatcher() {
+            boolean text_empty_flag = true;
+            Integer savbtn_tag = (Integer) saveBtn.getTag();
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0) {
+                    text_empty_flag = false;
+                }
+                else {
+                    text_empty_flag = true;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && text_empty_flag == true) {
+                    imgbtn_anim[0] = R.id.save_btn;
+                    imgbtn_anim[1] = R.mipmap.ellipsis;
+                    imgbtn_anim[2] = R.mipmap.moneytransfer;
+                    saveBtn.startAnimation(outAnimation);
+                }
+                else if (charSequence.length() == 0) {
+                    imgbtn_anim[0] = R.id.save_btn;
+                    imgbtn_anim[1] = R.mipmap.moneytransfer;
+                    imgbtn_anim[2] = R.mipmap.ellipsis;
+                    saveBtn.startAnimation(outAnimation);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        outAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                ImageButton btn = findViewById(imgbtn_anim[0]);
+                if (imgbtn_anim[2] != imgbtn_anim[1]) {
+                    btn.setImageResource(imgbtn_anim[2]);
+                    btn.setTag(imgbtn_anim[2]);
+                    btn.startAnimation(inAnimation);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
 
+        messageAdapter = new MessageAdapter(this);
+        messagesView = (ListView) findViewById(R.id.message_list);
+        messagesView.setAdapter(messageAdapter);
 
         /*
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -229,6 +292,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static int dpToPx(float dp, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+
+    public void sendMessage(View view, String num_str, String time_str, String type_str, boolean sender) {
+        if (num_str.length() > 0) {
+            Message msg_s = new Message(num_str, time_str, type_str, sender);
+            messageAdapter.add(msg_s);
+            messagesView.setSelection(messagesView.getCount() - 1);
+        }
     }
 
 }
