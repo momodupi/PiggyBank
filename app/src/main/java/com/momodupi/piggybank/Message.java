@@ -1,5 +1,7 @@
 package com.momodupi.piggybank;
 
+import android.util.Log;
+
 public class Message {
     private String text;
     private String time;
@@ -14,25 +16,25 @@ public class Message {
     }
 
     public String getText() {
-        if (belongsToCurrentUser) {
-            return type + ": $" + text;
+        if (this.belongsToCurrentUser) {
+            return this.type + ": $" + this.text;
         }
         else {
-            return "Got it!";
+            return this.text;
         }
     }
 
     public String getTime() {
-        String datetime[] = time.split(" ");
+        String datetime[] = this.time.split(" ");
         String time_s[] = datetime[1].split("-");
         return time_s[0]+":"+time_s[1];
     }
 
     public  String getType() {
-        return type;
+        return this.type;
     }
 
     public boolean isBelongsToCurrentUser() {
-        return belongsToCurrentUser;
+        return this.belongsToCurrentUser;
     }
 }

@@ -136,14 +136,16 @@ public class MainActivity extends AppCompatActivity {
 
                 String num_str = num_text.getText().toString();
                 //Float amount = Float.parseFloat(str);
-                if (num_str != null && type_input != null) {
+                if (!num_str.isEmpty() && type_input != null) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
+                    String botreply = getRandomAnswer(type_input, Float.parseFloat(num_str));
 
                     ContentValues values = new ContentValues();
                     values.put("book_type", type_input);
                     values.put("book_time", datetime);
                     values.put("book_amount", num_str);
+                    values.put("book_reply", botreply);
 
                     sendMessage(view, num_str, datetime, type_input, true);
 
@@ -153,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
                     //sqliteDatabase.execSQL(sql);
                     /**/
                     Cursor cursor = sqliteDatabase.query("book",
-                            new String[] { "book_type", "book_time", "book_amount"},
-                            "book_type=? AND book_time=? AND book_amount=?",
-                            new String[] { type_input, datetime, num_str },
+                            new String[] { "book_type", "book_time", "book_amount", "book_reply"},
+                            "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
+                            new String[] { type_input, datetime, num_str, botreply },
                             null, null, null);
 
                     //cursor = sqliteDatabase.rawQuery("select * from book",null);
@@ -164,29 +166,31 @@ public class MainActivity extends AppCompatActivity {
                     String checktype = null;
                     String checktime = null;
                     float checknum = 0;
+                    String checkreply = null;
 
                     while (!cursor.isAfterLast()) {
                         checktype = cursor.getString(0);
                         checktime = cursor.getString(1);
                         checknum = cursor.getFloat(2);
+                        checkreply = cursor.getString(3);
                         // do something useful with these
                         cursor.moveToNext();
                     }
                     cursor.close();
 
-                    Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
-                    if ((checktype.equals(type_input))  && checktime.equals(datetime) && (checknum==Float.parseFloat(num_str))) {
-                        sendMessage(view, String.valueOf(checknum), checktime, checktype, false);
-                        Log.d("sqlite read", "message checked");
+                    //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
+                    if ((checktype.equals(type_input))  && checktime.equals(datetime) && (checknum == Float.parseFloat(num_str)) && (checkreply.equals(botreply))) {
+                        sendMessage(view, botreply, checktime, checktype, false);
+                        //Log.d("sqlite read", "message checked");
                     }
                     else {
-                        Log.d("sqlite read", "message wrong");
+                        //Log.d("sqlite read", "message wrong");
                     }
 
                     num_text.setText(null);
                 }
                 else {
-                    Toast.makeText(MainActivity.this, "null", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
                     num_text.setText(null);
                 }
             }
@@ -286,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == R.id.action_clear) {
+            sqliteDatabase.delete("book", null, null);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -301,6 +308,62 @@ public class MainActivity extends AppCompatActivity {
             messageAdapter.add(msg_s);
             messagesView.setSelection(messagesView.getCount() - 1);
         }
+    }
+
+    public String getRandomAnswer(String type, Float money) {
+
+        String[][] answer = {{"Got it!", "Sure!", "Yes, I got it.", "Understand.",
+                "OK!", "I see.", "Perfect!", "Received."},
+                {"Wow!", "OK!", "No problem!", "Yes!", "Roger.", "Hum!"},
+                {"Woooooow!", "Are you serious?", "Ouch!", "Mmm...", "Woo-Hoo!",
+                        "It's shocking!", "Surprising!"}};
+
+        int answer_flag = 0;
+
+        switch (type) {
+            case "Restaurant": {
+                if (money <= 10) {
+                    answer_flag = 0;
+                }
+                else if (money <= 20) {
+                    answer_flag = 1;
+                }
+                else {
+                    answer_flag = 2;
+                }
+            }
+            break;
+            case "Rent": {
+                answer_flag = 1;
+            }
+            break;
+            case "Mobile Payment": {
+                answer_flag = 0;
+            }
+            break;
+            case "Fuel": {
+                if (money <= 20) {
+                    answer_flag = 0;
+                }
+                else {
+                    answer_flag = 1;
+                }
+            }
+            break;
+            default: {
+                if (money <= 20) {
+                    answer_flag = 0;
+                }
+                else if (money <= 50) {
+                    answer_flag = 1;
+                }
+                else {
+                    answer_flag = 2;
+                }
+            }
+        }
+        Log.d("answer", "flag: " + answer_flag);
+        return answer[answer_flag][(int) Math.floor(Math.random() * answer.length)];
     }
 
 }
