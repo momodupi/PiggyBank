@@ -16,6 +16,7 @@ public class Message {
     }
 
     public String getText() {
+        /**/
         if (this.belongsToCurrentUser) {
             return this.type + ": $" + this.text;
         }
@@ -30,7 +31,7 @@ public class Message {
         return time_s[0]+":"+time_s[1];
     }
 
-    public  String getType() {
+    public String getType() {
         return this.type;
     }
 

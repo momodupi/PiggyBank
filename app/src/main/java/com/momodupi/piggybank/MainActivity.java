@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout btm_frame;
     private LinearLayout btm_box;
 
-    private DatabaseHelper dbbasehelper;
-    private SQLiteDatabase sqliteDatabase;
+    //private DatabaseHelper dbbasehelper;
+    //private SQLiteDatabase sqliteDatabase;
 
     private ImageButton type_btn;
     private EditText num_text;
@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView messagesView;
 
     private AccountTypes accounttype;
+
+    private Robot robot;
 
 
     @Override
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("nonvirgin", true);
         editor.apply();
 
+        robot = new Robot(this, "book");
+
         accounttype = new AccountTypes();
         tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
         typegridview = (GridView) findViewById(R.id.type_grid);
@@ -90,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         btm_box = findViewById(R.id.btm_box);
 
 
-        dbbasehelper = new DatabaseHelper(this, "book", null, 1);
-        sqliteDatabase = dbbasehelper.getWritableDatabase();
+        //dbbasehelper = new DatabaseHelper(this, "book", null, 1);
+        //sqliteDatabase = dbbasehelper.getWritableDatabase();
 
         type_btn = (ImageButton) findViewById(R.id.type_button);
         type_btn.setImageResource(R.mipmap.decision);
@@ -139,8 +143,12 @@ public class MainActivity extends AppCompatActivity {
                 if (!num_str.isEmpty() && type_input != null) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
-                    String botreply = getRandomAnswer(type_input, Float.parseFloat(num_str));
+                    //String botreply = getRandomAnswer(type_input, Float.parseFloat(num_str));
 
+
+                    sendMessage(view, num_str, datetime, type_input, true);
+                    robot.read(type_input, datetime, num_str);
+                    /*
                     ContentValues values = new ContentValues();
                     values.put("book_type", type_input);
                     values.put("book_time", datetime);
@@ -149,11 +157,13 @@ public class MainActivity extends AppCompatActivity {
 
                     sendMessage(view, num_str, datetime, type_input, true);
 
-                    sqliteDatabase.insert("book", null, values);
+                    robot.read(type_input, datetime, num_str);
+
+                    //sqliteDatabase.insert("book", null, values);
 
                     //String sql = "insert into book (book_type, book_date, book_time, book_amount) values ('fruit', '2222-22-22', '22-22', str)";
                     //sqliteDatabase.execSQL(sql);
-                    /**/
+
                     Cursor cursor = sqliteDatabase.query("book",
                             new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                             "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
@@ -185,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else {
                         //Log.d("sqlite read", "message wrong");
-                    }
+                    }*/
+                    sendMessage(view, robot.reply(), robot.getTime(), robot.getType(), false);
 
                     num_text.setText(null);
                 }
@@ -288,10 +299,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            robot.showAllData("ALL", "123");
+            View view = new View(this);
+            sendMessage(view, robot.showAllData("ALL", robot.getTime()), robot.getTime(), robot.getType(), false);
             return true;
         }
         else if (id == R.id.action_clear) {
-            sqliteDatabase.delete("book", null, null);
+            //sqliteDatabase.delete("book", null, null);
+            robot.deleteDataBase();
         }
 
         return super.onOptionsItemSelected(item);
@@ -310,60 +325,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String getRandomAnswer(String type, Float money) {
-
-        String[][] answer = {{"Got it!", "Sure!", "Yes, I got it.", "Understand.",
-                "OK!", "I see.", "Perfect!", "Received."},
-                {"Wow!", "OK!", "No problem!", "Yes!", "Roger.", "Hum!"},
-                {"Woooooow!", "Are you serious?", "Ouch!", "Mmm...", "Woo-Hoo!",
-                        "It's shocking!", "Surprising!"}};
-
-        int answer_flag = 0;
-
-        switch (type) {
-            case "Restaurant": {
-                if (money <= 10) {
-                    answer_flag = 0;
-                }
-                else if (money <= 20) {
-                    answer_flag = 1;
-                }
-                else {
-                    answer_flag = 2;
-                }
-            }
-            break;
-            case "Rent": {
-                answer_flag = 1;
-            }
-            break;
-            case "Mobile Payment": {
-                answer_flag = 0;
-            }
-            break;
-            case "Fuel": {
-                if (money <= 20) {
-                    answer_flag = 0;
-                }
-                else {
-                    answer_flag = 1;
-                }
-            }
-            break;
-            default: {
-                if (money <= 20) {
-                    answer_flag = 0;
-                }
-                else if (money <= 50) {
-                    answer_flag = 1;
-                }
-                else {
-                    answer_flag = 2;
-                }
-            }
-        }
-        Log.d("answer", "flag: " + answer_flag);
-        return answer[answer_flag][(int) Math.floor(Math.random() * answer.length)];
-    }
 
 }
