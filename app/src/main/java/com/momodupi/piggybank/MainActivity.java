@@ -115,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
         outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
         inAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
 
+        messageAdapter = new MessageAdapter(this);
+        messagesView = (ListView) findViewById(R.id.message_list);
+        messagesView.setAdapter(messageAdapter);
+
 
         typegridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -141,62 +145,13 @@ public class MainActivity extends AppCompatActivity {
                 String num_str = num_text.getText().toString();
                 //Float amount = Float.parseFloat(str);
                 if (!num_str.isEmpty() && type_input != null) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
-                    //String botreply = getRandomAnswer(type_input, Float.parseFloat(num_str));
-
 
                     sendMessage(view, num_str, datetime, type_input, true);
                     robot.read(type_input, datetime, num_str);
-                    /*
-                    ContentValues values = new ContentValues();
-                    values.put("book_type", type_input);
-                    values.put("book_time", datetime);
-                    values.put("book_amount", num_str);
-                    values.put("book_reply", botreply);
 
-                    sendMessage(view, num_str, datetime, type_input, true);
-
-                    robot.read(type_input, datetime, num_str);
-
-                    //sqliteDatabase.insert("book", null, values);
-
-                    //String sql = "insert into book (book_type, book_date, book_time, book_amount) values ('fruit', '2222-22-22', '22-22', str)";
-                    //sqliteDatabase.execSQL(sql);
-
-                    Cursor cursor = sqliteDatabase.query("book",
-                            new String[] { "book_type", "book_time", "book_amount", "book_reply"},
-                            "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
-                            new String[] { type_input, datetime, num_str, botreply },
-                            null, null, null);
-
-                    //cursor = sqliteDatabase.rawQuery("select * from book",null);
-                    cursor.moveToFirst();
-
-                    String checktype = null;
-                    String checktime = null;
-                    float checknum = 0;
-                    String checkreply = null;
-
-                    while (!cursor.isAfterLast()) {
-                        checktype = cursor.getString(0);
-                        checktime = cursor.getString(1);
-                        checknum = cursor.getFloat(2);
-                        checkreply = cursor.getString(3);
-                        // do something useful with these
-                        cursor.moveToNext();
-                    }
-                    cursor.close();
-
-                    //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
-                    if ((checktype.equals(type_input))  && checktime.equals(datetime) && (checknum == Float.parseFloat(num_str)) && (checkreply.equals(botreply))) {
-                        sendMessage(view, botreply, checktime, checktype, false);
-                        //Log.d("sqlite read", "message checked");
-                    }
-                    else {
-                        //Log.d("sqlite read", "message wrong");
-                    }*/
-                    sendMessage(view, robot.reply(), robot.getTime(), robot.getType(), false);
+                    sendMessage(view, robot.reply(), robot.getInputTime(), robot.getInputTpye(), false);
 
                     num_text.setText(null);
                 }
@@ -265,10 +220,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        messageAdapter = new MessageAdapter(this);
-        messagesView = (ListView) findViewById(R.id.message_list);
-        messagesView.setAdapter(messageAdapter);
-
         /*
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -277,10 +228,10 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-
+        */
         mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mTopToolbar);
-        */
+
     }
 
     @Override
@@ -299,14 +250,17 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            robot.showAllData("ALL", "123");
+            //robot.showAllData("ALL", "123", "345");
             View view = new View(this);
-            sendMessage(view, robot.showAllData("ALL", robot.getTime()), robot.getTime(), robot.getType(), false);
+            sendMessage(view, robot.showAllData("ALL", "123", "234"), robot.getInputTime(), robot.getInputTpye(), false);
             return true;
         }
         else if (id == R.id.action_clear) {
             //sqliteDatabase.delete("book", null, null);
             robot.deleteDataBase();
+        }
+        else if (id == R.id.action_about) {
+            robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
         }
 
         return super.onOptionsItemSelected(item);

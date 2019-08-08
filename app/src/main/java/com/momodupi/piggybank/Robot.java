@@ -4,17 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ParseException;
 import android.util.Log;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class Robot {
 
     private String book;
     private String starttime;
+    private String histroytime;
 
     private String reply_str;
 
@@ -27,11 +32,15 @@ public class Robot {
     private DatabaseHelper dbbasehelper;
     private SQLiteDatabase sqliteDatabase;
 
+    private Context botcontext;
+
 
     public Robot(Context context, String bookname){
         this.book = bookname;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        this.botcontext = context;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         this.starttime = simpleDateFormat.format(new java.util.Date());
+        this.histroytime = this.starttime;
 
         dbbasehelper = new DatabaseHelper(context, "book", null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
@@ -44,7 +53,7 @@ public class Robot {
 
         //AccountTypes accountTypes = new AccountTypes();
 
-        if (!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount < 0 ) {
+        if (!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 ) {
             this.isInputCorrect = false;
         }
         else {
@@ -67,9 +76,9 @@ public class Robot {
 
         values.put("book_reply", this.reply_str);
 
-        sqliteDatabase.insert("book", null, values);
+        this.sqliteDatabase.insert("book", null, values);
 
-        Cursor cursor = sqliteDatabase.query("book",
+        Cursor cursor = this.sqliteDatabase.query("book",
                 new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                 "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
                 new String[] { this.input_type, this.input_time, String.valueOf(this.input_amount), this.reply_str },
@@ -115,16 +124,25 @@ public class Robot {
         }
     }
 
-    public String getTime() {
+    public String getInputTime() {
         return this.input_time;
     }
 
-    public String getType() {
+    public String getInputTpye() {
         return this.input_type;
     }
 
+    public String getBotStartTime() {
+        return this.starttime;
+    }
+
+    public String getCurrentTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(new java.util.Date());
+    }
+
     public void deleteDataBase() {
-        sqliteDatabase.delete("book", null, null);
+        this.sqliteDatabase.delete("book", null, null);
     }
 
     public boolean isTypeLegal(String type) {
@@ -132,11 +150,70 @@ public class Robot {
         return Arrays.asList(accountTypes.getTpyeString()).contains(type);
     }
 
-    public String showAllData(String type, String time) {
+    public void getHistroy(MessageAdapter msa, ListView msgv, String rqsttime) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Log.d("time",this.histroytime + "  " + rqsttime);
+        try {
+            if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
+                Log.d("time",this.histroytime + "  " + rqsttime);
+                Cursor cursor;
+                cursor = this.sqliteDatabase.query("book",
+                        null,
+                        "book_time BETWEEN ? AND ?",
+                        new String[] { "2019-08-01 00:00:00", rqsttime },
+                        null, null, null);
+
+
+                //cursor = sqliteDatabase.rawQuery("select * from book",null);
+                cursor.moveToLast();
+
+                String checktype = null;
+                String checktime = null;
+                float checknum = 0;
+                String checkreply = null;
+
+                Message msg_s;
+                int current_pos = 0;
+
+                while (!cursor.isBeforeFirst()) {
+                    checktype = cursor.getString(0);
+                    checktime = cursor.getString(1);
+                    checknum = cursor.getFloat(2);
+                    checkreply = cursor.getString(3);
+
+                    msg_s = new Message(checkreply, checktime, checktype, false);
+                    msa.addtotop(msg_s);
+                    msgv.setSelection(msgv.getCount() - 1);
+
+                    msg_s = new Message(String.valueOf(checknum), checktime, checktype, true);
+                    msa.addtotop(msg_s);
+                    msgv.setSelection(msgv.getCount() - 1);
+
+                    current_pos += 2;
+                    msgv.setSelection(current_pos);
+
+                    cursor.moveToPrevious();
+                }
+                cursor.close();
+                this.histroytime = rqsttime;
+            }
+            else {
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this.botcontext, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    public String showAllData(String type, String starttime, String endtime) {
 
         Cursor cursor;
         if (isTypeLegal(type))  {
-            cursor = sqliteDatabase.query("book",
+            cursor = this.sqliteDatabase.query("book",
                     new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                     "book_type=?",
                     new String[] { type },

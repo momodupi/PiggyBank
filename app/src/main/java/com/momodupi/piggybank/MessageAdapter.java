@@ -31,6 +31,11 @@ public class MessageAdapter extends BaseAdapter {
         notifyDataSetChanged(); // to render the list we need to notify
     }
 
+    public void addtotop(Message message) {
+        this.messages.add(0, message);
+        notifyDataSetChanged(); // to render the list we need to notify
+    }
+
     @Override
     public int getCount() {
         return messages.size();

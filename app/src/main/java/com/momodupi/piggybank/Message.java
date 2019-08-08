@@ -27,7 +27,7 @@ public class Message {
 
     public String getTime() {
         String datetime[] = this.time.split(" ");
-        String time_s[] = datetime[1].split("-");
+        String time_s[] = datetime[1].split(":");
         return time_s[0]+":"+time_s[1];
     }
 
