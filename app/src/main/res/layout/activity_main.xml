@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/message_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -38,9 +38,10 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:divider="#ffffff"
+            android:listSelector="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/btm_frame"
@@ -53,14 +54,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <GridView
-            android:id="@+id/type_grid"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:gravity="center"
-            android:numColumns="5"
-            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/btm_box"
@@ -118,6 +111,14 @@
             </FrameLayout>
 
         </LinearLayout>
+
+        <GridView
+            android:id="@+id/type_grid"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:numColumns="5"
+            android:visibility="visible" />
     </LinearLayout>
 
 

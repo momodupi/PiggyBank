@@ -12,12 +12,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
 import android.view.animation.Animation;
@@ -32,10 +34,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements KeyboardHeightObserver {
 
 
     static Integer imgbtn_anim[] = {0,0,0};
@@ -46,25 +50,29 @@ public class MainActivity extends AppCompatActivity {
     private GridView typegridview;
     private GridViewAdatper tpyrgridview_act;
 
-    private LinearLayout btm_frame;
-    private LinearLayout btm_box;
+    private LinearLayout btmFrame;
+    private LinearLayout btmBox;
 
     //private DatabaseHelper dbbasehelper;
     //private SQLiteDatabase sqliteDatabase;
 
-    private ImageButton type_btn;
-    private EditText num_text;
+    private ImageButton typeBtn;
+    private EditText numText;
     private ImageButton saveBtn;
 
     private Animation outAnimation;
     private Animation inAnimation;
 
+    private SwipeRefreshLayout messageFrame;
     private MessageAdapter messageAdapter;
     private ListView messagesView;
 
     private AccountTypes accounttype;
+    private KeyboardHeightProvider keyboardHeightProvider;
 
     private Robot robot;
+
+    private int keyboardheight = 0;
 
 
     @Override
@@ -89,27 +97,30 @@ public class MainActivity extends AppCompatActivity {
         typegridview = (GridView) findViewById(R.id.type_grid);
         typegridview.setAdapter(tpyrgridview_act);
 
+        messageFrame = (SwipeRefreshLayout) findViewById(R.id.message_frame);
+        messageFrame.setColorSchemeColors(
+                getResources().getColor(R.color.refreshcolor1),
+                getResources().getColor(R.color.refreshcolor2));
 
-        btm_frame = findViewById(R.id.btm_frame);
-        btm_box = findViewById(R.id.btm_box);
+
+        btmFrame = findViewById(R.id.btm_frame);
+        btmBox = findViewById(R.id.btm_box);
 
 
         //dbbasehelper = new DatabaseHelper(this, "book", null, 1);
         //sqliteDatabase = dbbasehelper.getWritableDatabase();
 
-        type_btn = (ImageButton) findViewById(R.id.type_button);
-        type_btn.setImageResource(R.mipmap.decision);
+        typeBtn = (ImageButton) findViewById(R.id.type_button);
+        typeBtn.setImageResource(R.mipmap.decision);
 
 
-        num_text = (EditText) findViewById(R.id.input_edittext);
+        numText = (EditText) findViewById(R.id.input_edittext);
 
 
         saveBtn = (ImageButton) findViewById(R.id.save_btn);
         saveBtn.requestFocus();
         saveBtn.setImageResource(R.mipmap.ellipsis);
         saveBtn.setTag(R.mipmap.ellipsis);
-
-        // Obtain a reference to the Activity Context
 
         // Create the Animation objects.
         outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
@@ -119,6 +130,41 @@ public class MainActivity extends AppCompatActivity {
         messagesView = (ListView) findViewById(R.id.message_list);
         messagesView.setAdapter(messageAdapter);
 
+        keyboardHeightProvider = new KeyboardHeightProvider(this);
+
+        View view = findViewById(R.id.backgroundlayout);
+        view.post(new Runnable() {
+            public void run() {
+                keyboardHeightProvider.start();
+            }
+        });
+
+
+        messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String h_time = robot.getBotHistoryTime();
+                h_time = h_time.split(" ")[0] + " 00:00:00";
+                Log.d("time", h_time);
+
+                try {
+                    Date date = simpleDateFormat.parse(h_time);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.add(Calendar.DATE, -1);
+                    String ph_time = simpleDateFormat.format(calendar.getTime());
+                    //Log.d("time", ph_time + "  &&&&  " + h_time);
+                    robot.getHistroy(messageAdapter, messagesView, ph_time);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
+                }
+
+                messageFrame.setRefreshing(false);
+            }
+        });
+
 
         typegridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -126,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
                 //type_btn.setImageResource(gridViewImageId[position]);
                 type_input = accounttype.getTpyeString()[position];
                 imgbtn_anim[0] = R.id.type_button;
-                imgbtn_anim[1] = (Integer) type_btn.getTag();
+                imgbtn_anim[1] = (Integer) typeBtn.getTag();
                 imgbtn_anim[2] = accounttype.getTpyeIcon()[position];
-                type_btn.startAnimation(outAnimation);
+                typeBtn.startAnimation(outAnimation);
                 Toast.makeText(MainActivity.this, "Select: " + type_input + "!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -142,27 +188,27 @@ public class MainActivity extends AppCompatActivity {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
 
-                String num_str = num_text.getText().toString();
+                String num_str = numText.getText().toString();
                 //Float amount = Float.parseFloat(str);
                 if (!num_str.isEmpty() && type_input != null) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
 
-                    sendMessage(view, num_str, datetime, type_input, true);
+                    sendMessage(view, num_str, datetime, type_input, "master");
                     robot.read(type_input, datetime, num_str);
 
-                    sendMessage(view, robot.reply(), robot.getInputTime(), robot.getInputTpye(), false);
+                    sendMessage(view, robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot");
 
-                    num_text.setText(null);
+                    numText.setText(null);
                 }
                 else {
                     Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
-                    num_text.setText(null);
+                    numText.setText(null);
                 }
             }
         });
 
-        num_text.addTextChangedListener(new TextWatcher() {
+        numText.addTextChangedListener(new TextWatcher() {
             boolean text_empty_flag = true;
             Integer savbtn_tag = (Integer) saveBtn.getTag();
             @Override
@@ -232,7 +278,60 @@ public class MainActivity extends AppCompatActivity {
         mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mTopToolbar);
 
+
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onKeyboardHeightChanged(int height, int orientation) {
+
+        if (height > 0) {
+            keyboardheight = height;
+            typegridview.getLayoutParams().height = 0;
+            btmFrame.getLayoutParams().height = btmBox.getLayoutParams().height;
+            Log.d("height", height + "  " + typegridview.getLayoutParams().height);
+        }
+        else {
+            typegridview.getLayoutParams().height = keyboardheight;
+            btmFrame.getLayoutParams().height = btmBox.getLayoutParams().height + keyboardheight;
+            Log.d("height", height + "  " + typegridview.getLayoutParams().height);
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        keyboardHeightProvider.setKeyboardHeightObserver(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        keyboardHeightProvider.setKeyboardHeightObserver(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        keyboardHeightProvider.close();
+    }
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -252,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             //robot.showAllData("ALL", "123", "345");
             View view = new View(this);
-            sendMessage(view, robot.showAllData("ALL", "123", "234"), robot.getInputTime(), robot.getInputTpye(), false);
+            sendMessage(view, robot.showAllData("ALL", "123", "234"), robot.getInputTime(), robot.getInputTpye(), "bot");
             return true;
         }
         else if (id == R.id.action_clear) {
@@ -260,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
             robot.deleteDataBase();
         }
         else if (id == R.id.action_about) {
-            robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
+            //robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
         }
 
         return super.onOptionsItemSelected(item);
@@ -271,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void sendMessage(View view, String num_str, String time_str, String type_str, boolean sender) {
+    public void sendMessage(View view, String num_str, String time_str, String type_str, String sender) {
         if (num_str.length() > 0) {
             Message msg_s = new Message(num_str, time_str, type_str, sender);
             messageAdapter.add(msg_s);

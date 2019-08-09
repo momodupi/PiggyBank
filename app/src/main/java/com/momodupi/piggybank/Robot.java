@@ -136,6 +136,10 @@ public class Robot {
         return this.starttime;
     }
 
+    public String getBotHistoryTime() {
+        return this.histroytime;
+    }
+
     public String getCurrentTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(new java.util.Date());
@@ -153,19 +157,13 @@ public class Robot {
     public void getHistroy(MessageAdapter msa, ListView msgv, String rqsttime) {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Log.d("time",this.histroytime + "  " + rqsttime);
         try {
             if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
                 Log.d("time",this.histroytime + "  " + rqsttime);
                 Cursor cursor;
-                cursor = this.sqliteDatabase.query("book",
-                        null,
-                        "book_time BETWEEN ? AND ?",
-                        new String[] { "2019-08-01 00:00:00", rqsttime },
-                        null, null, null);
+                cursor = this.sqliteDatabase.query("book", null, "book_time BETWEEN ? AND ?",
+                        new String[] { rqsttime, this.histroytime }, null, null, null);
 
-
-                //cursor = sqliteDatabase.rawQuery("select * from book",null);
                 cursor.moveToLast();
 
                 String checktype = null;
@@ -182,11 +180,11 @@ public class Robot {
                     checknum = cursor.getFloat(2);
                     checkreply = cursor.getString(3);
 
-                    msg_s = new Message(checkreply, checktime, checktype, false);
+                    msg_s = new Message(checkreply, checktime, checktype, "bot");
                     msa.addtotop(msg_s);
                     msgv.setSelection(msgv.getCount() - 1);
 
-                    msg_s = new Message(String.valueOf(checknum), checktime, checktype, true);
+                    msg_s = new Message(String.valueOf(checknum), checktime, checktype, "master");
                     msa.addtotop(msg_s);
                     msgv.setSelection(msgv.getCount() - 1);
 
@@ -196,7 +194,15 @@ public class Robot {
                     cursor.moveToPrevious();
                 }
                 cursor.close();
-                this.histroytime = rqsttime;
+
+                if (current_pos != 0) {
+                    this.histroytime = rqsttime;
+
+                    msg_s = new Message(null, this.histroytime, null, "date");
+                    msa.addtotop(msg_s);
+                    msgv.setSelection(msgv.getCount() - 1);
+                }
+
             }
             else {
                 return;

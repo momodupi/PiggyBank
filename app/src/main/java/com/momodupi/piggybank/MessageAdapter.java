@@ -59,28 +59,42 @@ public class MessageAdapter extends BaseAdapter {
         Message message = messages.get(i);
 
         //a chat bubble on right
-        if (message.isBelongsToCurrentUser()) {
-            convertView = messageInflater.inflate(R.layout.host_msg, null);
-            holder.msg = (TextView) convertView.findViewById(R.id.host_msg);
-            holder.time = (TextView) convertView.findViewById(R.id.host_time);
-            convertView.setTag(holder);
-            holder.msg.setText(message.getText());
-            holder.time.setText(message.getTime());
-        }
-        // a chat bubble on left
-        else {
-            convertView = messageInflater.inflate(R.layout.bot_msg, null);
-            holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
-            holder.name = (TextView) convertView.findViewById(R.id.name);
-            holder.msg = (TextView) convertView.findViewById(R.id.bot_msg);
-            convertView.setTag(holder);
+        switch (message.getUser()) {
+            case "master": {
+                convertView = messageInflater.inflate(R.layout.host_msg, null);
+                holder.msg = (TextView) convertView.findViewById(R.id.host_msg);
+                holder.time = (TextView) convertView.findViewById(R.id.host_time);
+                convertView.setTag(holder);
+                holder.msg.setText(message.getText());
+                holder.time.setText(message.getTime());
+            }
+            break;
+            case "bot": {
+                convertView = messageInflater.inflate(R.layout.bot_msg, null);
+                holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
+                holder.name = (TextView) convertView.findViewById(R.id.name);
+                holder.msg = (TextView) convertView.findViewById(R.id.bot_msg);
+                convertView.setTag(holder);
 
-            holder.name.setText(message.getType());
-            holder.msg.setText(message.getText());
+                holder.name.setText(message.getType());
+                holder.msg.setText(message.getText());
 
-            AccountTypes accountTypes = new AccountTypes();
-            holder.avatar.setImageResource(accountTypes.findIconbySring(message.getType()));
+                AccountTypes accountTypes = new AccountTypes();
+                holder.avatar.setImageResource(accountTypes.findIconbySring(message.getType()));
+            }
+            break;
+            case "date": {
+                convertView = messageInflater.inflate(R.layout.date_msg, null);
+                holder.time = (TextView) convertView.findViewById(R.id.mid_date);
+                convertView.setTag(holder);
+                holder.time.setText(message.getText());
+            }
+            break;
+            default: {
+
+            }
         }
+
 
         return convertView;
     }
