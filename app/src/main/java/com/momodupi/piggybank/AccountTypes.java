@@ -11,7 +11,7 @@ public class AccountTypes {
             "Fuel", "Software", "Season", "Airplane", "Railway", "Treatment",
             "Supplement", "Water", "Tissue", "Movie", "Network",
             "Game", "Tools", "Exercise", "Drinks", "Cooking", "Shopping", "Books",
-            "Accidents", "Mobile Payment", "Other"
+            "Accidents", "Mobile Payment"
     };
 
     private int[] type_icon_sets = {
@@ -30,7 +30,7 @@ public class AccountTypes {
                 R.mipmap.dumbbell, R.mipmap.cocktail,
                 R.mipmap.cooking, R.mipmap.buying,
                 R.mipmap.book, R.mipmap.bang,
-                R.mipmap.mobilepayment, R.mipmap.decision
+                R.mipmap.mobilepayment
     };
 
     ArrayList<Typetuple> type_sets = null;

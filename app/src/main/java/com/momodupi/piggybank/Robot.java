@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Robot {
@@ -45,6 +46,7 @@ public class Robot {
         dbbasehelper = new DatabaseHelper(context, "book", null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
     }
+
 
     public void read(String type, String time, String amount) {
         this.input_type = type;
@@ -182,14 +184,14 @@ public class Robot {
 
                     msg_s = new Message(checkreply, checktime, checktype, "bot");
                     msa.addtotop(msg_s);
-                    msgv.setSelection(msgv.getCount() - 1);
+                    //msgv.setSelection(msa.getCount() - 1);
 
                     msg_s = new Message(String.valueOf(checknum), checktime, checktype, "master");
                     msa.addtotop(msg_s);
-                    msgv.setSelection(msgv.getCount() - 1);
+                    //msgv.setSelection(msa.getCount() - 1);
 
                     current_pos += 2;
-                    msgv.setSelection(current_pos);
+                    //msgv.setSelection(current_pos);
 
                     cursor.moveToPrevious();
                 }
@@ -200,7 +202,8 @@ public class Robot {
 
                     msg_s = new Message(null, this.histroytime, null, "date");
                     msa.addtotop(msg_s);
-                    msgv.setSelection(msgv.getCount() - 1);
+                    //msgv.setSelection(current_pos);
+                    msgv.smoothScrollToPosition(current_pos - 1);
                 }
 
             }
@@ -211,7 +214,6 @@ public class Robot {
             e.printStackTrace();
             Toast.makeText(this.botcontext, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
         }
-
     }
 
 

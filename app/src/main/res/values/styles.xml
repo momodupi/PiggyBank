@@ -12,4 +12,5 @@
     <style name="mActionBarTheme" parent="Theme.AppCompat">
         <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
+
 </resources>

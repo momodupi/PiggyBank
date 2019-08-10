@@ -3,13 +3,16 @@ package com.momodupi.piggybank;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -19,9 +22,13 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -39,7 +46,7 @@ import java.util.Date;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity implements KeyboardHeightObserver {
+public class MainActivity extends AppCompatActivity {
 
 
     static Integer imgbtn_anim[] = {0,0,0};
@@ -50,8 +57,9 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
     private GridView typegridview;
     private GridViewAdatper tpyrgridview_act;
 
+    //private View rootView;
     private LinearLayout btmFrame;
-    private LinearLayout btmBox;
+    private LinearLayout panelFrame;
 
     //private DatabaseHelper dbbasehelper;
     //private SQLiteDatabase sqliteDatabase;
@@ -68,27 +76,18 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
     private ListView messagesView;
 
     private AccountTypes accounttype;
-    private KeyboardHeightProvider keyboardHeightProvider;
 
     private Robot robot;
 
-    private int keyboardheight = 0;
+
+    private InputMethodManager inputMethodManager;
+    private TypeKeyboard typeKeyboard;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        SharedPreferences preferences = getSharedPreferences("piggypref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = getSharedPreferences("kaomojipref", MODE_PRIVATE).edit();
-        if (!preferences.getBoolean("nonvirgin", false)) {
-            editor.putInt("keyboard_height", 0);
-            Log.d("STATE", "I'm virgin");
-        }
-        editor.putBoolean("nonvirgin", true);
-        editor.apply();
 
         robot = new Robot(this, "book");
 
@@ -103,18 +102,22 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
                 getResources().getColor(R.color.refreshcolor2));
 
 
+        //rootView = findViewById(R.id.backgroundlayout);
         btmFrame = findViewById(R.id.btm_frame);
-        btmBox = findViewById(R.id.btm_box);
+        panelFrame = findViewById(R.id.panel_frame);
 
 
-        //dbbasehelper = new DatabaseHelper(this, "book", null, 1);
-        //sqliteDatabase = dbbasehelper.getWritableDatabase();
+        inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        //RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycleview);
+
 
         typeBtn = (ImageButton) findViewById(R.id.type_button);
         typeBtn.setImageResource(R.mipmap.decision);
 
 
         numText = (EditText) findViewById(R.id.input_edittext);
+        numText.requestFocus();
 
 
         saveBtn = (ImageButton) findViewById(R.id.save_btn);
@@ -129,16 +132,6 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
         messageAdapter = new MessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.message_list);
         messagesView.setAdapter(messageAdapter);
-
-        keyboardHeightProvider = new KeyboardHeightProvider(this);
-
-        View view = findViewById(R.id.backgroundlayout);
-        view.post(new Runnable() {
-            public void run() {
-                keyboardHeightProvider.start();
-            }
-        });
-
 
         messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -166,6 +159,19 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
         });
 
 
+        messagesView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                //numText.clearFocus();
+                inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                Log.d("STATE", "touch messageview");
+                return false;
+            }
+        });
+
+
         typegridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -178,16 +184,11 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
                 Toast.makeText(MainActivity.this, "Select: " + type_input + "!", Toast.LENGTH_SHORT).show();
             }
         });
-
+        /**/
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-
                 String num_str = numText.getText().toString();
                 //Float amount = Float.parseFloat(str);
                 if (!num_str.isEmpty() && type_input != null) {
@@ -200,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
                     sendMessage(view, robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot");
 
                     numText.setText(null);
+                    inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 else {
                     Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
@@ -265,6 +268,8 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
             }
         });
 
+        typeKeyboard = new TypeKeyboard(this, numText, panelFrame, typeBtn, messageFrame);
+
 
         /*
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -277,60 +282,7 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
         */
         mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mTopToolbar);
-
-
     }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onKeyboardHeightChanged(int height, int orientation) {
-
-        if (height > 0) {
-            keyboardheight = height;
-            typegridview.getLayoutParams().height = 0;
-            btmFrame.getLayoutParams().height = btmBox.getLayoutParams().height;
-            Log.d("height", height + "  " + typegridview.getLayoutParams().height);
-        }
-        else {
-            typegridview.getLayoutParams().height = keyboardheight;
-            btmFrame.getLayoutParams().height = btmBox.getLayoutParams().height + keyboardheight;
-            Log.d("height", height + "  " + typegridview.getLayoutParams().height);
-        }
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        keyboardHeightProvider.setKeyboardHeightObserver(null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        keyboardHeightProvider.setKeyboardHeightObserver(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        keyboardHeightProvider.close();
-    }
-
-
-
 
 
     @Override
@@ -349,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //robot.showAllData("ALL", "123", "345");
             View view = new View(this);
             sendMessage(view, robot.showAllData("ALL", "123", "234"), robot.getInputTime(), robot.getInputTpye(), "bot");
             return true;
@@ -363,10 +314,6 @@ public class MainActivity extends AppCompatActivity implements KeyboardHeightObs
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public static int dpToPx(float dp, Context context) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
 

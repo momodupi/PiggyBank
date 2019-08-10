@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width = "match_parent"
+    android:layout_height="220dp"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical" >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <GridView
+            android:id="@+id/type_grid"
+            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:numColumns="5" >
+        </GridView>
+    </LinearLayout>
+
+</merge>

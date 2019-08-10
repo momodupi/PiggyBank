@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backgroundlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
     android:background="@color/colorPrimaryDark"
-    android:id="@+id/backgroundlayout"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity">
 
@@ -16,21 +17,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
         android:elevation="2dp"
-        app:popupTheme="@style/mActionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/mActionBarTheme" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/message_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btm_frame"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        android:layout_weight="1">
 
         <ListView
             android:id="@+id/message_list"
@@ -43,83 +38,18 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <include layout="@layout/btm_frame" />
+
     <LinearLayout
-        android:id="@+id/btm_frame"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:id="@+id/panel_frame"
+        android:layout_width = "match_parent"
+        android:layout_height="220dp"
         android:background="@color/colorPrimary"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:elevation="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:elevation="2dp"
+        android:visibility="gone" >
 
-        <LinearLayout
-            android:id="@+id/btm_box"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:elevation="2dp"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:visibility="visible">
-
-                <ImageButton
-                    android:id="@+id/type_button"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@mipmap/decision" />
-
-            </FrameLayout>
-
-            <EditText
-                android:id="@+id/input_edittext"
-                android:layout_width="240dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:ems="10"
-                android:hint="@string/type_to_save"
-                android:importantForAutofill="no"
-                android:inputType="numberDecimal"
-                android:textColor="#ffffff"
-                android:textColorHint="@color/colorAccent" />
-
-            <FrameLayout
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <ImageButton
-                    android:id="@+id/save_btn"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@mipmap/ellipsis" />
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <GridView
-            android:id="@+id/type_grid"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:gravity="center"
-            android:numColumns="5"
-            android:visibility="visible" />
+        <include layout="@layout/panel" />
     </LinearLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
