@@ -1,8 +1,8 @@
 package com.momodupi.piggybank;
 
-import android.util.Pair;
 
 import java.util.ArrayList;
+
 
 public class AccountTypes {
     private String[] type_string_sets = {
@@ -11,7 +11,7 @@ public class AccountTypes {
             "Fuel", "Software", "Season", "Airplane", "Railway", "Treatment",
             "Supplement", "Water", "Tissue", "Movie", "Network",
             "Game", "Tools", "Exercise", "Drinks", "Cooking", "Shopping", "Books",
-            "Accidents", "Mobile Payment"
+            "Accidents", "Mobile Payment", "Milk", "Meat", "Salary"
     };
 
     private int[] type_icon_sets = {
@@ -30,7 +30,8 @@ public class AccountTypes {
                 R.mipmap.dumbbell, R.mipmap.cocktail,
                 R.mipmap.cooking, R.mipmap.buying,
                 R.mipmap.book, R.mipmap.bang,
-                R.mipmap.mobilepayment
+                R.mipmap.mobilepayment, R.mipmap.milk,
+                R.mipmap.steak, R.mipmap.cashinhand
     };
 
     ArrayList<Typetuple> type_sets = null;

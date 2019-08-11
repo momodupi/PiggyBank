@@ -1,34 +1,22 @@
 package com.momodupi.piggybank;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.MotionEvent;
+import android.view.ContextThemeWrapper;
+import android.view.MenuInflater;
 import android.view.View;
 
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -38,12 +26,12 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,12 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private GridView typegridview;
     private GridViewAdatper tpyrgridview_act;
 
-    //private View rootView;
     private LinearLayout btmFrame;
     private LinearLayout panelFrame;
-
-    //private DatabaseHelper dbbasehelper;
-    //private SQLiteDatabase sqliteDatabase;
 
     private ImageButton typeBtn;
     private EditText numText;
@@ -79,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Robot robot;
 
+    private String edittime;
 
     private InputMethodManager inputMethodManager;
     private TypeKeyboard typeKeyboard;
@@ -102,18 +87,15 @@ public class MainActivity extends AppCompatActivity {
                 getResources().getColor(R.color.refreshcolor2));
 
 
-        //rootView = findViewById(R.id.backgroundlayout);
+
         btmFrame = findViewById(R.id.btm_frame);
         panelFrame = findViewById(R.id.panel_frame);
 
 
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        //RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycleview);
-
-
         typeBtn = (ImageButton) findViewById(R.id.type_button);
-        typeBtn.setImageResource(R.mipmap.decision);
+        typeBtn.setImageResource(R.mipmap.unknown);
 
 
         numText = (EditText) findViewById(R.id.input_edittext);
@@ -121,9 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         saveBtn = (ImageButton) findViewById(R.id.save_btn);
-        saveBtn.requestFocus();
-        saveBtn.setImageResource(R.mipmap.ellipsis);
-        saveBtn.setTag(R.mipmap.ellipsis);
+        saveBtn.setImageResource(R.mipmap.transaction);
+        saveBtn.setTag(R.mipmap.transaction);
 
         // Create the Animation objects.
         outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
@@ -132,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
         messageAdapter = new MessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.message_list);
         messagesView.setAdapter(messageAdapter);
+
+
+        robot.getToday(messageAdapter, messagesView);
+
 
         messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -158,15 +143,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        messagesView.setOnTouchListener(new View.OnTouchListener() {
+        messagesView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, int i, long l) {
 
-                //numText.clearFocus();
-                inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                Log.d("STATE", "touch messageview");
+                Context wrapper = new ContextThemeWrapper(getBaseContext(), R.style.mActionBarTheme);
+                PopupMenu popup = new PopupMenu(wrapper, view);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.popmenu, popup.getMenu());
+
+                final Message selectemsg = (Message) messageAdapter.getItem(i);
+                Log.d("message", "user: " + selectemsg.getUser() + "  type: "
+                        + selectemsg.getType() + "  time: " + selectemsg.getTime() + "  amount: " + selectemsg.getText());
+
+                if (selectemsg.getUser().equals("master")) {
+                    popup.show();
+
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            int id = menuItem.getItemId();
+                            if (id == R.id.popdelete) {
+                                robot.delteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
+                                messageAdapter.remove(selectemsg);
+                            }
+                            else if (id == R.id.popedit) {
+                                edittime = selectemsg.getTime();
+                                numText.setText(selectemsg.getText());
+                                type_input = selectemsg.getType();
+                                imgbtn_anim[0] = R.id.type_button;
+                                imgbtn_anim[1] = (Integer) typeBtn.getTag();
+                                imgbtn_anim[2] = accounttype.findIconbySring(selectemsg.getType());
+                                typeBtn.startAnimation(outAnimation);
+
+                                robot.delteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
+                                messageAdapter.remove(selectemsg);
+                            }
+                            return false;
+                        }
+                    });
+                }
+
+
                 return false;
             }
         });
@@ -194,6 +212,10 @@ public class MainActivity extends AppCompatActivity {
                 if (!num_str.isEmpty() && type_input != null) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
+
+                    if (!edittime.isEmpty()) {
+                        datetime = edittime;
+                    }
 
                     sendMessage(view, num_str, datetime, type_input, "master");
                     robot.read(type_input, datetime, num_str);
@@ -228,14 +250,14 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() != 0 && text_empty_flag == true) {
                     imgbtn_anim[0] = R.id.save_btn;
-                    imgbtn_anim[1] = R.mipmap.ellipsis;
+                    imgbtn_anim[1] = R.mipmap.transaction;
                     imgbtn_anim[2] = R.mipmap.moneytransfer;
                     saveBtn.startAnimation(outAnimation);
                 }
                 else if (charSequence.length() == 0) {
                     imgbtn_anim[0] = R.id.save_btn;
                     imgbtn_anim[1] = R.mipmap.moneytransfer;
-                    imgbtn_anim[2] = R.mipmap.ellipsis;
+                    imgbtn_anim[2] = R.mipmap.transaction;
                     saveBtn.startAnimation(outAnimation);
                 }
             }
@@ -270,18 +292,16 @@ public class MainActivity extends AppCompatActivity {
 
         typeKeyboard = new TypeKeyboard(this, numText, panelFrame, typeBtn, messageFrame);
 
-
-        /*
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
-        */
         mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mTopToolbar);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (!typeKeyboard.interceptBackPress()) {
+            super.onBackPressed();
+        }
     }
 
 
@@ -302,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             View view = new View(this);
-            sendMessage(view, robot.showAllData("ALL", "123", "234"), robot.getInputTime(), robot.getInputTpye(), "bot");
+            sendMessage(view, robot.showAllData("ALL", "2019-01-01 00:00:00", robot.getCurrentTime()), robot.getInputTime(), "ALL", "bot");
             return true;
         }
         else if (id == R.id.action_clear) {

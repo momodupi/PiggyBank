@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -180,7 +180,8 @@ public class TypeKeyboard {
         int softKeyboardHeight = getSoftKeyboardHeight();
         if (softKeyboardHeight == 0) {
             softKeyboardHeight = getSoftKeyboardHeightLocalValue();
-        } else {
+        }
+        else {
             hideSoftKeyboard();
         }
         panelView.getLayoutParams().height = softKeyboardHeight;

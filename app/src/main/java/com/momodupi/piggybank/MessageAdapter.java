@@ -2,19 +2,20 @@ package com.momodupi.piggybank;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MessageAdapter extends BaseAdapter {
@@ -28,12 +29,23 @@ public class MessageAdapter extends BaseAdapter {
 
     public void add(Message message) {
         this.messages.add(message);
-        notifyDataSetChanged(); // to render the list we need to notify
+        notifyDataSetChanged();
     }
 
     public void addtotop(Message message) {
         this.messages.add(0, message);
-        notifyDataSetChanged(); // to render the list we need to notify
+        notifyDataSetChanged();
+    }
+
+    public void remove(Message message) {
+        int pos = messages.indexOf(message);
+        this.messages.remove(pos);
+
+        if (this.messages.get(pos).getUser().equals("bot")) {
+            this.messages.remove(pos);
+        }
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -54,10 +66,11 @@ public class MessageAdapter extends BaseAdapter {
     // This is the backbone of the class, it handles the creation of single ListView row (chat bubble)
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
-        MessageViewHolder holder = new MessageViewHolder();
+        final MessageViewHolder holder = new MessageViewHolder();
         LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         Message message = messages.get(i);
 
+        String output_str = "";
         //a chat bubble on right
         switch (message.getUser()) {
             case "master": {
@@ -65,8 +78,21 @@ public class MessageAdapter extends BaseAdapter {
                 holder.msg = (TextView) convertView.findViewById(R.id.host_msg);
                 holder.time = (TextView) convertView.findViewById(R.id.host_time);
                 convertView.setTag(holder);
-                holder.msg.setText(message.getText());
-                holder.time.setText(message.getTime());
+
+                output_str = message.getType() + ": $" + message.getText();
+                holder.msg.setText(output_str);
+
+                String time_s[] = message.getTime().split(" ")[1].split(":");
+                output_str = time_s[0]+":"+time_s[1];
+                holder.time.setText(output_str);
+
+                holder.msg.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Log.d("press", "true");
+                        return false;
+                    }
+                });
             }
             break;
             case "bot": {
@@ -80,22 +106,35 @@ public class MessageAdapter extends BaseAdapter {
                 holder.msg.setText(message.getText());
 
                 AccountTypes accountTypes = new AccountTypes();
-                holder.avatar.setImageResource(accountTypes.findIconbySring(message.getType()));
+                if (message.getType() == "ALL") {
+                    holder.avatar.setImageResource(R.mipmap.moneybank);
+                }
+                else {
+                    holder.avatar.setImageResource(accountTypes.findIconbySring(message.getType()));
+                }
             }
             break;
             case "date": {
                 convertView = messageInflater.inflate(R.layout.date_msg, null);
                 holder.time = (TextView) convertView.findViewById(R.id.mid_date);
                 convertView.setTag(holder);
-                holder.time.setText(message.getText());
+                //holder.time.setText(message.getText());
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date transdate = simpleDateFormat.parse(message.getTime());
+                    simpleDateFormat = new SimpleDateFormat("MMM dd");
+                    output_str = simpleDateFormat.format(transdate);
+                    holder.time.setText(output_str);
+                }  catch (Exception e) {
+                    Log.d("time", "Bug!");
+                }
             }
             break;
             default: {
 
             }
         }
-
-
         return convertView;
     }
 }

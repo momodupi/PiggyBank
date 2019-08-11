@@ -4,17 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.ParseException;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+
+
 
 public class Robot {
 
@@ -43,7 +40,7 @@ public class Robot {
         this.starttime = simpleDateFormat.format(new java.util.Date());
         this.histroytime = this.starttime;
 
-        dbbasehelper = new DatabaseHelper(context, "book", null, 1);
+        dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
     }
 
@@ -78,9 +75,9 @@ public class Robot {
 
         values.put("book_reply", this.reply_str);
 
-        this.sqliteDatabase.insert("book", null, values);
+        this.sqliteDatabase.insert(this.book, null, values);
 
-        Cursor cursor = this.sqliteDatabase.query("book",
+        Cursor cursor = this.sqliteDatabase.query(this.book,
                 new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                 "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
                 new String[] { this.input_type, this.input_time, String.valueOf(this.input_amount), this.reply_str },
@@ -99,7 +96,7 @@ public class Robot {
             checktime = cursor.getString(1);
             checknum = cursor.getFloat(2);
             checkreply = cursor.getString(3);
-            // do something useful with these
+
             cursor.moveToNext();
         }
         cursor.close();
@@ -148,13 +145,68 @@ public class Robot {
     }
 
     public void deleteDataBase() {
-        this.sqliteDatabase.delete("book", null, null);
+        this.sqliteDatabase.delete(this.book, null, null);
+    }
+
+    public void delteItem(String type, String time, String amount) {
+        this.sqliteDatabase.delete(this.book, "book_type=? AND book_time=? AND book_amount=?",
+                new String[] {type, time, amount });
     }
 
     public boolean isTypeLegal(String type) {
         AccountTypes accountTypes = new AccountTypes();
         return Arrays.asList(accountTypes.getTpyeString()).contains(type);
     }
+
+    public void getToday(MessageAdapter msa, ListView msgv) {
+        String h_time = this.starttime.split(" ")[0] + " 00:00:00";
+        Cursor cursor;
+        cursor = this.sqliteDatabase.query(this.book, null, "book_time BETWEEN ? AND ?",
+                new String[] { h_time, this.starttime }, null, null, null);
+
+        String checktype = null;
+        String checktime = null;
+        float checknum = 0;
+        String checkreply = null;
+
+        cursor.moveToLast();
+
+        Message msg_s;
+        int current_pos = 0;
+
+        while (!cursor.isBeforeFirst()) {
+            checktype = cursor.getString(0);
+            checktime = cursor.getString(1);
+            checknum = cursor.getFloat(2);
+            checkreply = cursor.getString(3);
+
+            msg_s = new Message(checkreply, checktime, checktype, "bot");
+            msa.addtotop(msg_s);
+            //msgv.setSelection(msa.getCount() - 1);
+
+            msg_s = new Message(String.valueOf(checknum), checktime, checktype, "master");
+            msa.addtotop(msg_s);
+            //msgv.setSelection(msa.getCount() - 1);
+
+            current_pos += 2;
+            //msgv.setSelection(current_pos);
+
+            cursor.moveToPrevious();
+        }
+        cursor.close();
+
+        Log.d("state", "time: " + h_time);
+
+        if (current_pos != 0) {
+            this.histroytime = h_time;
+
+            msg_s = new Message(null, this.histroytime, null, "date");
+            msa.addtotop(msg_s);
+            //msgv.setSelection(current_pos);
+            msgv.smoothScrollToPosition(current_pos);
+        }
+    }
+
 
     public void getHistroy(MessageAdapter msa, ListView msgv, String rqsttime) {
 
@@ -163,7 +215,7 @@ public class Robot {
             if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
                 Log.d("time",this.histroytime + "  " + rqsttime);
                 Cursor cursor;
-                cursor = this.sqliteDatabase.query("book", null, "book_time BETWEEN ? AND ?",
+                cursor = this.sqliteDatabase.query(this.book, null, "book_time BETWEEN ? AND ?",
                         new String[] { rqsttime, this.histroytime }, null, null, null);
 
                 cursor.moveToLast();
@@ -199,6 +251,7 @@ public class Robot {
 
                 if (current_pos != 0) {
                     this.histroytime = rqsttime;
+                    Log.d("time", "history: " + this.histroytime);
 
                     msg_s = new Message(null, this.histroytime, null, "date");
                     msa.addtotop(msg_s);
@@ -218,19 +271,19 @@ public class Robot {
 
 
     public String showAllData(String type, String starttime, String endtime) {
-
         Cursor cursor;
         if (isTypeLegal(type))  {
-            cursor = this.sqliteDatabase.query("book",
+            cursor = this.sqliteDatabase.query(this.book,
                     new String[] { "book_type", "book_time", "book_amount", "book_reply"},
-                    "book_type=?",
-                    new String[] { type },
+                    "book_type=? AND book_time BETWEEN ? AND ?",
+                    new String[] { type, starttime, endtime },
                     null, null, null);
         }
         else {
-            cursor = sqliteDatabase.query("book",
+            cursor = sqliteDatabase.query(this.book,
                     new String[] { "book_type", "book_time", "book_amount", "book_reply"},
-                    null, null, null, null, null);
+                    "book_time BETWEEN ? AND ?", new String[] { starttime, endtime },
+                    null, null, null);
         }
 
 
@@ -240,22 +293,27 @@ public class Robot {
         String checktype = null;
         String checktime = null;
         float checknum = 0;
-        String checkreply = null;
-        this.reply_str = type + "\n";
+        //String checkreply = null;
+        this.reply_str = "";
 
         while (!cursor.isAfterLast()) {
-            //checktype = cursor.getString(0);
+            checktype = cursor.getString(0);
             checktime = cursor.getString(1);
             checknum = cursor.getFloat(2);
             //checkreply = cursor.getString(3);
-            // do something useful with these
-            this.reply_str += checktime + ": $" + checknum + "\n";
+
+            if (type.equals("ALL")) {
+                this.reply_str += checktype + "\n$" + checknum + " at " + checktime.substring(0, 16) + "\n\n";
+            }
+            else {
+                this.reply_str += checknum + " at " + checktime.substring(0, 16) + "\n\n";
+            }
 
             cursor.moveToNext();
         }
         cursor.close();
 
-        return reply_str;
+        return reply_str + "(=ﾟωﾟ)=";
     }
 
     public String getRandomAnswer() {
