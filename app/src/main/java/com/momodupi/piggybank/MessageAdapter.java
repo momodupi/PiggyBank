@@ -37,6 +37,11 @@ public class MessageAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void addtoppostition(Message message, int pos) {
+        this.messages.add(pos, message);
+        notifyDataSetChanged();
+    }
+
     public void remove(Message message) {
         int pos = messages.indexOf(message);
         this.messages.remove(pos);
@@ -63,7 +68,6 @@ public class MessageAdapter extends BaseAdapter {
         return i;
     }
 
-    // This is the backbone of the class, it handles the creation of single ListView row (chat bubble)
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         final MessageViewHolder holder = new MessageViewHolder();

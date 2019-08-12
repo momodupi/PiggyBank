@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Robot robot;
 
-    private String edittime;
+    private String edittime = "noedit";
+    private int editposition;
 
     private InputMethodManager inputMethodManager;
     private TypeKeyboard typeKeyboard;
@@ -152,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.popmenu, popup.getMenu());
 
+                editposition = i;
+
                 final Message selectemsg = (Message) messageAdapter.getItem(i);
                 Log.d("message", "user: " + selectemsg.getUser() + "  type: "
                         + selectemsg.getType() + "  time: " + selectemsg.getTime() + "  amount: " + selectemsg.getText());
@@ -213,14 +216,22 @@ public class MainActivity extends AppCompatActivity {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String datetime = simpleDateFormat.format(new java.util.Date());
 
-                    if (!edittime.isEmpty()) {
+                    if (!edittime.equals("noedit")) {
                         datetime = edittime;
+                        sendMessageToPosition(num_str, datetime, type_input, "master", editposition);
+                        robot.read(type_input, datetime, num_str);
+
+                        sendMessageToPosition(robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot", editposition+1);
+                        Log.d("send", "edit: true");
+                        edittime = "noedit";
                     }
+                    else {
+                        sendMessage(num_str, datetime, type_input, "master");
+                        robot.read(type_input, datetime, num_str);
 
-                    sendMessage(view, num_str, datetime, type_input, "master");
-                    robot.read(type_input, datetime, num_str);
-
-                    sendMessage(view, robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot");
+                        sendMessage(robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot");
+                        Log.d("send", "edit: false");
+                    }
 
                     numText.setText(null);
                     inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -321,13 +332,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            View view = new View(this);
-            sendMessage(view, robot.showAllData("ALL", "2019-01-01 00:00:00", robot.getCurrentTime()), robot.getInputTime(), "ALL", "bot");
+            sendMessage(robot.showSomeData("ALL", "2019-01-01 00:00:00", robot.getCurrentTime()), robot.getInputTime(), "ALL", "bot");
             return true;
         }
-        else if (id == R.id.action_clear) {
-            //sqliteDatabase.delete("book", null, null);
-            robot.deleteDataBase();
+        else if (id == R.id.action_backup) {
+            robot.exportDataBaes();
         }
         else if (id == R.id.action_about) {
             //robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
@@ -337,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void sendMessage(View view, String num_str, String time_str, String type_str, String sender) {
+    public void sendMessage(String num_str, String time_str, String type_str, String sender) {
         if (num_str.length() > 0) {
             Message msg_s = new Message(num_str, time_str, type_str, sender);
             messageAdapter.add(msg_s);
@@ -345,5 +354,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void sendMessageToPosition(String num_str, String time_str, String type_str, String sender, int pos) {
+        if (num_str.length() > 0) {
+            Message msg_s = new Message(num_str, time_str, type_str, sender);
+            messageAdapter.addtoppostition(msg_s, pos);
+            messagesView.setSelection(messagesView.getCount() - 1);
+        }
+    }
 
 }

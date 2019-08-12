@@ -28,4 +28,5 @@ public class Message {
     public String getUser() {
         return this.user;
     }
+
 }
