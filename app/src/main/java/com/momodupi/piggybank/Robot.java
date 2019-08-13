@@ -86,7 +86,7 @@ public class Robot {
                 new String[] { this.input_type, this.input_time, String.valueOf(this.input_amount), this.reply_str },
                 null, null, null);
 
-        //cursor = sqliteDatabase.rawQuery("select * from book",null);
+        //cursor = sqliteDatabase.rawQuery("select * from books",null);
         cursor.moveToFirst();
 
         String checktype = null;

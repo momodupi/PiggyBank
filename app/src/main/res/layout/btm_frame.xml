@@ -4,62 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/colorPrimary"
-    android:gravity="center_horizontal"
     android:elevation="2dp"
-    android:orientation="vertical">
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/btm_box"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+    <FrameLayout
+        android:layout_width="12dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:visibility="visible">
 
-        <FrameLayout
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="visible">
-
-            <ImageButton
-                android:id="@+id/type_button"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside" />
-
-        </FrameLayout>
-
-        <EditText
-            android:id="@+id/input_edittext"
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+        <ImageButton
+            android:id="@+id/type_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:ems="10"
-            android:hint="@string/type_to_save"
-            android:importantForAutofill="no"
-            android:inputType="numberDecimal"
-            android:textColor="#ffffff"
-            android:textColorHint="@color/colorAccent" />
+            android:scaleType="centerInside" />
 
-        <FrameLayout
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+    </FrameLayout>
 
-            <ImageButton
-                android:id="@+id/save_btn"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside" />
-        </FrameLayout>
+    <EditText
+        android:id="@+id/input_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/type_to_save"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:textColor="#ffffff"
+        android:textColorHint="@color/colorAccent" />
 
-    </LinearLayout>
+    <FrameLayout
+        android:layout_width="12dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/save_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside" />
+    </FrameLayout>
 
 </LinearLayout>

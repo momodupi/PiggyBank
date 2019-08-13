@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        robot = new Robot(this, "book");
+        robot = new Robot(this, DatabaseHelper.BOOKNAME);
+        //robot.deleteDataBase();
 
         accounttype = new AccountTypes();
         tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
@@ -104,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         saveBtn = (ImageButton) findViewById(R.id.save_btn);
-        saveBtn.setImageResource(R.mipmap.transaction);
-        saveBtn.setTag(R.mipmap.transaction);
+        saveBtn.setImageResource(R.mipmap.etransfer);
+        saveBtn.setTag(R.mipmap.etransfer);
 
         // Create the Animation objects.
         outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
@@ -261,14 +262,14 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() != 0 && text_empty_flag == true) {
                     imgbtn_anim[0] = R.id.save_btn;
-                    imgbtn_anim[1] = R.mipmap.transaction;
-                    imgbtn_anim[2] = R.mipmap.moneytransfer;
+                    imgbtn_anim[1] = R.mipmap.etransfer;
+                    imgbtn_anim[2] = R.mipmap.transfer;
                     saveBtn.startAnimation(outAnimation);
                 }
                 else if (charSequence.length() == 0) {
                     imgbtn_anim[0] = R.id.save_btn;
-                    imgbtn_anim[1] = R.mipmap.moneytransfer;
-                    imgbtn_anim[2] = R.mipmap.transaction;
+                    imgbtn_anim[1] = R.mipmap.transfer;
+                    imgbtn_anim[2] = R.mipmap.etransfer;
                     saveBtn.startAnimation(outAnimation);
                 }
             }
