@@ -12,4 +12,73 @@
     <string name="type_to_save">type to save...</string>
     <string name="save">Save!</string>
 
+
+    <string-array name="type_name">
+        <item>Clothes</item>
+        <item>Shoes</item>
+        <item>Luxury</item>
+        <item>Accessories</item>
+
+        <item>Restaurant</item>
+        <item>Fast Food</item>
+        <item>Carbide</item>
+        <item>Snacks</item>
+        <item>Meats</item>
+        <item>Fruits</item>
+
+        <item>Vegetables</item>
+        <item>Drinks</item>
+        <item>Alcohols</item>
+        <item>Milk</item>
+        <item>Cooking</item>
+
+        <item>Rent</item>
+        <item>Electricity</item>
+        <item>Gas</item>
+        <item>Water</item>
+        <item>Internet</item>
+        <item>Devices</item>
+        <item>Furniture</item>
+        <item>House Keeping</item>
+
+        <item>Tools</item>
+        <item>Washing</item>
+        <item>Personal Care</item>
+        <item>Hotel</item>
+
+        <item>Car Service</item>
+        <item>Fuel</item>
+        <item>Airplane</item>
+        <item>Bus</item>
+        <item>Car Pooling</item>
+        <item>Train</item>
+        <item>Car Insurance</item>
+
+        <item>Mobile Payments</item>
+        <item>Post</item>
+        <item>Delivery</item>
+
+        <item>Training</item>
+        <item>Game</item>
+        <item>Software</item>
+        <item>Tourism</item>
+        <item>Movies</item>
+        <item>Bar</item>
+
+        <item>Courses</item>
+        <item>Books</item>
+        <item>Stationery</item>
+
+        <item>Party</item>
+        <item>Gift</item>
+        <item>Donation</item>
+
+        <item>Treatment</item>
+        <item>Pills</item>
+        <item>Supplements</item>
+
+        <item>Accidents</item>
+        <item>Tickets</item>
+
+    </string-array>
 </resources>

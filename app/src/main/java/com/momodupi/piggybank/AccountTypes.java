@@ -1,12 +1,19 @@
 package com.momodupi.piggybank;
 
 
+
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class AccountTypes {
+    /*
     private String[] type_string_sets = {
             "Clothes", "Shoes", "Luxury", "Accessories",
             "Restaurant", "Fast Food", "Carbide", "Snacks", "Meats", "Fruits",
@@ -21,6 +28,7 @@ public class AccountTypes {
             "Treatment", "Pills", "Supplements",
             "Accidents", "Tickets"
     };
+    */
 
     private int[] type_icon_sets = {
             R.mipmap.clothes, R.mipmap.shoes, R.mipmap.luxury, R.mipmap.accessories,
@@ -42,6 +50,10 @@ public class AccountTypes {
             R.mipmap.treatment, R.mipmap.pills, R.mipmap.supplements,
             R.mipmap.accidents, R.mipmap.tickets
     };
+
+    private String[] type_string_sets;
+    //private int[] type_icon_sets;
+
 
     private String[] type_clothing = {
             "Clothes", "Shoes", "Luxury", "Accessories"
@@ -124,11 +136,13 @@ public class AccountTypes {
     };
 
 
-
     ArrayList<Typetuple> type_sets = null;
 
 
-    public AccountTypes() {
+    public AccountTypes(Context context) {
+
+        type_string_sets = context.getResources().getStringArray(R.array.type_name);
+
         type_sets = new ArrayList<Typetuple>();
         for (int i=0; i<type_string_sets.length; i++) {
             Typetuple t = new Typetuple();

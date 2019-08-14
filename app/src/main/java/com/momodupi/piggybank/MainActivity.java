@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         robot = new Robot(this, DatabaseHelper.BOOKNAME);
         //robot.deleteDataBase();
 
-        accounttype = new AccountTypes();
+        accounttype = new AccountTypes(this);
         tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
         typegridview = (GridView) findViewById(R.id.type_grid);
         typegridview.setAdapter(tpyrgridview_act);

@@ -106,7 +106,6 @@ public class Robot {
 
         //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
         if ((checktype.equals(this.input_type))  && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str)))) {
-            //sendMessage(view, botreply, checktime, checktype, false);
             //Log.d("sqlite read", "message checked");
             return true;
         }
@@ -157,7 +156,7 @@ public class Robot {
     }
 
     public boolean isTypeLegal(String type) {
-        AccountTypes accountTypes = new AccountTypes();
+        AccountTypes accountTypes = new AccountTypes(this.botcontext);
         return Arrays.asList(accountTypes.getTpyeString()).contains(type);
     }
 
@@ -226,11 +225,10 @@ public class Robot {
 
         if (todaydata.size() != 0) {
             this.histroytime = h_time;
-
-            msg_s = new Message(null, this.histroytime, null, "date");
-            msa.addtotop(msg_s);
-            msgv.smoothScrollToPosition(todaydata.size() - 1);
         }
+        msg_s = new Message(null, this.histroytime, null, "date");
+        msa.addtotop(msg_s);
+        msgv.smoothScrollToPosition(todaydata.size() - 1);
     }
 
 

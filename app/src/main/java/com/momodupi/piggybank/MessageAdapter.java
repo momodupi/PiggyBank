@@ -109,7 +109,7 @@ public class MessageAdapter extends BaseAdapter {
                 holder.name.setText(message.getType());
                 holder.msg.setText(message.getText());
 
-                AccountTypes accountTypes = new AccountTypes();
+                AccountTypes accountTypes = new AccountTypes(context);
                 if (message.getType() == "ALL") {
                     holder.avatar.setImageResource(R.mipmap.moneybank);
                 }
