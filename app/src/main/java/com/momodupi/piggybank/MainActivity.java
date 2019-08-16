@@ -1,8 +1,17 @@
 package com.momodupi.piggybank;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.FileUtils;
+import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,6 +23,8 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
@@ -69,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private InputMethodManager inputMethodManager;
     private TypeKeyboard typeKeyboard;
 
+    private Uri selectedfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
         messageFrame.setColorSchemeColors(
                 getResources().getColor(R.color.refreshcolor1),
                 getResources().getColor(R.color.refreshcolor2));
-
-
 
         btmFrame = findViewById(R.id.btm_frame);
         panelFrame = findViewById(R.id.panel_frame);
@@ -337,13 +347,57 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         else if (id == R.id.action_backup) {
-            robot.exportDataBaes();
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                sendMessage("(´ﾟДﾟ`)\nI need storage permission to backup!", null, "ALL", "bot");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        1);
+            } else {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                startActivityForResult(intent, 1);
+            }
+        }
+        else if (id == R.id.action_import) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                sendMessage("(´ﾟДﾟ`)\nI need storage permission to backup!", null, "ALL", "bot");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        1);
+            } else {
+                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                startActivityForResult(Intent.createChooser(intent, "Select a file"), 2);
+            }
         }
         else if (id == R.id.action_about) {
             //robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == RESULT_OK) {
+            Uri select = data.getData();
+            Log.d("path", select.toString());
+            String path = FileUtil.getFullPathFromTreeUri(select, this);
+            //String path = select.getPath();
+            sendMessage(robot.exportDataBaes(path), null, "ALL", "bot");
+        }
+        else if(requestCode == 2 && resultCode == RESULT_OK) {
+            Uri select = data.getData();
+            Log.d("path", select.toString());
+            String path = FileUtil.getFullPathFromUri(select, this);
+            Log.d("path", path);
+            sendMessage(robot.importDataBase(path), null, "ALL", "bot");
+        }
     }
 
 

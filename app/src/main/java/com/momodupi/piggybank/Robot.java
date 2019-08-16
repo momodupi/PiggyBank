@@ -1,19 +1,33 @@
 package com.momodupi.piggybank;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 
 public class Robot {
@@ -228,7 +242,7 @@ public class Robot {
         }
         msg_s = new Message(null, this.histroytime, null, "date");
         msa.addtotop(msg_s);
-        msgv.smoothScrollToPosition(todaydata.size() - 1);
+        msgv.smoothScrollToPosition(todaydata.size());
     }
 
 
@@ -256,14 +270,11 @@ public class Robot {
                     //msgv.setSelection(msa.getCount() - 1);
                 }
 
-                if (historydata.size() != 0) {
-                    this.histroytime = rqsttime;
-                    Log.d("time", "history: " + this.histroytime);
-
-                    msg_s = new Message(null, this.histroytime, null, "date");
-                    msa.addtotop(msg_s);
-                    msgv.smoothScrollToPosition(historydata.size() - 1);
-                }
+                this.histroytime = rqsttime;
+                Log.d("time", "history: " + this.histroytime);
+                msg_s = new Message(null, this.histroytime, null, "date");
+                msa.addtotop(msg_s);
+                msgv.smoothScrollToPosition(historydata.size());
             }
             else {
                 return;
@@ -348,11 +359,12 @@ public class Robot {
         return answer[answer_flag][(int) Math.floor(Math.random() * answer.length)];
     }
 
-    public void exportDataBaes() {
+    public String exportDataBaes(String path) {
         List<structure_Database> alldata = this.getData("ALL", "2000-00-00 00:00:00", this.getCurrentTime());
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("type, time, amount, relay\r\n");
+        Log.d("path", path);
 
         for(structure_Database msg: alldata){
             String amount_str = String.valueOf(msg.getAmount());
@@ -368,19 +380,59 @@ public class Robot {
             //intent.setData(Uri.parse("package:" + botcontext.getPackageName()));
             //botcontext.startActivity(intent);
 
-            String path = botcontext.getExternalFilesDir("test").getPath();
-            Log.d("path", path);
+            //String file_path = botcontext.getExternalCacheDir().getPath() + path;
+            //Log.d("external path", file_path);
+            //Log.d("path", file_path);
+
             File file = new File(path, filename);
+
             Log.d("export status", file.getAbsolutePath());
             FileOutputStream outputStream = new FileOutputStream(file);
-
 
             outputStream.write(data.getBytes());
             outputStream.close();
             Log.d("export status", "successd!");
+
+            return "(＾o＾)ﾉ\nBackup Succeed!";
+
         } catch (Exception e) {
             Log.d("export status", "faile!");
             e.printStackTrace();
+            return "|-` )\nBackup Failed!";
+        }
+    }
+
+    public String importDataBase(String path) {
+        Log.d("path", path);
+
+        try {
+            FileReader file = new FileReader(path);
+            BufferedReader buffer = new BufferedReader(file);
+            String buf_line = buffer.readLine();
+
+            this.sqliteDatabase.execSQL("DELETE FROM " + this.book);
+
+            while ((buf_line = buffer.readLine()) != null) {
+
+                String[] buf_str = buf_line.split(",");
+
+                ContentValues values = new ContentValues();
+                values.put("book_type", buf_str[0]);
+                values.put("book_time", buf_str[1]);
+                values.put("book_amount", buf_str[2]);
+                values.put("book_reply", buf_str[3]);
+                Log.d("read", buf_str[0]);
+
+                this.sqliteDatabase.insert(this.book, null, values);
+            }
+            //sqliteDatabase.setTransactionSuccessful();
+            //sqliteDatabase.endTransaction();
+            return "(＾o＾)ﾉ\nRecover Succeed!";
+        }
+        catch (Exception e) {
+            Log.d("export status", "faile!");
+            e.printStackTrace();
+            return "|-` )\nRecover Failed!";
         }
     }
 
