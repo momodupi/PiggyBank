@@ -1,33 +1,19 @@
 package com.momodupi.piggybank;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-
-import android.os.FileUtils;
-import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.MenuInflater;
-import android.view.View;
-
-import android.view.MenuItem;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -39,6 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -148,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     robot.getHistroy(messageAdapter, messagesView, ph_time);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
                 }
 
                 messageFrame.setRefreshing(false);
@@ -270,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() != 0 && text_empty_flag == true) {
+                if (charSequence.length() != 0 && text_empty_flag) {
                     imgbtn_anim[0] = R.id.save_btn;
                     imgbtn_anim[1] = R.mipmap.etransfer;
                     imgbtn_anim[2] = R.mipmap.transfer;
@@ -351,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
 
-                sendMessage("(´ﾟДﾟ`)\nI need storage permission to backup!", null, "ALL", "bot");
+                sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         1);
@@ -365,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
 
-                sendMessage("(´ﾟДﾟ`)\nI need storage permission to backup!", null, "ALL", "bot");
+                sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         1);
@@ -396,7 +388,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d("path", select.toString());
             String path = FileUtil.getFullPathFromUri(select, this);
             Log.d("path", path);
+
+            messageAdapter = null;
+            messageAdapter = new MessageAdapter(this);
+            messagesView.setAdapter(messageAdapter);
+
             sendMessage(robot.importDataBase(path), null, "ALL", "bot");
+            robot.getToday(messageAdapter, messagesView);
         }
     }
 

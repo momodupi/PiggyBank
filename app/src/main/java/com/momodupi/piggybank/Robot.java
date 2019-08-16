@@ -1,31 +1,21 @@
 package com.momodupi.piggybank;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -66,8 +56,6 @@ public class Robot {
         this.input_type = type;
         this.input_time = time;
         this.input_amount = Float.parseFloat(amount);
-
-        //AccountTypes accountTypes = new AccountTypes();
 
         if (!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 ) {
             this.isInputCorrect = false;
@@ -119,14 +107,7 @@ public class Robot {
         cursor.close();
 
         //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
-        if ((checktype.equals(this.input_type))  && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str)))) {
-            //Log.d("sqlite read", "message checked");
-            return true;
-        }
-        else {
-            //Log.d("sqlite read", "message wrong");
-            return false;
-        }
+        return ((checktype.equals(this.input_type))  && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str))));
     }
 
 
@@ -223,6 +204,7 @@ public class Robot {
         Log.d("data", " " + h_time + "    " + this.starttime);
 
         Message msg_s;
+        Collections.reverse(todaydata);
 
         for(structure_Database msg: todaydata) {
             //structure_Database msg = todaydata.get(pos);
@@ -242,7 +224,7 @@ public class Robot {
         }
         msg_s = new Message(null, this.histroytime, null, "date");
         msa.addtotop(msg_s);
-        msgv.smoothScrollToPosition(todaydata.size());
+        msgv.smoothScrollToPosition(msa.getCount() - 1);
     }
 
 
@@ -256,6 +238,7 @@ public class Robot {
                 List<structure_Database> historydata = this.getData("ALL", rqsttime, this.histroytime);
 
                 Message msg_s;
+                Collections.reverse(historydata);
 
                 for(structure_Database msg: historydata) {
                     //structure_Database msg = historydata.get(pos);
@@ -263,11 +246,11 @@ public class Robot {
 
                     msg_s = new Message(msg.getReply(), msg.getTime(), msg.getType(), "bot");
                     msa.addtotop(msg_s);
-                    //msgv.setSelection(msa.getCount() - 1);
+                    msgv.setSelection(msa.getCount() - 1);
 
                     msg_s = new Message(amount_str, msg.getTime(), msg.getType(), "master");
                     msa.addtotop(msg_s);
-                    //msgv.setSelection(msa.getCount() - 1);
+                    msgv.setSelection(msa.getCount() - 1);
                 }
 
                 this.histroytime = rqsttime;
@@ -281,7 +264,7 @@ public class Robot {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this.botcontext, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.botcontext, botcontext.getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -356,7 +339,7 @@ public class Robot {
             }
         }
         Log.d("answer", "flag: " + answer_flag);
-        return answer[answer_flag][(int) Math.floor(Math.random() * answer.length)];
+        return answer[answer_flag][(int) Math.floor(Math.random() * answer[answer_flag].length)];
     }
 
     public String exportDataBaes(String path) {
@@ -393,12 +376,12 @@ public class Robot {
             outputStream.close();
             Log.d("export status", "successd!");
 
-            return "(＾o＾)ﾉ\nBackup Succeed!";
+            return botcontext.getResources().getString(R.string.backups);
 
         } catch (Exception e) {
             Log.d("export status", "faile!");
             e.printStackTrace();
-            return "|-` )\nBackup Failed!";
+            return botcontext.getResources().getString(R.string.backupf);
         }
     }
 
@@ -427,12 +410,15 @@ public class Robot {
             }
             //sqliteDatabase.setTransactionSuccessful();
             //sqliteDatabase.endTransaction();
-            return "(＾o＾)ﾉ\nRecover Succeed!";
+            this.starttime = this.getCurrentTime();
+            this.histroytime = this.starttime;
+
+            return botcontext.getResources().getString(R.string.recoverys);
         }
         catch (Exception e) {
             Log.d("export status", "faile!");
             e.printStackTrace();
-            return "|-` )\nRecover Failed!";
+            return botcontext.getResources().getString(R.string.recoveryf);
         }
     }
 
