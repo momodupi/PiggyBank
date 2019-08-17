@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
         typeKeyboard = new TypeKeyboard(this, numText, panelFrame, typeBtn, messageFrame);
 
-        mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mTopToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mTopToolbar);
     }
 
@@ -317,7 +317,6 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -332,45 +331,62 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Log.d("item", item.toString());
+
+        Intent intent;
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            sendMessage(robot.showSomeData("ALL", "2019-01-01 00:00:00", robot.getCurrentTime()), robot.getInputTime(), "ALL", "bot");
-            return true;
-        }
-        else if (id == R.id.action_backup) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+        switch (item.getItemId()) {
+            case R.id.action_chart:
+                intent = new Intent(MainActivity.this, ChartActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                MainActivity.this.startActivity(intent);
+                MainActivity.this.finish();
 
-                sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        1);
-            } else {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                startActivityForResult(intent, 1);
-            }
-        }
-        else if (id == R.id.action_import) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+                overridePendingTransition(R.anim.rightin, R.anim.leftout);
 
-                sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        1);
-            } else {
-                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
-                startActivityForResult(Intent.createChooser(intent, "Select a file"), 2);
-            }
-        }
-        else if (id == R.id.action_about) {
-            //robot.getHistroy(messageAdapter, messagesView, "2019-08-08 03:30:00");
-        }
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.action_settings:
+                sendMessage(robot.showSomeData("ALL", "2019-01-01 00:00:00", robot.getCurrentTime()), robot.getInputTime(), "ALL", "bot");
+                return true;
+
+            case R.id.action_backup:
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            1);
+                } else {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    startActivityForResult(intent, 1);
+                }
+                return true;
+
+            case R.id.action_import:
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    sendMessage(getResources().getString(R.string.needpermission), null, "ALL", "bot");
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            1);
+                } else {
+                    intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), 2);
+                }
+                return true;
+
+            case R.id.action_about:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -397,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
             robot.getToday(messageAdapter, messagesView);
         }
     }
+
 
 
     public void sendMessage(String num_str, String time_str, String type_str, String sender) {
