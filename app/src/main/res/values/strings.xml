@@ -90,5 +90,39 @@
         <item>Tickets</item>
 
     </string-array>
+
+    <string-array name="lowprice_answer">
+        <item>Got it!</item>
+        <item>Sure!</item>
+        <item>Yes, I got it.</item>
+        <item>Understand.</item>
+        <item>OK!</item>
+        <item>I see.</item>
+        <item>Perfect!</item>
+        <item>Received.</item>
+    </string-array>
+
+    <string-array name="mediumprice_answer">
+        <item>Wow!</item>
+        <item>OK!</item>
+        <item>No problem!</item>
+        <item>Understand.</item>
+        <item>Hum!</item>
+        <item>Roger.</item>
+    </string-array>
+
+    <string-array name="highprice_answer">
+        <item>Woooooow!</item>
+        <item>Are you serious?</item>
+        <item>Ouch!</item>
+        <item>Mmm....</item>
+        <item>Woo-Hoo!!</item>
+        <item>Incredible!</item>
+    </string-array>
+
+
     <string name="title_activity_chart">ChartActivity</string>
+
+
+
 </resources>

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     static Integer imgbtn_anim[] = {0,0,0};
 
-    private Toolbar mTopToolbar;
+    private Toolbar toolbar;
     public String type_input = null;
 
     private GridView typegridview;
@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
         accounttype = new AccountTypes(this);
         tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
-        typegridview = (GridView) findViewById(R.id.type_grid);
+        typegridview = findViewById(R.id.type_grid);
         typegridview.setAdapter(tpyrgridview_act);
 
-        messageFrame = (SwipeRefreshLayout) findViewById(R.id.message_frame);
+        messageFrame = findViewById(R.id.message_frame);
         messageFrame.setColorSchemeColors(
                 getResources().getColor(R.color.refreshcolor1),
                 getResources().getColor(R.color.refreshcolor2));
@@ -98,15 +98,15 @@ public class MainActivity extends AppCompatActivity {
 
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        typeBtn = (ImageButton) findViewById(R.id.type_button);
+        typeBtn = findViewById(R.id.type_button);
         typeBtn.setImageResource(R.mipmap.unknown);
 
 
-        numText = (EditText) findViewById(R.id.input_edittext);
+        numText = findViewById(R.id.input_edittext);
         numText.requestFocus();
 
 
-        saveBtn = (ImageButton) findViewById(R.id.save_btn);
+        saveBtn = findViewById(R.id.save_btn);
         saveBtn.setImageResource(R.mipmap.etransfer);
         saveBtn.setTag(R.mipmap.etransfer);
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         messagesView.setAdapter(messageAdapter);
 
 
-        robot.getToday(messageAdapter, messagesView);
+        robot.showToday(messageAdapter, messagesView);
 
 
         messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     calendar.add(Calendar.DATE, -1);
                     String ph_time = simpleDateFormat.format(calendar.getTime());
                     //Log.d("time", ph_time + "  &&&&  " + h_time);
-                    robot.getHistroy(messageAdapter, messagesView, ph_time);
+                    robot.showHistory(messageAdapter, messagesView, ph_time);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
@@ -306,8 +306,8 @@ public class MainActivity extends AppCompatActivity {
 
         typeKeyboard = new TypeKeyboard(this, numText, panelFrame, typeBtn, messageFrame);
 
-        mTopToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(mTopToolbar);
+        toolbar = findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
     }
 
 
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
             messagesView.setAdapter(messageAdapter);
 
             sendMessage(robot.importDataBase(path), null, "ALL", "bot");
-            robot.getToday(messageAdapter, messagesView);
+            robot.showToday(messageAdapter, messagesView);
         }
     }
 

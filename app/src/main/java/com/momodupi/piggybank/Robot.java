@@ -2,6 +2,7 @@ package com.momodupi.piggybank;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -15,9 +16,14 @@ import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class Robot {
@@ -39,16 +45,50 @@ public class Robot {
 
     private Context botcontext;
 
+    private float[] type_total;
+
 
     public Robot(Context context, String bookname){
         this.book = bookname;
         this.botcontext = context;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        this.starttime = simpleDateFormat.format(new java.util.Date());
+        this.starttime = simpleDateFormat.format(new Date());
         this.histroytime = this.starttime;
 
         dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
+
+        type_total = new float[botcontext.getResources().getStringArray(R.array.type_name).length];
+
+        /*
+        SharedPreferences preferences = botcontext.getSharedPreferences("robot", MODE_PRIVATE);
+
+        String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
+        type_total = new float[type_list.length];
+
+        if (!preferences.getBoolean("nonvirgin", false)) {
+            SharedPreferences.Editor editor = botcontext.getSharedPreferences("robot", MODE_PRIVATE).edit();
+
+            editor.putBoolean("nonvirgin", true);
+
+            StringBuilder save_str = new StringBuilder();
+
+            for (int cnt = 0; cnt<type_list.length; cnt++) {
+                save_str.append(type_total[cnt]).append(",");
+            }
+
+            editor.putString("answer_average", save_str.toString());
+            editor.apply();
+        }
+
+        String str_buf = preferences.getString("answer_average", "");
+        Log.d("save avr", str_buf);
+        StringTokenizer str_token = new StringTokenizer(str_buf, ",");
+        for (int cnt = 0; cnt<type_total.length; cnt++) {
+            type_total[cnt] = Float.parseFloat(str_token.nextToken());
+            Log.d("avr", String.valueOf(type_total[cnt]));
+        }
+        */
     }
 
 
@@ -65,14 +105,58 @@ public class Robot {
         }
     }
 
-    public boolean messageProcess() {
+    private boolean messageProcess() {
         ContentValues values = new ContentValues();
         values.put("book_type", this.input_type);
         values.put("book_time", this.input_time);
         values.put("book_amount", String.valueOf(this.input_amount));
 
         if (this.isInputCorrect) {
-            this.reply_str = this.getRandomAnswer();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String h_time = this.getCurrentTime();
+            h_time = h_time.split(" ")[0] + " 00:00:00";
+            Log.d("time", h_time);
+
+            try {
+                Date date = simpleDateFormat.parse(h_time);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.add(Calendar.MONTH, -4);
+                String ph_time = simpleDateFormat.format(calendar.getTime());
+
+                Log.d("time", ph_time);
+
+                List<structure_Database> history_list = this.getData(this.input_type, ph_time, h_time);
+
+                if (history_list == null) {
+                    this.reply_str = this.getRandomAnswer(0);
+                    Log.d("reply", this.reply_str);
+                }
+                else {
+                    String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
+
+                    int cnt = 0;
+                    for (String t : type_list) {
+                        if (t.equals(this.input_type)) {
+                            break;
+                        }
+                        cnt++;
+                    }
+                    type_total[cnt] = 0;
+
+                    for (structure_Database sd : history_list) {
+                        type_total[cnt] += sd.getAmount();
+                    }
+
+                    float avg = type_total[cnt]/history_list.size();
+                    this.reply_str = this.getRandomAnswer((this.input_amount - avg)/avg);
+                    Log.d("persentage", String.valueOf((this.input_amount - avg)/avg));
+                    Log.d("reply", this.reply_str);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         else {
             return false;
@@ -194,10 +278,11 @@ public class Robot {
         }
         cursor.close();
 
+        Log.d("return", String.valueOf(savelist.size()));
         return savelist;
     }
 
-    public void getToday(MessageAdapter msa, ListView msgv) {
+    public void showToday(MessageAdapter msa, ListView msgv) {
         String h_time = this.starttime.split(" ")[0] + " 00:00:00";
 
         List<structure_Database> todaydata = this.getData("ALL", h_time, this.starttime);
@@ -228,7 +313,7 @@ public class Robot {
     }
 
 
-    public void getHistroy(MessageAdapter msa, ListView msgv, String rqsttime) {
+    public void showHistory(MessageAdapter msa, ListView msgv, String rqsttime) {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
@@ -286,60 +371,20 @@ public class Robot {
         return reply_str + "(=ﾟωﾟ)=";
     }
 
-    public String getRandomAnswer() {
+    public String getRandomAnswer(float persentage) {
 
-        String[][] answer = {{"Got it!", "Sure!", "Yes, I got it.", "Understand.",
-                "OK!", "I see.", "Perfect!", "Received."},
-                {"Wow!", "OK!", "No problem!", "Yes!", "Roger.", "Hum!"},
-                {"Woooooow!", "Are you serious?", "Ouch!", "Mmm...", "Woo-Hoo!",
-                        "It's shocking!", "Surprising!"}};
-
-        int answer_flag = 0;
-
-        switch (this.input_type) {
-            case "Restaurant": {
-                if (this.input_amount <= 10) {
-                    answer_flag = 0;
-                }
-                else if (this.input_amount <= 20) {
-                    answer_flag = 1;
-                }
-                else {
-                    answer_flag = 2;
-                }
-            }
-            break;
-            case "Rent": {
-                answer_flag = 1;
-            }
-            break;
-            case "Mobile Payment": {
-                answer_flag = 0;
-            }
-            break;
-            case "Fuel": {
-                if (this.input_amount <= 20) {
-                    answer_flag = 0;
-                }
-                else {
-                    answer_flag = 1;
-                }
-            }
-            break;
-            default: {
-                if (this.input_amount <= 20) {
-                    answer_flag = 0;
-                }
-                else if (this.input_amount <= 50) {
-                    answer_flag = 1;
-                }
-                else {
-                    answer_flag = 2;
-                }
-            }
+        String[] answer = null;
+        if (persentage > 0.5) {
+            answer = botcontext.getResources().getStringArray(R.array.highprice_answer);
         }
-        Log.d("answer", "flag: " + answer_flag);
-        return answer[answer_flag][(int) Math.floor(Math.random() * answer[answer_flag].length)];
+        else if (persentage < 0.2) {
+            answer = botcontext.getResources().getStringArray(R.array.lowprice_answer);
+        }
+        else {
+            answer = botcontext.getResources().getStringArray(R.array.mediumprice_answer);
+        }
+
+        return answer[(int) Math.floor(Math.random() * answer.length)];
     }
 
     public String exportDataBaes(String path) {
@@ -347,7 +392,7 @@ public class Robot {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("type, time, amount, relay\r\n");
-        Log.d("path", path);
+        //Log.d("path", path);
 
         for(structure_Database msg: alldata){
             String amount_str = String.valueOf(msg.getAmount());
@@ -359,27 +404,19 @@ public class Robot {
             String data = buffer.toString();
             String filename = "book_" + this.getCurrentTime().split(" ")[0] + ".csv";
 
-            //Intent intent = new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS);
-            //intent.setData(Uri.parse("package:" + botcontext.getPackageName()));
-            //botcontext.startActivity(intent);
-
-            //String file_path = botcontext.getExternalCacheDir().getPath() + path;
-            //Log.d("external path", file_path);
-            //Log.d("path", file_path);
-
             File file = new File(path, filename);
 
-            Log.d("export status", file.getAbsolutePath());
+            //Log.d("export status", file.getAbsolutePath());
             FileOutputStream outputStream = new FileOutputStream(file);
 
             outputStream.write(data.getBytes());
             outputStream.close();
-            Log.d("export status", "successd!");
+            //Log.d("export status", "successd!");
 
             return botcontext.getResources().getString(R.string.backups);
 
         } catch (Exception e) {
-            Log.d("export status", "faile!");
+            //Log.d("export status", "faile!");
             e.printStackTrace();
             return botcontext.getResources().getString(R.string.backupf);
         }
@@ -404,7 +441,7 @@ public class Robot {
                 values.put("book_time", buf_str[1]);
                 values.put("book_amount", buf_str[2]);
                 values.put("book_reply", buf_str[3]);
-                Log.d("read", buf_str[0]);
+                //Log.d("read", buf_str[0]);
 
                 this.sqliteDatabase.insert(this.book, null, values);
             }
@@ -416,7 +453,7 @@ public class Robot {
             return botcontext.getResources().getString(R.string.recoverys);
         }
         catch (Exception e) {
-            Log.d("export status", "faile!");
+            //Log.d("export status", "faile!");
             e.printStackTrace();
             return botcontext.getResources().getString(R.string.recoveryf);
         }

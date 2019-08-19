@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">司会</string>
+    <string name="chart_name">统计</string>
+
+    <string name="action_settings">近期收支</string>
+    <string name="action_charts">统计</string>
+    <string name="action_about">关于</string>
+    <string name="action_import">导入</string>
+    <string name="action_backup">备份</string>
+
+    <string name="pop_delete">删除条目</string>
+    <string name="pop_edit">编辑条目</string>
+
+    <string name="type_to_save">请输入...</string>
+    <string name="save">保存</string>
+
+    <string name="loadingfailed">载入失败(ﾟДﾟ≡ﾟДﾟ)</string>
+    <string name="needpermission">(´ﾟДﾟ`)\n我需要存储权限来备份！</string>
+    <string name="backups">(＾o＾)ﾉ\n备份成功！</string>
+    <string name="backupf">|-` )\n备份失败！</string>
+    <string name="recoverys">(＾o＾)ﾉ\n导入成功！</string>
+    <string name="recoveryf">|-` )\n导入失败！</string>
+
+
+    <string-array name="type_name">
+        <item>衣物</item>
+        <item>鞋帽</item>
+        <item>奢侈品</item>
+        <item>饰物</item>
+
+        <item>餐厅</item>
+        <item>快餐</item>
+        <item>主食</item>
+        <item>零食</item>
+        <item>肉类</item>
+        <item>水果</item>
+
+        <item>蔬菜</item>
+        <item>饮料</item>
+        <item>酒水</item>
+        <item>牛奶</item>
+        <item>烹饪</item>
+
+        <item>房租</item>
+        <item>电费</item>
+        <item>煤气费</item>
+        <item>水费</item>
+        <item>网费</item>
+        <item>电子产品</item>
+        <item>家具</item>
+        <item>清洁</item>
+
+        <item>工具</item>
+        <item>洗衣</item>
+        <item>个人护理</item>
+        <item>旅馆</item>
+
+        <item>汽车保养</item>
+        <item>燃油</item>
+        <item>飞机</item>
+        <item>巴士</item>
+        <item>网约车</item>
+        <item>火车</item>
+        <item>汽车保险</item>
+
+        <item>话费</item>
+        <item>信件</item>
+        <item>快递</item>
+
+        <item>运动</item>
+        <item>游戏</item>
+        <item>软件</item>
+        <item>旅游</item>
+        <item>电影</item>
+        <item>酒吧</item>
+
+        <item>学费</item>
+        <item>书籍</item>
+        <item>文具</item>
+
+        <item>聚会</item>
+        <item>礼品</item>
+        <item>捐款</item>
+
+        <item>治疗</item>
+        <item>药物</item>
+        <item>保健品</item>
+
+        <item>意外事故</item>
+        <item>罚单</item>
+
+    </string-array>
+
+
+    <string-array name="lowprice_answer">
+        <item>好!</item>
+        <item>行吧。</item>
+        <item>知道了。</item>
+        <item>了解。</item>
+        <item>好的!</item>
+        <item>我知道了。</item>
+        <item>没问题。</item>
+        <item>收到。</item>
+    </string-array>
+
+    <string-array name="mediumprice_answer">
+        <item>哇！</item>
+        <item>欧了！</item>
+        <item>么问题！</item>
+        <item>还行还行。</item>
+        <item>嗯！</item>
+        <item>明白！</item>
+    </string-array>
+
+    <string-array name="highprice_answer">
+        <item>哇！！</item>
+        <item>没少花钱啊！</item>
+        <item>我去！</item>
+        <item>这。。。。</item>
+        <item>哎哟！！</item>
+        <item>这么多！</item>
+    </string-array>
+
+
+
+    <string name="title_activity_chart">ChartActivity</string>
+
+
+</resources>
