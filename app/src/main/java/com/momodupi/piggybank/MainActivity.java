@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AccountTypes accounttype;
 
-    private Robot robot;
+    static public Robot robot;
 
     private String edittime = "noedit";
     private int editposition;

@@ -13,10 +13,11 @@
     <string name="pop_delete">删除条目</string>
     <string name="pop_edit">编辑条目</string>
 
-    <string name="type_to_save">请输入...</string>
+    <string name="type_to_save">请输入......</string>
     <string name="save">保存</string>
+    <string name="typemistake">(;´Д`)\n出错了！</string>
 
-    <string name="loadingfailed">载入失败(ﾟДﾟ≡ﾟДﾟ)</string>
+    <string name="loadingfailed">(ﾟДﾟ≡ﾟДﾟ)载入失败</string>
     <string name="needpermission">(´ﾟДﾟ`)\n我需要存储权限来备份！</string>
     <string name="backups">(＾o＾)ﾉ\n备份成功！</string>
     <string name="backupf">|-` )\n备份失败！</string>

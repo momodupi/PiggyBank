@@ -240,7 +240,7 @@ public class Robot {
     }
 
 
-    private List<structure_Database> getData(String type, String starttime, String endtime) {
+    public List<structure_Database> getData(String type, String starttime, String endtime) {
         List<structure_Database> savelist = new ArrayList<structure_Database>();
 
         Cursor cursor;

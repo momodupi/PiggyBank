@@ -13,8 +13,9 @@
 
     <string name="type_to_save">type to save...</string>
     <string name="save">Save!</string>
+    <string name="typemistake">(;´Д`)\nI cannot understand!</string>
 
-    <string name="loadingfailed">Loading failed!(ﾟДﾟ≡ﾟДﾟ)</string>
+    <string name="loadingfailed">(ﾟДﾟ≡ﾟДﾟ)Loading failed!</string>
     <string name="needpermission">(´ﾟДﾟ`)\nI need storage permission to backup!</string>
     <string name="backups">(＾o＾)ﾉ\nBackup Succeed!</string>
     <string name="backupf">|-` )\nBackup Failed!</string>
@@ -104,7 +105,7 @@
 
     <string-array name="mediumprice_answer">
         <item>Wow!</item>
-        <item>OK!</item>
+        <item>OKAY!</item>
         <item>No problem!</item>
         <item>Understand.</item>
         <item>Hum!</item>

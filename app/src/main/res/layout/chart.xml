@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/bot_buddle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bot_msg_conner"
+        android:elevation="2dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="6dp"
+        android:orientation="vertical">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chartline"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

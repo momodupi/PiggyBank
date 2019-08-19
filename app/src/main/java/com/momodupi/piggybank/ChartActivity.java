@@ -1,26 +1,105 @@
 package com.momodupi.piggybank;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class ChartActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private ChartAdapter chartAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
 
+/*
+        LineChart  chart = (LineChart) findViewById(R.id.chartline);
+        List<Entry> yVals1 = new ArrayList<>();
+        float[] ys1 = new float[] {22f, 24f, 25f, 25f, 25f, 22f};
+        for (int i = 0; i < ys1.length; i++) {
+            yVals1.add(new Entry(i,ys1[i]));
+        }
+        LineDataSet lineDataSet1 = new LineDataSet(yVals1, "最高温度");
+        LineData lineData = new LineData(lineDataSet1);
+        chart.setData(lineData);
+*/
+
+        chartAdapter = new ChartAdapter(this);
+        recyclerView = findViewById(R.id.chart);
+        layoutManager = new LinearLayoutManager(this);
+
+        Robot robot = MainActivity.robot;
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String h_time = robot.getCurrentTime();
+        h_time = h_time.split(" ")[0] + " 00:00:00";
+
+        try {
+            Date date = simpleDateFormat.parse(h_time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.MONTH, -1);
+            String ph_time = simpleDateFormat.format(calendar.getTime());
+            List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
+
+            String day = (String) DateFormat.format("dd", date);
+
+            float[] y = new float[Integer.parseInt(day)];
+            float[] x = new float[Integer.parseInt(day)];
+
+            for (int cnt = 0; cnt<Integer.parseInt(day); cnt++) {
+                x[cnt] = cnt+1;
+            }
+
+            for (structure_Database sdata : alldata) {
+
+                date = simpleDateFormat.parse(sdata.getTime());
+                day = (String) DateFormat.format("dd", date);
+
+                y[Integer.parseInt(day)] += sdata.getAmount();
+            }
+
+            ChartData chartData = new ChartData(x,y);
+            chartAdapter.addItem(chartData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
+
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(chartAdapter);
 
 
         Toolbar toolbar = findViewById(R.id.toolbar_chart);
