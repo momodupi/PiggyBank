@@ -4,9 +4,15 @@ public class ChartData {
     private float[] X;
     private float[] Y;
 
-    public ChartData(float[] x, float[] y) {
+    private String time;
+
+    private String chartype;
+
+    public ChartData(float[] x, float[] y, String time, String chartype) {
         this.X = x;
         this.Y = y;
+        this.time = time;
+        this.chartype = chartype;
     }
 
     public float[] getX() {
@@ -15,5 +21,13 @@ public class ChartData {
 
     public float[] getY() {
         return this.Y;
+    }
+
+    public String getTime() {
+        return this.time;
+    }
+
+    public String getChartype() {
+        return  this.chartype;
     }
 }

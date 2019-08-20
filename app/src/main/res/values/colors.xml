@@ -6,4 +6,13 @@
 
     <color name="refreshcolor1">#03A9F4</color>
     <color name="refreshcolor2">#9E9E9E</color>
+
+
+    <color name="chartcyan500">#00BCD4</color>
+    <color name="chartcyanA400">#00E5FF</color>
+
+    <color name="chartgreen400">#66BB6A</color>
+
+
+
 </resources>

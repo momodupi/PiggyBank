@@ -200,7 +200,7 @@ public class Robot {
             return this.reply_str;
         }
         else {
-            return "I can't understand!";
+            return botcontext.getResources().getString(R.string.typemistake);
         }
     }
 

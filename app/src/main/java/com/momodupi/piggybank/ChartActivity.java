@@ -42,20 +42,9 @@ public class ChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
 
-/*
-        LineChart  chart = (LineChart) findViewById(R.id.chartline);
-        List<Entry> yVals1 = new ArrayList<>();
-        float[] ys1 = new float[] {22f, 24f, 25f, 25f, 25f, 22f};
-        for (int i = 0; i < ys1.length; i++) {
-            yVals1.add(new Entry(i,ys1[i]));
-        }
-        LineDataSet lineDataSet1 = new LineDataSet(yVals1, "最高温度");
-        LineData lineData = new LineData(lineDataSet1);
-        chart.setData(lineData);
-*/
 
         chartAdapter = new ChartAdapter(this);
-        recyclerView = findViewById(R.id.chart);
+        recyclerView = findViewById(R.id.chartframe);
         layoutManager = new LinearLayoutManager(this);
 
         Robot robot = MainActivity.robot;
@@ -66,13 +55,16 @@ public class ChartActivity extends AppCompatActivity {
 
         try {
             Date date = simpleDateFormat.parse(h_time);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            calendar.add(Calendar.MONTH, -1);
-            String ph_time = simpleDateFormat.format(calendar.getTime());
+            //Calendar calendar = Calendar.getInstance();
+            //calendar.setTime(date);
+            //calendar.add(Calendar.MONTH, 0);
+
+            String[] ymd = h_time.split(" ")[0].split("-");
+            String ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
             List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
 
-            String day = (String) DateFormat.format("dd", date);
+            String day = ymd[2];
+            Log.d("time", ph_time);
 
             float[] y = new float[Integer.parseInt(day)];
             float[] x = new float[Integer.parseInt(day)];
@@ -87,9 +79,10 @@ public class ChartActivity extends AppCompatActivity {
                 day = (String) DateFormat.format("dd", date);
 
                 y[Integer.parseInt(day)] += sdata.getAmount();
+                Log.d("y", String.valueOf(y[Integer.parseInt(day)]));
             }
 
-            ChartData chartData = new ChartData(x,y);
+            ChartData chartData = new ChartData(x,y, ph_time, "Line");
             chartAdapter.addItem(chartData);
         } catch (Exception e) {
             e.printStackTrace();

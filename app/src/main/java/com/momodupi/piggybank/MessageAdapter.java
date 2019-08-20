@@ -79,8 +79,8 @@ public class MessageAdapter extends BaseAdapter {
         switch (message.getUser()) {
             case "master": {
                 convertView = messageInflater.inflate(R.layout.host_msg, null);
-                holder.msg = (TextView) convertView.findViewById(R.id.host_msg);
-                holder.time = (TextView) convertView.findViewById(R.id.host_time);
+                holder.msg = convertView.findViewById(R.id.host_msg);
+                holder.time = convertView.findViewById(R.id.host_time);
                 convertView.setTag(holder);
 
                 output_str = message.getType() + ": $" + message.getText();
@@ -101,9 +101,9 @@ public class MessageAdapter extends BaseAdapter {
             break;
             case "bot": {
                 convertView = messageInflater.inflate(R.layout.bot_msg, null);
-                holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
-                holder.name = (TextView) convertView.findViewById(R.id.name);
-                holder.msg = (TextView) convertView.findViewById(R.id.bot_msg);
+                holder.avatar = convertView.findViewById(R.id.avatar);
+                holder.name = convertView.findViewById(R.id.name);
+                holder.msg = convertView.findViewById(R.id.bot_msg);
                 convertView.setTag(holder);
 
                 holder.name.setText(message.getType());
@@ -120,7 +120,7 @@ public class MessageAdapter extends BaseAdapter {
             break;
             case "date": {
                 convertView = messageInflater.inflate(R.layout.date_msg, null);
-                holder.time = (TextView) convertView.findViewById(R.id.mid_date);
+                holder.time = convertView.findViewById(R.id.mid_date);
                 convertView.setTag(holder);
                 //holder.time.setText(message.getText());
 
