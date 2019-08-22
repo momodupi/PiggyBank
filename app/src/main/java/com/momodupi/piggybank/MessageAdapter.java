@@ -83,7 +83,8 @@ public class MessageAdapter extends BaseAdapter {
                 holder.time = convertView.findViewById(R.id.host_time);
                 convertView.setTag(holder);
 
-                output_str = message.getType() + ": $" + message.getText();
+                output_str = message.getType() + ": "
+                        + context.getResources().getString(R.string.moneyunit) + message.getText();
                 holder.msg.setText(output_str);
 
                 String time_s[] = message.getTime().split(" ")[1].split(":");

@@ -362,7 +362,8 @@ public class Robot {
             String amount_str = String.valueOf(msg.getAmount());
 
             if (type.equals("ALL")) {
-                this.reply_str += msg.getType() + "\n$" + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
+                this.reply_str += msg.getType() + "\n" + botcontext.getResources().getString(R.string.moneyunit)
+                        + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
             }
             else {
                 this.reply_str += amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";

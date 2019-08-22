@@ -11,6 +11,8 @@
     <string name="pop_delete">Delete</string>
     <string name="pop_edit">Edit</string>
 
+    <string name="moneyunit">$</string>
+
     <string name="type_to_save">type to save...</string>
     <string name="save">Save!</string>
     <string name="typemistake">(;´Д`)\nI cannot understand!</string>

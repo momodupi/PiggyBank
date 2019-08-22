@@ -49,27 +49,31 @@ public class ChartActivity extends AppCompatActivity {
 
         Robot robot = MainActivity.robot;
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String h_time = robot.getCurrentTime();
-        h_time = h_time.split(" ")[0] + " 00:00:00";
+
 
         try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String h_time = robot.getCurrentTime();
+            h_time = h_time.split(" ")[0] + " 00:00:00";
+
             Date date = simpleDateFormat.parse(h_time);
             //Calendar calendar = Calendar.getInstance();
             //calendar.setTime(date);
             //calendar.add(Calendar.MONTH, 0);
-
             String[] ymd = h_time.split(" ")[0].split("-");
             String ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
+
+            h_time = robot.getCurrentTime();
+            Log.d("date", h_time + "  " + ph_time);
             List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
 
             String day = ymd[2];
             Log.d("time", ph_time);
 
-            float[] y = new float[Integer.parseInt(day)];
-            float[] x = new float[Integer.parseInt(day)];
+            float[] y = new float[Integer.parseInt(day)+1];
+            float[] x = new float[Integer.parseInt(day)+1];
 
-            for (int cnt = 0; cnt<Integer.parseInt(day); cnt++) {
+            for (int cnt = 0; cnt<Integer.parseInt(day)+1; cnt++) {
                 x[cnt] = cnt+1;
             }
 

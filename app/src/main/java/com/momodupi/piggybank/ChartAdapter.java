@@ -133,22 +133,22 @@ public class ChartAdapter extends RecyclerView.Adapter {
         }
 
 
-        String title_str = "Total: $" + total;
+        String title_str = "Total: " + context.getResources().getString(R.string.moneyunit) + total;
         hld.charttitle.setText(title_str);
         hld.chartlabel.setText(month);
 
         LineDataSet lineDataSet = new LineDataSet(output, "Total");
 
-        lineDataSet.setColor(context.getResources().getColor(R.color.chartgreen400));
+        lineDataSet.setColor(context.getResources().getColor(R.color.chartlightgreen800));
         //lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         lineDataSet.setDrawCircleHole(false);
         lineDataSet.setCircleRadius(1);
         lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleColor(context.getResources().getColor(R.color.chartgreen400));
+        lineDataSet.setCircleColor(context.getResources().getColor(R.color.chartlightgreen800));
         lineDataSet.setCubicIntensity(0.15f);
         lineDataSet.setValueTextSize(10);
-        lineDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccent));
-        lineDataSet.setDrawValues(false);
+        lineDataSet.setValueTextColor(context.getResources().getColor(R.color.chartlightgreen300));
+        //lineDataSet.setDrawValues(false);
 
 
         lineDataSet.setHighLightColor(context.getResources().getColor(R.color.chartcyanA400));
@@ -160,14 +160,14 @@ public class ChartAdapter extends RecyclerView.Adapter {
         xAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
         xAxis.setAxisLineColor(context.getResources().getColor(R.color.colorAccent));
         xAxis.setAxisLineWidth(2f);
-        //xAxis.setLabelCount(itemdata.getX().length+1);
+        xAxis.setLabelCount(itemdata.getX().length);
         xAxis.setAxisMinimum(1);
         xAxis.setAxisMaximum(itemdata.getX().length);
 
         YAxis yAxis = hld.linechart.getAxisLeft();
         yAxis.setDrawGridLines(true);
         yAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        //yAxis.setEnabled(false);
+        yAxis.setEnabled(false);
         yAxis.setDrawAxisLine(false);
         yAxis.setMinWidth(0);
         //yAxis.setMaxWidth(Math.round(max_y));

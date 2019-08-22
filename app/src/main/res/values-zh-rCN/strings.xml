@@ -13,6 +13,8 @@
     <string name="pop_delete">删除条目</string>
     <string name="pop_edit">编辑条目</string>
 
+    <string name="moneyunit">¥</string>
+
     <string name="type_to_save">请输入......</string>
     <string name="save">保存</string>
     <string name="typemistake">(;´Д`)\n出错了！</string>
