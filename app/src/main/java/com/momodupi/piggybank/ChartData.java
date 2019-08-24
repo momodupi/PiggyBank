@@ -1,21 +1,23 @@
 package com.momodupi.piggybank;
 
 public class ChartData {
-    private float[] X;
+    private String[] X;
     private float[] Y;
 
     private String time;
 
-    private String chartype;
+    private String charType;
+    private String timeType;
 
-    public ChartData(float[] x, float[] y, String time, String chartype) {
+    public ChartData(String[] x, float[] y, String time, String chartype, String timetype) {
         this.X = x;
         this.Y = y;
         this.time = time;
-        this.chartype = chartype;
+        this.charType = chartype;
+        this.timeType = timetype;
     }
 
-    public float[] getX() {
+    public String[] getX() {
         return this.X;
     }
 
@@ -27,7 +29,11 @@ public class ChartData {
         return this.time;
     }
 
-    public String getChartype() {
-        return  this.chartype;
+    public String getCharType() {
+        return  this.charType;
+    }
+
+    public String getTimeType() {
+        return this.timeType;
     }
 }

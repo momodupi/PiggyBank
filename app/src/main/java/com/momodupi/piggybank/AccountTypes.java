@@ -136,33 +136,92 @@ public class AccountTypes {
     };
 
 
-    ArrayList<Typetuple> type_sets = null;
+    private String[] general_type_sets = {
+            "Clothing", "Food", "Housing", "Transportation",
+            "Communication", "Entertainment", "Study",
+            "Social", "Medical", "Misfortune"
+    };
+    private int[] general_type_color_sets = {
+            R.color.chartlightgreen800, R.color.chartorange800, R.color.chartblue800,
+            R.color.chartcyan800, R.color.chartpurple800, R.color.chartlime800,
+            R.color.chartamber800, R.color.chartyellow800, R.color.chartred800
+    };
+
+
+    private ArrayList<Typetuple> type_sets = null;
+    private Context context;
 
 
     public AccountTypes(Context context) {
 
-        type_string_sets = context.getResources().getStringArray(R.array.type_name);
+        this.context = context;
 
-        type_sets = new ArrayList<Typetuple>();
-        for (int i=0; i<type_string_sets.length; i++) {
+        this.type_string_sets = context.getResources().getStringArray(R.array.type_name);
+
+        this.type_sets = new ArrayList<Typetuple>();
+        for (int i=0; i<this.type_string_sets.length; i++) {
             Typetuple t = new Typetuple();
-            t.type_str = type_string_sets[i];
-            t.type_icon = type_icon_sets[i];
-            type_sets.add(t);
+            t.type_str = this.type_string_sets[i];
+            t.type_icon = this.type_icon_sets[i];
+            this.type_sets.add(t);
         }
     }
 
 
     public String[] getTpyeString() {
-        return type_string_sets;
+        return this.type_string_sets;
+    }
+
+    public String[] getGeneralTypeString() {
+        return this.general_type_sets;
+    }
+    public int[] getGeneralTypeColor() {
+        int color[] = new int[this.general_type_color_sets.length];
+        for (int cnt=0; cnt<this.general_type_color_sets.length; cnt++) {
+            color[cnt] = this.general_type_color_sets[cnt];
+        }
+        return this.general_type_color_sets;
+    }
+
+    public String getGeneralType(String type) {
+        if (Arrays.asList(this.type_clothing).contains(type)) {
+            return this.general_type_sets[0];
+        }
+        else if (Arrays.asList(this.type_food).contains(type)) {
+            return this.general_type_sets[1];
+        }
+        else if (Arrays.asList(this.type_housing).contains(type)) {
+            return this.general_type_sets[2];
+        }
+        else if (Arrays.asList(this.type_transportation).contains(type)) {
+            return this.general_type_sets[3];
+        }
+        else if (Arrays.asList(this.type_communication).contains(type)) {
+            return this.general_type_sets[4];
+        }
+        else if (Arrays.asList(this.type_entertainment).contains(type)) {
+            return this.general_type_sets[5];
+        }
+        else if (Arrays.asList(this.type_study).contains(type)) {
+            return this.general_type_sets[6];
+        }
+        else if (Arrays.asList(this.type_social).contains(type)) {
+            return this.general_type_sets[7];
+        }
+        else if (Arrays.asList(this.type_medical).contains(type)) {
+            return this.general_type_sets[8];
+        }
+        else {
+            return this.general_type_sets[9];
+        }
     }
 
     public int[] getTpyeIcon() {
-        return type_icon_sets;
+        return this.type_icon_sets;
     }
 
     public int findIconbySring(String type) {
-        for (Typetuple t: type_sets) {
+        for (Typetuple t: this.type_sets) {
             if (t.type_str.equals(type)) {
                 return t.type_icon;
             }

@@ -3,8 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="8dp"
-    android:paddingRight="10dp"
-    android:paddingLeft="10dp"
+    android:paddingRight="12dp"
+    android:paddingLeft="12dp"
     android:gravity="center" >
 
     <LinearLayout
@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/chart_conner"
         android:elevation="2dp"
-        android:paddingHorizontal="6dp"
-        android:paddingVertical="6dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -26,7 +26,7 @@
                 android:id="@+id/chartlabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="8dp"
                 android:text="Jan"
                 android:textSize="20sp" />
 
@@ -34,7 +34,7 @@
                 android:id="@+id/charttitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
+                android:layout_marginLeft="40dp"
                 android:textSize="16sp"
                 android:text="Total: $1111" />
         </LinearLayout>

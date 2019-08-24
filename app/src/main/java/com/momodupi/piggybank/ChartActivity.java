@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ChartActivity extends AppCompatActivity {
             String h_time = robot.getCurrentTime();
             h_time = h_time.split(" ")[0] + " 00:00:00";
 
-            Date date = simpleDateFormat.parse(h_time);
+            //Date date = simpleDateFormat.parse(h_time);
             //Calendar calendar = Calendar.getInstance();
             //calendar.setTime(date);
             //calendar.add(Calendar.MONTH, 0);
@@ -71,28 +72,71 @@ public class ChartActivity extends AppCompatActivity {
             Log.d("time", ph_time);
 
             float[] y = new float[Integer.parseInt(day)+1];
-            float[] x = new float[Integer.parseInt(day)+1];
+            String[] x = new String[Integer.parseInt(day)+1];
 
             for (int cnt = 0; cnt<Integer.parseInt(day)+1; cnt++) {
-                x[cnt] = cnt+1;
+                x[cnt] = String.valueOf(cnt+1);
             }
 
             for (structure_Database sdata : alldata) {
 
-                date = simpleDateFormat.parse(sdata.getTime());
+                Date date = simpleDateFormat.parse(sdata.getTime());
                 day = (String) DateFormat.format("dd", date);
 
                 y[Integer.parseInt(day)] += sdata.getAmount();
-                Log.d("y", String.valueOf(y[Integer.parseInt(day)]));
+                //Log.d("y", String.valueOf(y[Integer.parseInt(day)]));
             }
 
-            ChartData chartData = new ChartData(x,y, ph_time, "Line");
+            ChartData chartData;
+            chartData = new ChartData(x, y, ph_time, "line", "month");
             chartAdapter.addItem(chartData);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String h_time = robot.getCurrentTime();
+            h_time = h_time.split(" ")[0] + " 00:00:00";
 
+            //Date date = simpleDateFormat.parse(h_time);
+            //Calendar calendar = Calendar.getInstance();
+            //calendar.setTime(date);
+            //calendar.add(Calendar.MONTH, 0);
+            String[] ymd = h_time.split(" ")[0].split("-");
+            String ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
+
+            h_time = robot.getCurrentTime();
+            Log.d("date", h_time + "  " + ph_time);
+            List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
+
+            String day = ymd[2];
+            //Log.d("time", ph_time);
+
+            AccountTypes accountTypes = new AccountTypes(this);
+            String[] x = accountTypes.getGeneralTypeString();
+            float[] y = new float[x.length];
+
+
+            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(x));
+            Log.d("type", type_index.toString());
+
+            for (structure_Database sdata : alldata) {
+                int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
+                Log.d("position", " "+pos);
+                if (pos >= 0 && pos < x.length) {
+                    y[pos] += sdata.getAmount();
+                }
+            }
+
+            ChartData chartData;
+            chartData = new ChartData(x, y, ph_time, "pie", "month");
+            chartAdapter.addItem(chartData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         recyclerView.setLayoutManager(layoutManager);

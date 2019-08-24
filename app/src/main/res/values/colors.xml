@@ -5,6 +5,8 @@
     <color name="colorAccent">#90a5b4</color>
     <color name="colorAccentDark">#3571a7</color>
 
+    <color name="colorAccentLight">#ffffff</color>
+
     <color name="refreshcolor1">#03A9F4</color>
     <color name="refreshcolor2">#9E9E9E</color>
 
@@ -16,8 +18,15 @@
     <color name="chartlightgreen800">#558B2F</color>
 
     <color name="chartorange300">#FFB74D</color>
+
+
     <color name="chartorange800">#EF6C00</color>
-
-
+    <color name="chartred800">#C62828</color>
+    <color name="chartpurple800">#6A1B9A</color>
+    <color name="chartblue800">#1565C0</color>
+    <color name="chartcyan800">#00838F</color>
+    <color name="chartlime800">#9E9D24</color>
+    <color name="chartyellow800">#F9A825</color>
+    <color name="chartamber800">#FF8F00</color>
 
 </resources>
