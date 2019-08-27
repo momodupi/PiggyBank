@@ -50,19 +50,19 @@ public class ChartActivity extends AppCompatActivity {
 
         Robot robot = MainActivity.robot;
 
+        LineChartData lineChartData = new LineChartData();
+        PieChartData pieChartData = new PieChartData();
+        BarChartData barChartData = new BarChartData();
 
+        String ph_time = "";
 
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String h_time = robot.getCurrentTime();
             h_time = h_time.split(" ")[0] + " 00:00:00";
 
-            //Date date = simpleDateFormat.parse(h_time);
-            //Calendar calendar = Calendar.getInstance();
-            //calendar.setTime(date);
-            //calendar.add(Calendar.MONTH, 0);
             String[] ymd = h_time.split(" ")[0].split("-");
-            String ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
+            ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
 
             h_time = robot.getCurrentTime();
             Log.d("date", h_time + "  " + ph_time);
@@ -71,11 +71,11 @@ public class ChartActivity extends AppCompatActivity {
             String day = ymd[2];
             Log.d("time", ph_time);
 
-            float[] y = new float[Integer.parseInt(day)+1];
-            String[] x = new String[Integer.parseInt(day)+1];
+            float[] liney = new float[Integer.parseInt(day)+1];
+            int[] linex = new int[Integer.parseInt(day)+1];
 
             for (int cnt = 0; cnt<Integer.parseInt(day)+1; cnt++) {
-                x[cnt] = String.valueOf(cnt+1);
+                linex[cnt] = cnt+1;
             }
 
             for (structure_Database sdata : alldata) {
@@ -83,60 +83,50 @@ public class ChartActivity extends AppCompatActivity {
                 Date date = simpleDateFormat.parse(sdata.getTime());
                 day = (String) DateFormat.format("dd", date);
 
-                y[Integer.parseInt(day)] += sdata.getAmount();
+                liney[Integer.parseInt(day)] += sdata.getAmount();
                 //Log.d("y", String.valueOf(y[Integer.parseInt(day)]));
             }
 
-            ChartData chartData;
-            chartData = new ChartData(x, y, ph_time, "line", "month");
-            chartAdapter.addItem(chartData);
+            //ChartData chartData;
+            //chartData = new ChartData(x, y, ph_time, "line", "month");
+            //chartAdapter.addItem(chartData);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            lineChartData.X = linex;
+            lineChartData.Y = liney;
 
-        try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String h_time = robot.getCurrentTime();
-            h_time = h_time.split(" ")[0] + " 00:00:00";
-
-            //Date date = simpleDateFormat.parse(h_time);
-            //Calendar calendar = Calendar.getInstance();
-            //calendar.setTime(date);
-            //calendar.add(Calendar.MONTH, 0);
-            String[] ymd = h_time.split(" ")[0].split("-");
-            String ph_time = ymd[0]+"-"+ymd[1]+"-01 00:00:00";
-
-            h_time = robot.getCurrentTime();
-            Log.d("date", h_time + "  " + ph_time);
-            List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
-
-            String day = ymd[2];
-            //Log.d("time", ph_time);
 
             AccountTypes accountTypes = new AccountTypes(this);
-            String[] x = accountTypes.getGeneralTypeString();
-            float[] y = new float[x.length];
+            String[] piex = accountTypes.getGeneralTypeString();
+            float[] piey = new float[piex.length];
 
-
-            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(x));
+            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
             Log.d("type", type_index.toString());
 
             for (structure_Database sdata : alldata) {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 Log.d("position", " "+pos);
-                if (pos >= 0 && pos < x.length) {
-                    y[pos] += sdata.getAmount();
+                if (pos >= 0 && pos < piex.length) {
+                    piey[pos] += sdata.getAmount();
                 }
             }
 
-            ChartData chartData;
-            chartData = new ChartData(x, y, ph_time, "pie", "month");
-            chartAdapter.addItem(chartData);
+            //ChartData chartData;
+            //chartData = new ChartData(x, y, ph_time, "pie", "month");
+            //chartAdapter.addItem(chartData);
+
+            pieChartData.X = piex;
+            pieChartData.Y = piey;
+
+
+            barChartData.X = linex;
+            barChartData.Y = liney;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "month");
+        chartAdapter.addItem(chartData);
 
 
         recyclerView.setLayoutManager(layoutManager);

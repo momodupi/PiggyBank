@@ -7,26 +7,63 @@
 
     <color name="colorAccentLight">#ffffff</color>
 
-    <color name="refreshcolor1">#03A9F4</color>
-    <color name="refreshcolor2">#9E9E9E</color>
 
     <color name="chartcyan300">#4DD0E1</color>
     <color name="chartcyan500">#00BCD4</color>
+    <color name="chartcyan800">#00838F</color>
     <color name="chartcyanA400">#00E5FF</color>
 
     <color name="chartlightgreen300">#AED581</color>
+    <color name="chartlightgreen500">#8BC34A</color>
     <color name="chartlightgreen800">#558B2F</color>
 
+    <color name="chartlightblue300">#4FC3F7</color>
+    <color name="chartlightblue500">#03A9F4</color>
+    <color name="chartlightblue800">#0277BD</color>
+
+
+    <color name="chartgray500">#9E9E9E</color>
+
     <color name="chartorange300">#FFB74D</color>
-
-
+    <color name="chartorange500">#FF9800</color>
     <color name="chartorange800">#EF6C00</color>
-    <color name="chartred800">#C62828</color>
+
+
+    <color name="chartindigo300">#7986CB</color>
+    <color name="chartindigo500">#3F51B5</color>
+    <color name="chartindigo800">#283593</color>
+
+    <color name="chartpink300">#F06292</color>
+    <color name="chartpink500">#E91E63</color>
+    <color name="chartpink800">#AD1457</color>
+
+    <color name="chartpurple300">#BA68C8</color>
+    <color name="chartpurple500">#9C27B0</color>
     <color name="chartpurple800">#6A1B9A</color>
-    <color name="chartblue800">#1565C0</color>
-    <color name="chartcyan800">#00838F</color>
+
+    <color name="chartlime300">#DCE775</color>
+    <color name="chartlime500">#CDDC39</color>
     <color name="chartlime800">#9E9D24</color>
+
+    <color name="chartyellow300">#FFF176</color>
+    <color name="chartyellow500">#FFEB3B</color>
     <color name="chartyellow800">#F9A825</color>
+
+    <color name="chartamber300">#FFD54F</color>
+    <color name="chartamber500">#FFC107</color>
     <color name="chartamber800">#FF8F00</color>
+
+
+    <color name="chartred300">#E57373</color>
+    <color name="chartred500">#F44336</color>
+    <color name="chartred800">#C62828</color>
+
+    <color name="chartblue300">#64B5F6</color>
+    <color name="chartblue500">#2196F3</color>
+    <color name="chartblue800">#1565C0</color>
+
+
+
+
 
 </resources>

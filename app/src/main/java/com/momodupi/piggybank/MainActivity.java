@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
         messageFrame = findViewById(R.id.message_frame);
         messageFrame.setColorSchemeColors(
-                getResources().getColor(R.color.refreshcolor1),
-                getResources().getColor(R.color.refreshcolor2));
+                getResources().getColor(R.color.chartlightblue500),
+                getResources().getColor(R.color.chartgray500));
 
         btmFrame = findViewById(R.id.btm_frame);
         panelFrame = findViewById(R.id.panel_frame);

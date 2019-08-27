@@ -1,39 +1,70 @@
 package com.momodupi.piggybank;
 
 public class ChartData {
-    private String[] X;
-    private float[] Y;
+    //private String[] X;
+    //private float[] Y;
+    private LineChartData lineChartData;
+    private PieChartData pieChartData;
+    private BarChartData barChartData;
 
     private String time;
 
-    private String charType;
     private String timeType;
 
-    public ChartData(String[] x, float[] y, String time, String chartype, String timetype) {
-        this.X = x;
-        this.Y = y;
+    public ChartData(LineChartData l, PieChartData p, BarChartData b, String time, String timetype) {
+        this.lineChartData = l;
+        this.pieChartData = p;
+        this.barChartData = b;
         this.time = time;
-        this.charType = chartype;
         this.timeType = timetype;
     }
 
-    public String[] getX() {
-        return this.X;
+    public int[] getLineX() {
+        return this.lineChartData.X;
     }
 
-    public float[] getY() {
-        return this.Y;
+    public float[] getLineY() {
+        return this.lineChartData.Y;
+    }
+
+    public String[] getPieX() {
+        return this.pieChartData.X;
+    }
+
+    public float[] getPieY() {
+        return this.pieChartData.Y;
+    }
+
+    public int[] getBarX() {
+        return this.barChartData.X;
+    }
+
+    public float[] getBarY() {
+        return this.barChartData.Y;
     }
 
     public String getTime() {
         return this.time;
     }
 
-    public String getCharType() {
-        return  this.charType;
-    }
 
     public String getTimeType() {
         return this.timeType;
     }
+}
+
+
+class LineChartData {
+    public int[] X;
+    public float[] Y;
+}
+
+class PieChartData {
+    public String[] X;
+    public float[] Y;
+}
+
+class BarChartData {
+    public int[] X;
+    public float[] Y;
 }

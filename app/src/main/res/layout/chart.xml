@@ -42,11 +42,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lineframe"
+            android:id="@+id/combinedframe"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:orientation="vertical">
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/linechart"
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/combinedchart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/barframe"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:orientation="vertical">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barchart"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
         </LinearLayout>
@@ -55,6 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pieframe"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:orientation="vertical">
 
             <com.github.mikephil.charting.charts.PieChart
@@ -63,18 +81,6 @@
                 android:layout_height="200dp">
 
             </com.github.mikephil.charting.charts.PieChart>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/barframe"
-            android:orientation="vertical">
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barchart"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
         </LinearLayout>
 
     </LinearLayout>

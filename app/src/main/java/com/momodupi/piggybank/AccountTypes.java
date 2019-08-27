@@ -143,8 +143,8 @@ public class AccountTypes {
     };
     private int[] general_type_color_sets = {
             R.color.chartlightgreen800, R.color.chartorange800, R.color.chartblue800,
-            R.color.chartcyan800, R.color.chartpurple800, R.color.chartlime800,
-            R.color.chartamber800, R.color.chartyellow800, R.color.chartred800
+            R.color.chartyellow500, R.color.chartpurple800, R.color.chartlightblue500,
+            R.color.chartlime800, R.color.chartcyan800, R.color.chartred800
     };
 
 

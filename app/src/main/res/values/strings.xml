@@ -25,6 +25,10 @@
     <string name="recoveryf">|-` )\nRecovery Failed!</string>
 
 
+    <string name="chartline">Total</string>
+    <string name="chartbar">Daily</string>
+
+
     <string-array name="type_name">
         <item>Clothes</item>
         <item>Shoes</item>

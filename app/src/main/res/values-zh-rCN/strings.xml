@@ -26,6 +26,8 @@
     <string name="recoverys">(＾o＾)ﾉ\n导入成功！</string>
     <string name="recoveryf">|-` )\n导入失败！</string>
 
+    <string name="chartline">累计</string>
+    <string name="chartbar">每日</string>
 
     <string-array name="type_name">
         <item>衣物</item>
