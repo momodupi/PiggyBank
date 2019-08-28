@@ -85,7 +85,7 @@ public class AccountTypes {
     };
 
     private String[] type_transportation = {
-            "Car Service", "Fuel", "Airplane", "Bus", "Car Pool", "Train", "Car Insurance"
+            "Car Service", "Fuel", "Airplane", "Bus", "Car Pooling", "Train", "Car Insurance"
     };
     private int[] type_transportation_icon = {
             R.mipmap.carservice, R.mipmap.fuel, R.mipmap.airplane,
@@ -93,7 +93,7 @@ public class AccountTypes {
     };
 
     private String[] type_communication = {
-            "Mobile Payments", "Post", "Delivery"
+            "Mobile Fees", "Post", "Delivery"
     };
     private int[] type_communication_icon = {
             R.mipmap.mobilepayment, R.mipmap.post, R.mipmap.delivery

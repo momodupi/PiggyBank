@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +107,11 @@ public class ChartActivity extends AppCompatActivity {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 //Log.d("position", " "+pos);
                 if (pos >= 0 && pos < piex.length) {
-                    piey[pos] += sdata.getAmount();
+                    BigDecimal b1 = new BigDecimal(piey[pos]);
+                    BigDecimal b2 = new BigDecimal(sdata.getAmount());
+                    //piey[pos] += sdata.getAmount();
+                    BigDecimal b3 = b1.add(b2);
+                    piey[pos] = b3.floatValue();
                 }
             }
 

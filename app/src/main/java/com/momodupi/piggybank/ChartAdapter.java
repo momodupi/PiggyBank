@@ -36,13 +36,17 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.math.BigDecimal;
 import java.text.BreakIterator;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -195,7 +199,12 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         for (int i = 0; i < daysInMonth; i++) {
             if (i < itemdata.getLineY().length) {
-                total += itemdata.getLineY()[i];
+                //total += itemdata.getLineY()[i];
+                BigDecimal b1 = new BigDecimal(total);
+                BigDecimal b2 = new BigDecimal(itemdata.getLineY()[i]);
+                BigDecimal b3 = b1.add(b2);
+                total = b3.floatValue();
+
                 lineoutput.add(new Entry(x_buf[i], total));
             }
         }
@@ -439,3 +448,4 @@ class ChartViewHolder extends RecyclerView.ViewHolder {
         barframe = itemView.findViewById(R.id.barframe);
     }
 }
+
