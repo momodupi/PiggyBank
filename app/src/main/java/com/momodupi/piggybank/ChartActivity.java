@@ -100,11 +100,11 @@ public class ChartActivity extends AppCompatActivity {
             float[] piey = new float[piex.length];
 
             ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
-            Log.d("type", type_index.toString());
+            //Log.d("type", type_index.toString());
 
             for (structure_Database sdata : alldata) {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
-                Log.d("position", " "+pos);
+                //Log.d("position", " "+pos);
                 if (pos >= 0 && pos < piex.length) {
                     piey[pos] += sdata.getAmount();
                 }

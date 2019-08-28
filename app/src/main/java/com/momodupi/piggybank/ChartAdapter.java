@@ -235,6 +235,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         barDataSet.setBarShadowColor(context.getResources().getColor(R.color.chartorange500));
         //lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         barDataSet.setHighlightEnabled(false);
+        barDataSet.setValueTextSize(7f);
         barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
 
 
@@ -385,7 +386,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                String cstr = getdata.getPieX()[Math.round(h.getX())] + "\n"
+                PieEntry pie_e = (PieEntry) e;
+                String cstr = pie_e.getLabel() + "\n"
                         + context.getResources().getString(R.string.moneyunit) + e.getY();
                 hld.piechart.setCenterText(cstr);
             }

@@ -137,14 +137,15 @@ public class AccountTypes {
 
 
     private String[] general_type_sets = {
-            "Clothing", "Food", "Housing", "Transportation",
-            "Communication", "Entertainment", "Study",
-            "Social", "Medical", "Misfortune"
+            "Clothing", "Food", "Housing",
+            "Transportation", "Communication", "Entertainment",
+            "Study", "Social", "Medical",
+            "Misfortune"
     };
     private int[] general_type_color_sets = {
-            R.color.chartlightgreen800, R.color.chartorange800, R.color.chartblue800,
-            R.color.chartyellow500, R.color.chartpurple800, R.color.chartlightblue500,
-            R.color.chartlime800, R.color.chartcyan800, R.color.chartred800
+            R.color.chartpink300, R.color.chartpurple500, R.color.chartindigo500, R.color.chartblue800,
+            R.color.chartlightblue300, R.color.chartcyan800, R.color.chartlightgreen500,
+            R.color.chartyellow500, R.color.chartorange800, R.color.chartred800
     };
 
 
