@@ -54,6 +54,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ChartAdapter extends RecyclerView.Adapter {
 
@@ -199,18 +200,13 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         for (int i = 0; i < daysInMonth; i++) {
             if (i < itemdata.getLineY().length) {
-                //total += itemdata.getLineY()[i];
-                BigDecimal b1 = new BigDecimal(total);
-                BigDecimal b2 = new BigDecimal(itemdata.getLineY()[i]);
-                BigDecimal b3 = b1.add(b2);
-                total = b3.floatValue();
-
+                total += itemdata.getLineY()[i];
                 lineoutput.add(new Entry(x_buf[i], total));
             }
         }
 
 
-        String title_str = "Total: " + context.getResources().getString(R.string.moneyunit) + total;
+        String title_str = "Total: " + context.getResources().getString(R.string.moneyunit) + String.format("%.2f", total);
         hld.charttitle.setText(title_str);
 
 
@@ -397,7 +393,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             public void onValueSelected(Entry e, Highlight h) {
                 PieEntry pie_e = (PieEntry) e;
                 String cstr = pie_e.getLabel() + "\n"
-                        + context.getResources().getString(R.string.moneyunit) + e.getY();
+                        + context.getResources().getString(R.string.moneyunit) + String.format("%.2f", e.getY());
                 hld.piechart.setCenterText(cstr);
             }
 
