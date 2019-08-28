@@ -58,8 +58,8 @@ import java.util.Locale;
 
 public class ChartAdapter extends RecyclerView.Adapter {
 
-    List<ChartData> dataSet = new ArrayList<>();
-    Context context;
+    private List<ChartData> dataSet = new ArrayList<>();
+    private Context context;
 
     public ChartAdapter(Context context){
         this.context = context;
@@ -68,7 +68,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.chart, parent, false);
+        View itemView = LayoutInflater.from(this.context).inflate(R.layout.chart, parent, false);
         return new ChartViewHolder(itemView);
     }
 
@@ -87,10 +87,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         layoutParams = (LinearLayout.LayoutParams) hld.barframe.getLayoutParams();
         layoutParams.height = 0;
 
-
         ChartData itemdata = this.dataSet.get(position);
-
-
 
         switch (itemdata.getTimeType()) {
             case "month":
@@ -113,8 +110,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 }
                 hld.chartlabel.setText(month);
 
-                this.setCombinedChart(context, hld, itemdata);
-                this.setPieChart(context, hld, itemdata);
+                this.setCombinedChart(this.context, hld, itemdata);
+                this.setPieChart(this.context, hld, itemdata);
 
 
                 break;
@@ -137,8 +134,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 }
                 hld.chartlabel.setText(year);
 
-                this.setCombinedChart(context, hld, itemdata);
-                this.setPieChart(context, hld, itemdata);
+                this.setCombinedChart(this.context, hld, itemdata);
+                this.setPieChart(this.context, hld, itemdata);
                 break;
             case "type":
                 hld.chartlabel.setText("");
@@ -186,7 +183,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             x_buf[cnt] = itemdata.getLineX()[cnt];
         }
 
-        int daysInMonth = 30;
+        int daysInMonth;
         String[] ymd = itemdata.getTime().split(" ")[0].split("-");
 
         if (Build.VERSION.SDK_INT >= 26) {
@@ -386,7 +383,6 @@ public class ChartAdapter extends RecyclerView.Adapter {
         PieData pieData = new PieData(pieDataSet);
         hld.piechart.setData(pieData);
 
-        final ChartData getdata = itemdata;
         hld.piechart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
@@ -405,11 +401,11 @@ public class ChartAdapter extends RecyclerView.Adapter {
     }
 
 
-    public static int pxToDp(int px) {
+    private static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static int dpToPx(int dp) {
+    private static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 

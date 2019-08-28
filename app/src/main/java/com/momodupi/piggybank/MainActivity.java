@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Uri selectedfile;
 
+    private int backbtncnt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -315,6 +317,16 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!typeKeyboard.interceptBackPress()) {
             super.onBackPressed();
+        }
+        else {
+            if (backbtncnt == 0) {
+                backbtncnt++;
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
+            }
+            else if (backbtncnt > 1) {
+                backbtncnt = 0;
+                super.onBackPressed();
+            }
         }
     }
 

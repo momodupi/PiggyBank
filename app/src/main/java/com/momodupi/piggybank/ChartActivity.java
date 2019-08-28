@@ -75,14 +75,15 @@ public class ChartActivity extends AppCompatActivity {
             float[] liney = new float[Integer.parseInt(day)+1];
             int[] linex = new int[Integer.parseInt(day)+1];
 
-            for (int cnt = 0; cnt<Integer.parseInt(day)+1; cnt++) {
-                linex[cnt] = cnt+1;
+            for (int cnt = 1; cnt<Integer.parseInt(day)+1; cnt++) {
+                linex[cnt] = cnt;
             }
 
             for (structure_Database sdata : alldata) {
 
-                Date date = simpleDateFormat.parse(sdata.getTime());
-                day = (String) DateFormat.format("dd", date);
+                //Date date = simpleDateFormat.parse(sdata.getTime());
+                //day = (String) DateFormat.format("dd", date);
+                day = sdata.getTime().split(" ")[0].split("-")[2];
 
                 liney[Integer.parseInt(day)] += sdata.getAmount();
                 //Log.d("y", String.valueOf(y[Integer.parseInt(day)]));
@@ -107,11 +108,7 @@ public class ChartActivity extends AppCompatActivity {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 //Log.d("position", " "+pos);
                 if (pos >= 0 && pos < piex.length) {
-                    BigDecimal b1 = new BigDecimal(piey[pos]);
-                    BigDecimal b2 = new BigDecimal(sdata.getAmount());
-                    //piey[pos] += sdata.getAmount();
-                    BigDecimal b3 = b1.add(b2);
-                    piey[pos] = b3.floatValue();
+                    piey[pos] += sdata.getAmount();
                 }
             }
 
@@ -164,5 +161,14 @@ public class ChartActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(ChartActivity.this, MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        ChartActivity.this.finish();
+
+        overridePendingTransition(R.anim.leftin, R.anim.rightout);
+    }
 
 }
