@@ -1,8 +1,10 @@
 package com.momodupi.piggybank;
 
+import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -43,14 +45,14 @@ public class Robot {
     private DatabaseHelper dbbasehelper;
     private SQLiteDatabase sqliteDatabase;
 
-    private Context botcontext;
+    private AccountTypes accountTypes;
 
     private float[] type_total;
 
 
     public Robot(Context context, String bookname){
         this.book = bookname;
-        this.botcontext = context;
+        //this.botcontext = context;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         this.starttime = simpleDateFormat.format(new Date());
         this.histroytime = this.starttime;
@@ -58,8 +60,9 @@ public class Robot {
         dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
 
-        type_total = new float[botcontext.getResources().getStringArray(R.array.type_name).length];
+        type_total = new float[context.getResources().getStringArray(R.array.type_name).length];
 
+        accountTypes = new AccountTypes(context);
         /*
         SharedPreferences preferences = botcontext.getSharedPreferences("robot", MODE_PRIVATE);
 
@@ -133,7 +136,7 @@ public class Robot {
                     Log.d("reply", this.reply_str);
                 }
                 else {
-                    String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
+                    String [] type_list = Resources.getSystem().getStringArray(R.array.type_name);
 
                     int cnt = 0;
                     for (String t : type_list) {
@@ -200,7 +203,7 @@ public class Robot {
             return this.reply_str;
         }
         else {
-            return botcontext.getResources().getString(R.string.typemistake);
+            return Resources.getSystem().getString(R.string.typemistake);
         }
     }
 
@@ -235,7 +238,6 @@ public class Robot {
     }
 
     public boolean isTypeLegal(String type) {
-        AccountTypes accountTypes = new AccountTypes(this.botcontext);
         return Arrays.asList(accountTypes.getTpyeString()).contains(type);
     }
 
@@ -349,7 +351,7 @@ public class Robot {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this.botcontext, botcontext.getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity().getApplicationContext(), Resources.getSystem().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -362,7 +364,7 @@ public class Robot {
             String amount_str = String.valueOf(msg.getAmount());
 
             if (type.equals("ALL")) {
-                this.reply_str += msg.getType() + "\n" + botcontext.getResources().getString(R.string.moneyunit)
+                this.reply_str += msg.getType() + "\n" + Resources.getSystem().getString(R.string.moneyunit)
                         + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
             }
             else {
@@ -376,19 +378,19 @@ public class Robot {
 
         String[] answer = null;
         if (persentage > 0.5) {
-            answer = botcontext.getResources().getStringArray(R.array.highprice_answer);
+            answer = Resources.getSystem().getStringArray(R.array.highprice_answer);
         }
         else if (persentage < 0.2) {
-            answer = botcontext.getResources().getStringArray(R.array.lowprice_answer);
+            answer = Resources.getSystem().getStringArray(R.array.lowprice_answer);
         }
         else {
-            answer = botcontext.getResources().getStringArray(R.array.mediumprice_answer);
+            answer = Resources.getSystem().getStringArray(R.array.mediumprice_answer);
         }
 
         return answer[(int) Math.floor(Math.random() * answer.length)];
     }
 
-    public String exportDataBaes(String path) {
+    public String exportDataBaes(Context context, String path) {
         List<structure_Database> alldata = this.getData("ALL", "2000-00-00 00:00:00", this.getCurrentTime());
         StringBuffer buffer = new StringBuffer();
 
@@ -414,16 +416,16 @@ public class Robot {
             outputStream.close();
             //Log.d("export status", "successd!");
 
-            return botcontext.getResources().getString(R.string.backups);
+            return context.getResources().getString(R.string.backups);
 
         } catch (Exception e) {
             //Log.d("export status", "faile!");
             e.printStackTrace();
-            return botcontext.getResources().getString(R.string.backupf);
+            return context.getResources().getString(R.string.backupf);
         }
     }
 
-    public String importDataBase(String path) {
+    public String importDataBase(Context context, String path) {
         Log.d("path", path);
 
         try {
@@ -451,12 +453,12 @@ public class Robot {
             this.starttime = this.getCurrentTime();
             this.histroytime = this.starttime;
 
-            return botcontext.getResources().getString(R.string.recoverys);
+            return context.getResources().getString(R.string.recoverys);
         }
         catch (Exception e) {
             //Log.d("export status", "faile!");
             e.printStackTrace();
-            return botcontext.getResources().getString(R.string.recoveryf);
+            return context.getResources().getString(R.string.recoveryf);
         }
     }
 

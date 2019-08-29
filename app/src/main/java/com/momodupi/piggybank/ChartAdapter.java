@@ -110,8 +110,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 }
                 hld.chartlabel.setText(month);
 
-                this.setCombinedChart(this.context, hld, itemdata);
-                this.setPieChart(this.context, hld, itemdata);
+                this.setCombinedChart(hld, itemdata);
+                this.setPieChart(hld, itemdata);
 
 
                 break;
@@ -134,8 +134,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 }
                 hld.chartlabel.setText(year);
 
-                this.setCombinedChart(this.context, hld, itemdata);
-                this.setPieChart(this.context, hld, itemdata);
+                this.setCombinedChart(hld, itemdata);
+                this.setPieChart(hld, itemdata);
                 break;
             case "type":
                 hld.chartlabel.setText("");
@@ -159,10 +159,17 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
     public void addItems(List<ChartData> items) {
         dataSet.addAll(items);
+        //notifyDataSetChanged();
     }
 
     public void addItem(ChartData item){
         dataSet.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void addItemToTop(ChartData item){
+        dataSet.add(0, item);
+        //notifyDataSetChanged();
     }
 
     public void deleteItem(int position) {
@@ -171,12 +178,21 @@ public class ChartAdapter extends RecyclerView.Adapter {
         notifyItemRangeChanged(0, dataSet.size() - 1);
     }
 
+    public void deleteAll() {
+        dataSet.clear();
+        notifyDataSetChanged();
+    }
 
-    private void setCombinedChart(Context context, ChartViewHolder hld, ChartData itemdata) {
+
+    private void setCombinedChart(ChartViewHolder hld, ChartData itemdata) {
         List<Entry> lineoutput = new ArrayList<>();
         List<BarEntry> baroutput = new ArrayList<>();
 
         float total = 0;
+
+        if (itemdata.getLineX() == null) {
+            return;
+        }
 
         int x_buf[] = new int[itemdata.getLineX().length];
         for (int cnt=0; cnt<itemdata.getLineX().length; cnt++) {
@@ -191,11 +207,11 @@ public class ChartAdapter extends RecyclerView.Adapter {
             daysInMonth = yearMonthObject.lengthOfMonth();
         }
         else {
-            Calendar mycal = new GregorianCalendar(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
-            daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            Calendar cal = new GregorianCalendar(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
+            daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         }
 
-        for (int i = 0; i < daysInMonth; i++) {
+        for (int i = 0; i < daysInMonth+1; i++) {
             if (i < itemdata.getLineY().length) {
                 total += itemdata.getLineY()[i];
                 lineoutput.add(new Entry(x_buf[i], total));
@@ -215,7 +231,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         lineDataSet.setDrawCircleHole(false);
         //lineDataSet.setCircleRadius(1);
         lineDataSet.setLineWidth(2);
-        //lineDataSet.setCircleColor(context.getResources().getColor(R.color.chartlightgreen800));
+        lineDataSet.setCircleColor(context.getResources().getColor(R.color.chartorange300));
         lineDataSet.setCubicIntensity(0.15f);
         //lineDataSet.setValueTextSize(10);
         //lineDataSet.setValueTextColor(context.getResources().getColor(R.color.chartlightgreen300));
@@ -226,7 +242,6 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         for (int i = 0; i < itemdata.getLineY().length; i++) {
             if (i < itemdata.getLineY().length) {
-                //total += itemdata.getLineY()[i];
                 baroutput.add(new BarEntry(x_buf[i], itemdata.getLineY()[i]));
             }
         }
@@ -235,7 +250,6 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         barDataSet.setColor(context.getResources().getColor(R.color.chartorange800));
         barDataSet.setBarShadowColor(context.getResources().getColor(R.color.chartorange500));
-        //lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         barDataSet.setHighlightEnabled(false);
         barDataSet.setValueTextSize(7f);
         barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
@@ -244,15 +258,17 @@ public class ChartAdapter extends RecyclerView.Adapter {
         XAxis xAxis = hld.combinedchart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
+        //xAxis.setGranularityEnabled(true);
+        //xAxis.setSpaceMax(0.1f);
         xAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
         xAxis.setAxisLineColor(context.getResources().getColor(R.color.colorAccent));
-        xAxis.setAxisLineWidth(2f);
+        xAxis.setAxisLineWidth(1f);
         xAxis.setTextSize(6f);
         //xAxis.setLabelCount(itemdata.getLineX().length);
         xAxis.setLabelCount(daysInMonth);
-        xAxis.setAxisMinimum(1);
+        xAxis.setAxisMinimum(1-0.6f);
         //xAxis.setAxisMaximum(itemdata.getLineX().length);
-        xAxis.setAxisMaximum(daysInMonth);
+        xAxis.setAxisMaximum(daysInMonth+0.6f);
 
         YAxis yAxis = hld.combinedchart.getAxisLeft();
         yAxis.setDrawGridLines(true);
@@ -260,6 +276,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         //yAxis.setEnabled(false);
         yAxis.setDrawAxisLine(false);
         yAxis.setMinWidth(0);
+        yAxis.setLabelCount(5);
         //yAxis.setMaxWidth(Math.round(max_y));
         yAxis.setGridColor(context.getResources().getColor(R.color.colorAccent));
         //yAxis.enableGridDashedLine(20, 40, 0);
@@ -286,16 +303,23 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         LineData lineData = new LineData(lineDataSet);
         BarData barchart = new BarData(barDataSet);
+        //barchart.setBarWidth(0.4f);
 
         CombinedData combinedData = new CombinedData();
         combinedData.setData(lineData);
         combinedData.setData(barchart);
+
+        hld.combinedchart.setScaleEnabled(true);
         hld.combinedchart.setData(combinedData);
     }
 
 
-    private void setPieChart(final Context context, final ChartViewHolder hld, ChartData itemdata) {
+    private void setPieChart(final ChartViewHolder hld, ChartData itemdata) {
         List<PieEntry> output = new ArrayList<>();
+
+        if (itemdata.getLineX() == null) {
+            return;
+        }
 
         for (int i = 0; i < itemdata.getPieY().length; i++) {
             output.add(new PieEntry(itemdata.getPieY()[i], itemdata.getPieX()[i]));

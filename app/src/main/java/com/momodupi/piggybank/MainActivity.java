@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private GridView typegridview;
     private GridViewAdatper tpyrgridview_act;
 
-    private LinearLayout btmFrame;
+    //private LinearLayout btmFrame;
     private LinearLayout panelFrame;
 
     private ImageButton typeBtn;
@@ -72,9 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private InputMethodManager inputMethodManager;
     private TypeKeyboard typeKeyboard;
 
-    private Uri selectedfile;
 
-    private int backbtncnt = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 getResources().getColor(R.color.chartlightblue500),
                 getResources().getColor(R.color.chartgray500));
 
-        btmFrame = findViewById(R.id.btm_frame);
+        //btmFrame = findViewById(R.id.btm_frame);
         panelFrame = findViewById(R.id.panel_frame);
 
 
@@ -191,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-
                 return false;
             }
         });
@@ -318,16 +314,6 @@ public class MainActivity extends AppCompatActivity {
         if (!typeKeyboard.interceptBackPress()) {
             super.onBackPressed();
         }
-        else {
-            if (backbtncnt == 0) {
-                backbtncnt++;
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
-            }
-            else if (backbtncnt > 1) {
-                backbtncnt = 0;
-                super.onBackPressed();
-            }
-        }
     }
 
     @Override
@@ -404,14 +390,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             Uri select = data.getData();
             Log.d("path", select.toString());
             String path = FileUtil.getFullPathFromTreeUri(select, this);
             //String path = select.getPath();
-            sendMessage(robot.exportDataBaes(path), null, "ALL", "bot");
+            sendMessage(robot.exportDataBaes(this, path), null, "ALL", "bot");
         }
-        else if(requestCode == 2 && resultCode == RESULT_OK) {
+        else if (requestCode == 2 && resultCode == RESULT_OK) {
             Uri select = data.getData();
             Log.d("path", select.toString());
             String path = FileUtil.getFullPathFromUri(select, this);
@@ -421,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
             messageAdapter = new MessageAdapter(this);
             messagesView.setAdapter(messageAdapter);
 
-            sendMessage(robot.importDataBase(path), null, "ALL", "bot");
+            sendMessage(robot.importDataBase(this, path), null, "ALL", "bot");
             robot.showToday(messageAdapter, messagesView);
         }
     }

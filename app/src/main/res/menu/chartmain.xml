@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+     <item
+        android:id="@+id/chart_month"
+        android:orderInCategory="1"
+        android:title="@string/tabmonth"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/chart_year"
+        android:orderInCategory="2"
+        android:title="@string/tabyear"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/chart_type"
+        android:orderInCategory="3"
+        android:title="@string/tabtype"
+        app:showAsAction="never" />
+
+</menu>

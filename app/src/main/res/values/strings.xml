@@ -29,6 +29,10 @@
     <string name="chartline">Total</string>
     <string name="chartbar">Daily</string>
 
+    <string name="tabmonth">Month</string>
+    <string name="tabyear">Year</string>
+    <string name="tabtype">Types</string>
+
 
     <string-array name="type_name">
         <item>Clothes</item>

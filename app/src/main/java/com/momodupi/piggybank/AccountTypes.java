@@ -13,22 +13,6 @@ import java.util.List;
 
 
 public class AccountTypes {
-    /*
-    private String[] type_string_sets = {
-            "Clothes", "Shoes", "Luxury", "Accessories",
-            "Restaurant", "Fast Food", "Carbide", "Snacks", "Meats", "Fruits",
-            "Vegetables", "Drinks", "Alcohols", "Milk", "Cooking",
-            "Rent", "Electricity", "Gas", "Water", "Internet", "Devices", "Furniture", "House Keeping",
-            "Tools", "Washing", "Personal Care", "Hotel",
-            "Car Service", "Fuel", "Airplane", "Bus", "Car Pooling", "Train", "Car Insurance",
-            "Mobile Payments", "Post", "Delivery",
-            "Training", "Game", "Software", "Tourism", "Movies", "Bar",
-            "Courses", "Books", "Stationery",
-            "Party", "Gift", "Donation",
-            "Treatment", "Pills", "Supplements",
-            "Accidents", "Tickets"
-    };
-    */
 
     private int[] type_icon_sets = {
             R.mipmap.clothes, R.mipmap.shoes, R.mipmap.luxury, R.mipmap.accessories,
@@ -150,12 +134,10 @@ public class AccountTypes {
 
 
     private ArrayList<Typetuple> type_sets = null;
-    private Context context;
+    //private Context context;
 
 
     public AccountTypes(Context context) {
-
-        this.context = context;
 
         this.type_string_sets = context.getResources().getStringArray(R.array.type_name);
 

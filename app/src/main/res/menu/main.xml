@@ -22,13 +22,13 @@
 
     <item
         android:id="@+id/action_import"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_import"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_about"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/action_about"
         app:showAsAction="never" />
 
