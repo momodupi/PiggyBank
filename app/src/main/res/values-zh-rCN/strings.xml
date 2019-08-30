@@ -29,6 +29,7 @@
 
     <string name="chartline">累计</string>
     <string name="chartbar">每日</string>
+    <string name="charttotal">总计： </string>
 
     <string name="tabmonth">月帐</string>
     <string name="tabyear">年帐</string>

@@ -41,9 +41,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ChartActivity extends AppCompatActivity {
 
+    private TabLayout chartTabLayout;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ChartAdapter chartAdapter;
@@ -57,14 +59,12 @@ public class ChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
 
-
         chartAdapter = new ChartAdapter(this);
         layoutManager = new LinearLayoutManager(this);
 
+        robot = new Robot(this, DatabaseHelper.BOOKNAME);
 
-        robot = MainActivity.robot;
-
-
+        chartTabLayout = findViewById(R.id.charttab);
         recyclerView = findViewById(R.id.chartframe);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(chartAdapter);
@@ -74,7 +74,46 @@ public class ChartActivity extends AppCompatActivity {
 
 
         //setMonthTab(chartAdapter, robot.getCurrentTime());
+        chartTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Log.d("tab", tab.getPosition()+"");
 
+                switch (tab.getPosition()) {
+                    case 0:
+                        //Log.d("menu", "month");
+                        chartAdapter.deleteAll();
+                        showAllMonthTab();
+                        charttype = "month";
+                        break;
+                    case 1:
+                        //Log.d("menu", "year");
+                        chartAdapter.deleteAll();
+                        showAllYearTab();
+                        charttype = "year";
+                        break;
+                    case 2:
+                        //Log.d("menu", "type");
+                        chartAdapter.deleteAll();
+
+                        charttype = "type";
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar_chart);
         setSupportActionBar(toolbar);
@@ -82,12 +121,6 @@ public class ChartActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.chartmain, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -101,28 +134,6 @@ public class ChartActivity extends AppCompatActivity {
                 ChartActivity.this.finish();
 
                 overridePendingTransition(R.anim.leftin, R.anim.rightout);
-                return true;
-            case R.id.chart_month:
-                Log.d("menu", "month");
-                chartAdapter.deleteAll();
-
-                this.showAllMonthTab();
-
-                charttype = "month";
-                return true;
-
-            case R.id.chart_year:
-                Log.d("menu", "year");
-                chartAdapter.deleteAll();
-
-                charttype = "year";
-                return true;
-
-            case R.id.chart_type:
-                Log.d("menu", "type");
-                chartAdapter.deleteAll();
-
-                charttype = "type";
                 return true;
 
             default:
@@ -185,7 +196,7 @@ public class ChartActivity extends AppCompatActivity {
             }
             else {
                 h_time = ymd[0] + "-" + ymd[1] + "-"
-                        + String.format("%02d", daysInMonth) + " 23:59:59";
+                        + String.format(Locale.getDefault(), "%02d", daysInMonth) + " 23:59:59";
                 liney = new float[daysInMonth+1];
                 linex = new int[daysInMonth+1];
 
@@ -194,7 +205,7 @@ public class ChartActivity extends AppCompatActivity {
                 }
             }
 
-            Log.d("date", h_time + "  " + ph_time);
+            //Log.d("date", h_time + "  " + ph_time);
             List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
 
             if (alldata.size() == 0) {
@@ -238,7 +249,7 @@ public class ChartActivity extends AppCompatActivity {
         ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "month");
 
         if (!isDateSetNull) {
-            chartAdapter.addItemToTop(chartData);
+            chartAdapter.addItem(chartData);
         }
 
     }
@@ -248,18 +259,138 @@ public class ChartActivity extends AppCompatActivity {
 
         String datetime[] = robot.getBotHistoryTime().split(" ");
         String ymd[] = datetime[0].split("-");
-        int month = Integer.parseInt(ymd[1]);
+        //int month = Integer.parseInt(ymd[1]);
 
-        String ph_time = ymd[0] + "-" + String.format("%02d", month) + "-" + ymd[2] + " " + datetime[1];
-        setMonthTab(chartAdapter, ph_time, true);
 
-        while (month > 1) {
-            month --;
-            ph_time = ymd[0] + "-" + String.format("%02d", month) + "-" + ymd[2] + " " + datetime[1];
+
+        String ph_time;
+        for(int month=1; month<Integer.parseInt(ymd[1]); month++) {
+
+            ph_time = ymd[0] + "-" + String.format(Locale.getDefault(), "%02d", month) + "-" + ymd[2] + " " + datetime[1];
             //Log.d("time", ph_time);
 
             setMonthTab(chartAdapter, ph_time, false);
         }
+        ph_time = ymd[0] + "-" + String.format(Locale.getDefault(), "%02d", Integer.parseInt(ymd[1])) + "-" + ymd[2] + " " + datetime[1];
+        setMonthTab(chartAdapter, ph_time, true);
+
+        recyclerView.scrollToPosition(chartAdapter.getItemCount());
+    }
+
+
+
+    private void setYearTab(ChartAdapter chartAdapter, String h_time, boolean isCurrentYear) {
+        LineChartData lineChartData = new LineChartData();
+        PieChartData pieChartData = new PieChartData();
+        BarChartData barChartData = new BarChartData();
+
+        String ph_time = "";
+        boolean isDateSetNull = true;
+
+        try {
+            //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //String h_time = robot.getCurrentTime();
+            h_time = h_time.split(" ")[0] + " 00:00:00";
+
+            String[] ymd = h_time.split(" ")[0].split("-");
+            ph_time = ymd[0]+"-01-01 00:00:00";
+
+            String month = ymd[1];
+
+
+            float[] liney;
+            int[] linex;
+
+            if (isCurrentYear) {
+                h_time = robot.getCurrentTime();
+                liney = new float[Integer.parseInt(month)+1];
+                linex = new int[Integer.parseInt(month)+1];
+
+                for (int cnt = 1; cnt<Integer.parseInt(month)+1; cnt++) {
+                    linex[cnt] = cnt;
+                }
+            }
+            else {
+                h_time = ymd[0] + "-12-31 23:59:59";
+                liney = new float[13];
+                linex = new int[13];
+
+                for (int cnt = 1; cnt<13; cnt++) {
+                    linex[cnt] = cnt;
+                }
+            }
+
+            //Log.d("date", h_time + "  " + ph_time);
+            List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
+
+            if (alldata.size() == 0) {
+                isDateSetNull = true;
+            }
+            else {
+                isDateSetNull = false;
+            }
+
+            for (structure_Database sdata : alldata) {
+                month = sdata.getTime().split(" ")[0].split("-")[1];
+                liney[Integer.parseInt(month)] += sdata.getAmount();
+            }
+
+            lineChartData.X = linex;
+            lineChartData.Y = liney;
+
+            AccountTypes accountTypes = new AccountTypes(this);
+            String[] piex = accountTypes.getGeneralTypeString();
+            float[] piey = new float[piex.length];
+
+            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
+
+            for (structure_Database sdata : alldata) {
+                int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
+                if (pos >= 0 && pos < piex.length) {
+                    piey[pos] += sdata.getAmount();
+                }
+            }
+
+            pieChartData.X = piex;
+            pieChartData.Y = piey;
+
+            barChartData.X = linex;
+            barChartData.Y = liney;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "year");
+
+        if (!isDateSetNull) {
+            chartAdapter.addItem(chartData);
+        }
+
+    }
+
+
+    private void showAllYearTab() {
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String datetime[] = robot.getBotHistoryTime().split(" ");
+        String ymd[] = datetime[0].split("-");
+        //int month = Integer.parseInt(ymd[1]);
+
+
+
+        String ph_time;
+        for(int year=2010; year<Integer.parseInt(ymd[0]); year++) {
+
+            ph_time = String.format(Locale.getDefault(), "%4d", year) + "-" + String.format(Locale.getDefault(), "%02d", year) + "-" + ymd[2] + " " + datetime[1];
+            //Log.d("time", ph_time);
+
+            setYearTab(chartAdapter, ph_time, false);
+        }
+        ph_time = ymd[0] + "-" + String.format(Locale.getDefault(), "%02d", Integer.parseInt(ymd[1])) + "-" + ymd[2] + " " + datetime[1];
+        setYearTab(chartAdapter, ph_time, true);
+
+        recyclerView.scrollToPosition(chartAdapter.getItemCount());
     }
 
 }

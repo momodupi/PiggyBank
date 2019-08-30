@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -101,7 +102,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
                 String month = "";
                 try {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     Date date = simpleDateFormat.parse(itemdata.getTime());
 
                     month = (String) DateFormat.format("MMM", date);
@@ -117,15 +118,15 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 break;
             case "year":
                 layoutParams = (LinearLayout.LayoutParams) hld.combinedframe.getLayoutParams();
-                layoutParams.height = 0;
+                layoutParams.height = dpToPx(200);
                 layoutParams = (LinearLayout.LayoutParams) hld.pieframe.getLayoutParams();
                 layoutParams.height = dpToPx(200);
                 layoutParams = (LinearLayout.LayoutParams) hld.barframe.getLayoutParams();
-                layoutParams.height = 200;
+                layoutParams.height = 0;
 
                 String year = "";
                 try {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     Date date = simpleDateFormat.parse(itemdata.getTime());
 
                     year = (String) DateFormat.format("yyyy", date);
@@ -159,7 +160,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
     public void addItems(List<ChartData> items) {
         dataSet.addAll(items);
-        //notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void addItem(ChartData item){
@@ -199,27 +200,52 @@ public class ChartAdapter extends RecyclerView.Adapter {
             x_buf[cnt] = itemdata.getLineX()[cnt];
         }
 
-        int daysInMonth;
-        String[] ymd = itemdata.getTime().split(" ")[0].split("-");
+        int Xcount = 0;
+        float XAxisTextSize = 0f;
+        float BarTextSize = 0f;
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]));
-            daysInMonth = yearMonthObject.lengthOfMonth();
-        }
-        else {
-            Calendar cal = new GregorianCalendar(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
-            daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        }
+        if (itemdata.getTimeType().equals("month")) {
+            //int daysInMonth;
+            String[] ymd = itemdata.getTime().split(" ")[0].split("-");
 
-        for (int i = 0; i < daysInMonth+1; i++) {
-            if (i < itemdata.getLineY().length) {
-                total += itemdata.getLineY()[i];
-                lineoutput.add(new Entry(x_buf[i], total));
+            if (Build.VERSION.SDK_INT >= 26) {
+                YearMonth yearMonthObject = YearMonth.of(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]));
+                Xcount = yearMonthObject.lengthOfMonth();
             }
+            else {
+                Calendar cal = new GregorianCalendar(Integer.parseInt(ymd[0]), Integer.parseInt(ymd[1]), Integer.parseInt(ymd[2]));
+                Xcount = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            }
+
+            for (int i = 0; i < Xcount+1; i++) {
+                if (i < itemdata.getLineY().length) {
+                    total += itemdata.getLineY()[i];
+                    lineoutput.add(new Entry(x_buf[i], total));
+                }
+            }
+
+            XAxisTextSize = 6f;
+            BarTextSize = 7f;
+        }
+        else if (itemdata.getTimeType().equals("year")) {
+            String[] ymd = itemdata.getTime().split(" ")[0].split("-");
+
+            Xcount = 12;
+
+            for (int i = 0; i < Xcount+1; i++) {
+                if (i < itemdata.getLineY().length) {
+                    total += itemdata.getLineY()[i];
+                    lineoutput.add(new Entry(x_buf[i], total));
+                }
+            }
+
+            XAxisTextSize = 10f;
+            BarTextSize = 10f;
         }
 
 
-        String title_str = "Total: " + context.getResources().getString(R.string.moneyunit) + String.format("%.2f", total);
+        String title_str = context.getResources().getString(R.string.charttotal) + "    " + context.getResources().getString(R.string.moneyunit)
+                + String.format(Locale.getDefault(), "%.2f", total);
         hld.charttitle.setText(title_str);
 
 
@@ -239,6 +265,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         //lineDataSet.setHighLightColor(context.getResources().getColor(R.color.chartcyanA400));
         lineDataSet.setHighlightEnabled(false);
 
+        LineData lineData = new LineData(lineDataSet);
 
         for (int i = 0; i < itemdata.getLineY().length; i++) {
             if (i < itemdata.getLineY().length) {
@@ -251,9 +278,10 @@ public class ChartAdapter extends RecyclerView.Adapter {
         barDataSet.setColor(context.getResources().getColor(R.color.chartorange800));
         barDataSet.setBarShadowColor(context.getResources().getColor(R.color.chartorange500));
         barDataSet.setHighlightEnabled(false);
-        barDataSet.setValueTextSize(7f);
+        barDataSet.setValueTextSize(BarTextSize);
         barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
 
+        BarData barchart = new BarData(barDataSet);
 
         XAxis xAxis = hld.combinedchart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -263,12 +291,20 @@ public class ChartAdapter extends RecyclerView.Adapter {
         xAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
         xAxis.setAxisLineColor(context.getResources().getColor(R.color.colorAccent));
         xAxis.setAxisLineWidth(1f);
-        xAxis.setTextSize(6f);
+        xAxis.setTextSize(XAxisTextSize);
         //xAxis.setLabelCount(itemdata.getLineX().length);
-        xAxis.setLabelCount(daysInMonth);
+        xAxis.setLabelCount(Xcount);
         xAxis.setAxisMinimum(1-0.6f);
         //xAxis.setAxisMaximum(itemdata.getLineX().length);
-        xAxis.setAxisMaximum(daysInMonth+0.6f);
+        xAxis.setAxisMaximum(Xcount+0.6f);
+
+        if (itemdata.getTimeType().equals("year")) {
+            ValueFormatter xAxisFormatter = new DayAxisValueFormatter(hld.combinedchart);
+            xAxis.setValueFormatter(xAxisFormatter);
+        }
+        else {
+            xAxis.setValueFormatter(null);
+        }
 
         YAxis yAxis = hld.combinedchart.getAxisLeft();
         yAxis.setDrawGridLines(true);
@@ -298,11 +334,10 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         hld.combinedchart.setDescription(description);
         hld.combinedchart.getAxisRight().setEnabled(false);
-        hld.combinedchart.animateXY(1000, 1000);
+        hld.combinedchart.animateXY(500, 500);
         hld.combinedchart.setTouchEnabled(false);
 
-        LineData lineData = new LineData(lineDataSet);
-        BarData barchart = new BarData(barDataSet);
+
         //barchart.setBarWidth(0.4f);
 
         CombinedData combinedData = new CombinedData();
@@ -330,7 +365,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             case "month" :
                 String month = "";
                 try {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     Date date = simpleDateFormat.parse(itemdata.getTime());
 
                     month = (String) DateFormat.format("MMM", date);
@@ -342,7 +377,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             case "year":
                 String year = "";
                 try {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     Date date = simpleDateFormat.parse(itemdata.getTime());
 
                     year = (String) DateFormat.format("yyyy", date);
@@ -378,7 +413,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         //pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         //pieDataSet.setValueLineColor(context.getResources().getColor(R.color.colorAccent));
 
-        hld.piechart.animateY(1000);
+        hld.piechart.animateY(500);
 
         hld.piechart.setDrawHoleEnabled(true);
         hld.piechart.setHoleColor(context.getResources().getColor(R.color.colorPrimary));
@@ -413,7 +448,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             public void onValueSelected(Entry e, Highlight h) {
                 PieEntry pie_e = (PieEntry) e;
                 String cstr = pie_e.getLabel() + "\n"
-                        + context.getResources().getString(R.string.moneyunit) + String.format("%.2f", e.getY());
+                        + context.getResources().getString(R.string.moneyunit) + String.format(Locale.getDefault(), "%.2f", e.getY());
                 hld.piechart.setCenterText(cstr);
             }
 
@@ -465,3 +500,21 @@ class ChartViewHolder extends RecyclerView.ViewHolder {
     }
 }
 
+
+class DayAxisValueFormatter extends ValueFormatter {
+    private final BarLineChartBase<?> chart;
+    public DayAxisValueFormatter(BarLineChartBase<?> chart) {
+        this.chart = chart;
+    }
+    @Override
+    public String getFormattedValue(float value) {
+
+        String format = "%tb";
+
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.set(Calendar.MONTH, Math.round(value)-1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        return String.format(Locale.getDefault(), format, calendar);
+    }
+}

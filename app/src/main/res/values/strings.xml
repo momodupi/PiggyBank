@@ -28,6 +28,7 @@
 
     <string name="chartline">Total</string>
     <string name="chartbar">Daily</string>
+    <string name="charttotal">Total: </string>
 
     <string name="tabmonth">Month</string>
     <string name="tabyear">Year</string>

@@ -29,7 +29,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class Robot {
-
+    private Context botcontext;
     private String book;
     private String starttime;
     private String histroytime;
@@ -52,7 +52,7 @@ public class Robot {
 
     public Robot(Context context, String bookname){
         this.book = bookname;
-        //this.botcontext = context;
+        this.botcontext = context;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         this.starttime = simpleDateFormat.format(new Date());
         this.histroytime = this.starttime;
@@ -136,7 +136,7 @@ public class Robot {
                     Log.d("reply", this.reply_str);
                 }
                 else {
-                    String [] type_list = Resources.getSystem().getStringArray(R.array.type_name);
+                    String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
 
                     int cnt = 0;
                     for (String t : type_list) {
@@ -203,7 +203,7 @@ public class Robot {
             return this.reply_str;
         }
         else {
-            return Resources.getSystem().getString(R.string.typemistake);
+            return botcontext.getResources().getString(R.string.typemistake);
         }
     }
 
@@ -364,7 +364,7 @@ public class Robot {
             String amount_str = String.valueOf(msg.getAmount());
 
             if (type.equals("ALL")) {
-                this.reply_str += msg.getType() + "\n" + Resources.getSystem().getString(R.string.moneyunit)
+                this.reply_str += msg.getType() + "\n" + botcontext.getResources().getString(R.string.moneyunit)
                         + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
             }
             else {
@@ -378,13 +378,13 @@ public class Robot {
 
         String[] answer = null;
         if (persentage > 0.5) {
-            answer = Resources.getSystem().getStringArray(R.array.highprice_answer);
+            answer = botcontext.getResources().getStringArray(R.array.highprice_answer);
         }
         else if (persentage < 0.2) {
-            answer = Resources.getSystem().getStringArray(R.array.lowprice_answer);
+            answer = botcontext.getResources().getStringArray(R.array.lowprice_answer);
         }
         else {
-            answer = Resources.getSystem().getStringArray(R.array.mediumprice_answer);
+            answer = botcontext.getResources().getStringArray(R.array.mediumprice_answer);
         }
 
         return answer[(int) Math.floor(Math.random() * answer.length)];

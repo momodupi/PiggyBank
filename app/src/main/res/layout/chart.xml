@@ -26,7 +26,7 @@
                 android:id="@+id/chartlabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="12dp"
                 android:text="Jan"
                 android:textSize="20sp" />
 
@@ -34,7 +34,7 @@
                 android:id="@+id/charttitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="60dp"
                 android:textSize="16sp"
                 android:text="Total: $1111" />
         </LinearLayout>
