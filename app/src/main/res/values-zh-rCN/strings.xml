@@ -35,6 +35,8 @@
     <string name="tabyear">年帐</string>
     <string name="tabtype">类别</string>
 
+    <string name="diag_message">感谢使用，本软件由momodupi开发维护(=ﾟωﾟ)=</string>
+
     <string-array name="type_name">
         <item>衣物</item>
         <item>鞋帽</item>

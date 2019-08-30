@@ -1,11 +1,14 @@
 package com.momodupi.piggybank;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -380,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_about:
+                Toast.makeText(MainActivity.this, R.string.diag_message, Toast.LENGTH_SHORT).show();
                 return true;
 
             default:
@@ -429,5 +433,6 @@ public class MainActivity extends AppCompatActivity {
             messagesView.setSelection(messagesView.getCount() - 1);
         }
     }
-
 }
+
+
