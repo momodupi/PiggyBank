@@ -28,21 +28,27 @@
     <string name="recoveryf">|-` )\n导入失败！</string>
 
     <string name="chartline">累计</string>
-    <string name="chartbar">每日</string>
+    <string name="chartbard">每日</string>
+    <string name="chartbarm">每月</string>
     <string name="charttotal">总计： </string>
+    <string name="chartincome">收入</string>
+    <string name="chartoutcome">支出</string>
 
     <string name="tabmonth">月帐</string>
     <string name="tabyear">年帐</string>
-    <string name="tabtype">类别</string>
+    <string name="tabtype">其他</string>
 
     <string name="diag_message">感谢使用，本软件由momodupi开发维护(=ﾟωﾟ)=</string>
 
-    <string-array name="type_name">
+
+    <string-array name="type_clothing">
         <item>衣物</item>
         <item>鞋帽</item>
         <item>奢侈品</item>
         <item>饰物</item>
+    </string-array>
 
+    <string-array name="type_food">
         <item>餐厅</item>
         <item>快餐</item>
         <item>主食</item>
@@ -53,9 +59,11 @@
         <item>蔬菜</item>
         <item>饮料</item>
         <item>酒水</item>
-        <item>牛奶</item>
+        <item>奶类</item>
         <item>烹饪</item>
+    </string-array>
 
+    <string-array name="type_housing">
         <item>房租</item>
         <item>电费</item>
         <item>煤气费</item>
@@ -69,41 +77,59 @@
         <item>洗衣</item>
         <item>个人护理</item>
         <item>旅馆</item>
+    </string-array>
 
+    <string-array name="type_transportation">
         <item>汽车保养</item>
         <item>燃油</item>
         <item>飞机</item>
         <item>巴士</item>
         <item>网约车</item>
         <item>火车</item>
-        <item>汽车保险</item>
+    </string-array>
 
+    <string-array name="type_communication">
         <item>话费</item>
         <item>信件</item>
         <item>快递</item>
+    </string-array>
 
+    <string-array name="type_entertainment">
         <item>运动</item>
         <item>游戏</item>
         <item>软件</item>
         <item>旅游</item>
         <item>电影</item>
         <item>酒吧</item>
+    </string-array>
 
+    <string-array name="type_study">
         <item>学费</item>
         <item>书籍</item>
         <item>文具</item>
+    </string-array>
 
+    <string-array name="type_social">
         <item>聚会</item>
         <item>礼品</item>
         <item>捐款</item>
+    </string-array>
 
+    <string-array name="type_medical">
         <item>治疗</item>
         <item>药物</item>
         <item>保健品</item>
+    </string-array>
 
+    <string-array name="type_misfortune">
+        <item>保险</item>
         <item>意外事故</item>
         <item>罚单</item>
+    </string-array>
 
+    <string-array name="type_income">
+        <item>工资</item>
+        <item>理财</item>
     </string-array>
 
 

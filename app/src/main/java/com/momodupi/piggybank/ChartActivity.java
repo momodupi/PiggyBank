@@ -160,6 +160,7 @@ public class ChartActivity extends AppCompatActivity {
 
         String ph_time = "";
         boolean isDateSetNull = true;
+        int incomem = 0;
 
         try {
             //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -215,15 +216,18 @@ public class ChartActivity extends AppCompatActivity {
                 isDateSetNull = false;
             }
 
+            AccountTypes accountTypes = new AccountTypes(this);
             for (structure_Database sdata : alldata) {
                 day = sdata.getTime().split(" ")[0].split("-")[2];
-                liney[Integer.parseInt(day)] += sdata.getAmount();
+                if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
+                    liney[Integer.parseInt(day)] += sdata.getAmount();
+                }
             }
 
             lineChartData.X = linex;
             lineChartData.Y = liney;
 
-            AccountTypes accountTypes = new AccountTypes(this);
+
             String[] piex = accountTypes.getGeneralTypeString();
             float[] piey = new float[piex.length];
 
@@ -232,7 +236,9 @@ public class ChartActivity extends AppCompatActivity {
             for (structure_Database sdata : alldata) {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 if (pos >= 0 && pos < piex.length) {
-                    piey[pos] += sdata.getAmount();
+                    if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
+                        piey[pos] += sdata.getAmount();
+                    }
                 }
             }
 
@@ -247,6 +253,7 @@ public class ChartActivity extends AppCompatActivity {
         }
 
         ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "month");
+        chartData.setTotalIncome(incomem);
 
         if (!isDateSetNull) {
             chartAdapter.addItem(chartData);
@@ -257,11 +264,9 @@ public class ChartActivity extends AppCompatActivity {
     private void showAllMonthTab() {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String datetime[] = robot.getBotHistoryTime().split(" ");
+        String datetime[] = robot.getCurrentTime().split(" ");
         String ymd[] = datetime[0].split("-");
         //int month = Integer.parseInt(ymd[1]);
-
-
 
         String ph_time;
         for(int month=1; month<Integer.parseInt(ymd[1]); month++) {
@@ -274,7 +279,7 @@ public class ChartActivity extends AppCompatActivity {
         ph_time = ymd[0] + "-" + String.format(Locale.getDefault(), "%02d", Integer.parseInt(ymd[1])) + "-" + ymd[2] + " " + datetime[1];
         setMonthTab(chartAdapter, ph_time, true);
 
-        recyclerView.scrollToPosition(chartAdapter.getItemCount());
+        recyclerView.smoothScrollToPosition(chartAdapter.getItemCount());
     }
 
 
@@ -286,6 +291,7 @@ public class ChartActivity extends AppCompatActivity {
 
         String ph_time = "";
         boolean isDateSetNull = true;
+        int incomey = 0;
 
         try {
             //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -297,13 +303,14 @@ public class ChartActivity extends AppCompatActivity {
 
             String month = ymd[1];
 
-
             float[] liney;
+            float[] bary;
             int[] linex;
 
             if (isCurrentYear) {
                 h_time = robot.getCurrentTime();
                 liney = new float[Integer.parseInt(month)+1];
+                bary = new float[Integer.parseInt(month)+1];
                 linex = new int[Integer.parseInt(month)+1];
 
                 for (int cnt = 1; cnt<Integer.parseInt(month)+1; cnt++) {
@@ -313,6 +320,7 @@ public class ChartActivity extends AppCompatActivity {
             else {
                 h_time = ymd[0] + "-12-31 23:59:59";
                 liney = new float[13];
+                bary = new float[13];
                 linex = new int[13];
 
                 for (int cnt = 1; cnt<13; cnt++) {
@@ -330,24 +338,34 @@ public class ChartActivity extends AppCompatActivity {
                 isDateSetNull = false;
             }
 
+            AccountTypes accountTypes = new AccountTypes(this);
             for (structure_Database sdata : alldata) {
                 month = sdata.getTime().split(" ")[0].split("-")[1];
-                liney[Integer.parseInt(month)] += sdata.getAmount();
+                if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
+                    liney[Integer.parseInt(month)] += sdata.getAmount();
+                }
+                else {
+                    incomey += sdata.getAmount();
+                    bary[Integer.parseInt(month)] += sdata.getAmount();
+                }
             }
 
             lineChartData.X = linex;
             lineChartData.Y = liney;
 
-            AccountTypes accountTypes = new AccountTypes(this);
-            String[] piex = accountTypes.getGeneralTypeString();
+            //AccountTypes accountTypes = new AccountTypes(this);
+            String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-2);
             float[] piey = new float[piex.length];
 
             ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
 
             for (structure_Database sdata : alldata) {
+                //Log.d("type", accountTypes.getGeneralType(sdata.getType()));
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
-                if (pos >= 0 && pos < piex.length) {
-                    piey[pos] += sdata.getAmount();
+                if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
+                    if (pos >= 0 && pos < piex.length) {
+                        piey[pos] += sdata.getAmount();
+                    }
                 }
             }
 
@@ -355,13 +373,14 @@ public class ChartActivity extends AppCompatActivity {
             pieChartData.Y = piey;
 
             barChartData.X = linex;
-            barChartData.Y = liney;
+            barChartData.Y = bary;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "year");
+        chartData.setTotalIncome(incomey);
 
         if (!isDateSetNull) {
             chartAdapter.addItem(chartData);
@@ -373,11 +392,9 @@ public class ChartActivity extends AppCompatActivity {
     private void showAllYearTab() {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String datetime[] = robot.getBotHistoryTime().split(" ");
+        String datetime[] = robot.getCurrentTime().split(" ");
         String ymd[] = datetime[0].split("-");
         //int month = Integer.parseInt(ymd[1]);
-
-
 
         String ph_time;
         for(int year=2010; year<Integer.parseInt(ymd[0]); year++) {
@@ -390,7 +407,7 @@ public class ChartActivity extends AppCompatActivity {
         ph_time = ymd[0] + "-" + String.format(Locale.getDefault(), "%02d", Integer.parseInt(ymd[1])) + "-" + ymd[2] + " " + datetime[1];
         setYearTab(chartAdapter, ph_time, true);
 
-        recyclerView.scrollToPosition(chartAdapter.getItemCount());
+        recyclerView.smoothScrollToPosition(chartAdapter.getItemCount());
     }
 
 }

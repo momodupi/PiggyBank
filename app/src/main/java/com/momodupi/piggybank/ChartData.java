@@ -1,5 +1,7 @@
 package com.momodupi.piggybank;
 
+import java.lang.reflect.Array;
+
 public class ChartData {
     //private String[] X;
     //private float[] Y;
@@ -11,12 +13,23 @@ public class ChartData {
 
     private String timeType;
 
+    private float income = 0;
+
+
     public ChartData(LineChartData l, PieChartData p, BarChartData b, String time, String timetype) {
         this.lineChartData = l;
         this.pieChartData = p;
         this.barChartData = b;
         this.time = time;
         this.timeType = timetype;
+    }
+
+    public void setTotalIncome(int income) {
+        this.income = income;
+    }
+
+    public float getTotalIncome() {
+        return this.income;
     }
 
     public int[] getLineX() {

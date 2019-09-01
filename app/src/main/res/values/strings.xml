@@ -26,22 +26,28 @@
     <string name="recoveryf">|-` )\nRecovery Failed!</string>
 
 
-    <string name="chartline">Total</string>
-    <string name="chartbar">Daily</string>
+    <string name="chartline">Total Cost</string>
+    <string name="chartbard">Daily</string>
+    <string name="chartbarm">Monthly</string>
     <string name="charttotal">Total: </string>
+    <string name="chartincome">Income</string>
+    <string name="chartoutcome">Outcome</string>
 
     <string name="tabmonth">Month</string>
     <string name="tabyear">Year</string>
-    <string name="tabtype">Types</string>
+    <string name="tabtype">Others</string>
 
     <string name="diag_message">Powered by momodupi!(=ﾟωﾟ)=</string>
 
-    <string-array name="type_name">
+
+    <string-array name="type_clothing">
         <item>Clothes</item>
         <item>Shoes</item>
         <item>Luxury</item>
         <item>Accessories</item>
+    </string-array>
 
+    <string-array name="type_food">
         <item>Restaurant</item>
         <item>Fast Food</item>
         <item>Carbide</item>
@@ -52,9 +58,11 @@
         <item>Vegetables</item>
         <item>Drinks</item>
         <item>Alcohols</item>
-        <item>Milk</item>
+        <item>Dairy</item>
         <item>Cooking</item>
+    </string-array>
 
+    <string-array name="type_housing">
         <item>Rent</item>
         <item>Electricity</item>
         <item>Gas</item>
@@ -68,42 +76,61 @@
         <item>Washing</item>
         <item>Personal Care</item>
         <item>Hotel</item>
+    </string-array>
 
+    <string-array name="type_transportation">
         <item>Car Service</item>
         <item>Fuel</item>
         <item>Airplane</item>
         <item>Bus</item>
         <item>Car Pooling</item>
         <item>Train</item>
-        <item>Car Insurance</item>
+    </string-array>
 
+    <string-array name="type_communication">
         <item>Mobile Fees</item>
         <item>Post</item>
         <item>Delivery</item>
+    </string-array>
 
+    <string-array name="type_entertainment">
         <item>Training</item>
         <item>Game</item>
         <item>Software</item>
         <item>Tourism</item>
         <item>Movies</item>
         <item>Bar</item>
+    </string-array>
 
+    <string-array name="type_study">
         <item>Courses</item>
         <item>Books</item>
         <item>Stationery</item>
+    </string-array>
 
+    <string-array name="type_social">
         <item>Party</item>
         <item>Gift</item>
         <item>Donation</item>
+    </string-array>
 
+    <string-array name="type_medical">
         <item>Treatment</item>
         <item>Pills</item>
         <item>Supplements</item>
+    </string-array>
 
+    <string-array name="type_misfortune">
+        <item>Insurance</item>
         <item>Accidents</item>
         <item>Tickets</item>
-
     </string-array>
+
+    <string-array name="type_income">
+        <item>Salary</item>
+        <item>Financial</item>
+    </string-array>
+
 
     <string-array name="lowprice_answer">
         <item>Got it!</item>

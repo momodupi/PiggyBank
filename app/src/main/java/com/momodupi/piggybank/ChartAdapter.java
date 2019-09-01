@@ -138,7 +138,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 this.setCombinedChart(hld, itemdata);
                 this.setPieChart(hld, itemdata);
                 break;
-            case "type":
+            case "others":
                 hld.chartlabel.setText("");
 
                 break;
@@ -170,7 +170,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
     public void addItemToTop(ChartData item){
         dataSet.add(0, item);
-        //notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void deleteItem(int position) {
@@ -188,7 +188,10 @@ public class ChartAdapter extends RecyclerView.Adapter {
     private void setCombinedChart(ChartViewHolder hld, ChartData itemdata) {
         List<Entry> lineoutput = new ArrayList<>();
         List<BarEntry> baroutput = new ArrayList<>();
+        List<BarEntry> baroutput_income = new ArrayList<>();
 
+
+        float income = itemdata.getTotalIncome();
         float total = 0;
 
         if (itemdata.getLineX() == null) {
@@ -228,8 +231,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             BarTextSize = 7f;
         }
         else if (itemdata.getTimeType().equals("year")) {
-            String[] ymd = itemdata.getTime().split(" ")[0].split("-");
-
+            //String[] ymd = itemdata.getTime().split(" ")[0].split("-");
             Xcount = 12;
 
             for (int i = 0; i < Xcount+1; i++) {
@@ -240,13 +242,20 @@ public class ChartAdapter extends RecyclerView.Adapter {
             }
 
             XAxisTextSize = 10f;
-            BarTextSize = 10f;
+            BarTextSize = 8f;
         }
 
-
+/*
         String title_str = context.getResources().getString(R.string.charttotal) + "    " + context.getResources().getString(R.string.moneyunit)
                 + String.format(Locale.getDefault(), "%.2f", total);
-        hld.charttitle.setText(title_str);
+
+ */
+        String title_str = context.getResources().getString(R.string.chartoutcome) + "\n" + context.getResources().getString(R.string.moneyunit)
+                + String.format(Locale.getDefault(), "%.2f", total);
+        hld.titleoutcome.setText(title_str);
+        title_str = context.getResources().getString(R.string.chartincome) + "\n" + context.getResources().getString(R.string.moneyunit)
+                + String.format(Locale.getDefault(), "%.2f", income);
+        hld.titleincome.setText(title_str);
 
 
         LineDataSet lineDataSet = new LineDataSet(lineoutput, context.getResources().getString(R.string.chartline));
@@ -270,10 +279,28 @@ public class ChartAdapter extends RecyclerView.Adapter {
         for (int i = 0; i < itemdata.getLineY().length; i++) {
             if (i < itemdata.getLineY().length) {
                 baroutput.add(new BarEntry(x_buf[i], itemdata.getLineY()[i]));
+                baroutput_income.add(new BarEntry(x_buf[i], itemdata.getBarY()[i]));
             }
         }
 
-        BarDataSet barDataSet = new BarDataSet(baroutput, context.getResources().getString(R.string.chartbar));
+        BarDataSet barDataSet;
+        BarDataSet barDataSet_income;
+
+        if (itemdata.getTimeType().equals("month")) {
+            barDataSet = new BarDataSet(baroutput, context.getResources().getString(R.string.chartbard));
+            barDataSet_income = null;
+        }
+        else {
+            barDataSet = new BarDataSet(baroutput, context.getResources().getString(R.string.chartoutcome));
+            barDataSet_income = new BarDataSet(baroutput_income, context.getResources().getString(R.string.chartincome));
+
+            barDataSet_income.setColor(context.getResources().getColor(R.color.chartblue500Transparent));
+            barDataSet_income.setBarShadowColor(context.getResources().getColor(R.color.chartblue500Transparent));
+            barDataSet_income.setHighlightEnabled(false);
+            barDataSet_income.setValueTextSize(BarTextSize);
+            barDataSet_income.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
+            barDataSet_income.setHighLightAlpha(50);
+        }
 
         barDataSet.setColor(context.getResources().getColor(R.color.chartorange800));
         barDataSet.setBarShadowColor(context.getResources().getColor(R.color.chartorange500));
@@ -281,7 +308,15 @@ public class ChartAdapter extends RecyclerView.Adapter {
         barDataSet.setValueTextSize(BarTextSize);
         barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
 
-        BarData barchart = new BarData(barDataSet);
+        BarData barchart;
+        if (itemdata.getTimeType().equals("year")) {
+            barchart = new BarData(barDataSet, barDataSet_income);
+            //barchart.groupBars(0, 0.2f, 0.3f);
+        }
+        else {
+            barchart = new BarData(barDataSet);
+        }
+
 
         XAxis xAxis = hld.combinedchart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -297,6 +332,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         xAxis.setAxisMinimum(1-0.6f);
         //xAxis.setAxisMaximum(itemdata.getLineX().length);
         xAxis.setAxisMaximum(Xcount+0.6f);
+
 
         if (itemdata.getTimeType().equals("year")) {
             ValueFormatter xAxisFormatter = new DayAxisValueFormatter(hld.combinedchart);
@@ -341,7 +377,10 @@ public class ChartAdapter extends RecyclerView.Adapter {
         //barchart.setBarWidth(0.4f);
 
         CombinedData combinedData = new CombinedData();
-        combinedData.setData(lineData);
+        if (itemdata.getTimeType().equals("month")) {
+            combinedData.setData(lineData);
+        }
+
         combinedData.setData(barchart);
 
         hld.combinedchart.setScaleEnabled(true);
@@ -478,7 +517,8 @@ class ChartViewHolder extends RecyclerView.ViewHolder {
     public PieChart piechart;
     public BarChart barchart;
     public TextView chartlabel;
-    public TextView charttitle;
+    public TextView titleoutcome;
+    public TextView titleincome;
 
     public LinearLayout combinedframe;
     public LinearLayout pieframe;
@@ -488,7 +528,8 @@ class ChartViewHolder extends RecyclerView.ViewHolder {
     public ChartViewHolder(View itemView) {
         super(itemView);
         chartlabel = itemView.findViewById(R.id.chartlabel);
-        charttitle = itemView.findViewById(R.id.charttitle);
+        titleoutcome = itemView.findViewById(R.id.chartoutcome);
+        titleincome = itemView.findViewById(R.id.chartincome);
 
         combinedchart = itemView.findViewById(R.id.combinedchart);
         piechart = itemView.findViewById(R.id.piechart);

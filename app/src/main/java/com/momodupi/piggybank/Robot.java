@@ -60,9 +60,9 @@ public class Robot {
         dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
 
-        type_total = new float[context.getResources().getStringArray(R.array.type_name).length];
-
         accountTypes = new AccountTypes(context);
+        type_total = new float[accountTypes.getTpyeString().length];
+
         /*
         SharedPreferences preferences = botcontext.getSharedPreferences("robot", MODE_PRIVATE);
 
@@ -136,7 +136,7 @@ public class Robot {
                     Log.d("reply", this.reply_str);
                 }
                 else {
-                    String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
+                    String [] type_list = accountTypes.getTpyeString();
 
                     int cnt = 0;
                     for (String t : type_list) {
