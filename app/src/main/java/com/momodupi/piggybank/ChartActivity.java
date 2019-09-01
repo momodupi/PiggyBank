@@ -222,6 +222,9 @@ public class ChartActivity extends AppCompatActivity {
                 if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
                     liney[Integer.parseInt(day)] += sdata.getAmount();
                 }
+                else {
+                    incomem += sdata.getAmount();
+                }
             }
 
             lineChartData.X = linex;
