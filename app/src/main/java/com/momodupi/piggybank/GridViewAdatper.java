@@ -16,7 +16,7 @@ public class GridViewAdatper extends BaseAdapter {
     private final String[] gridViewString;
     private final int[] gridViewImageId;
 
-    public GridViewAdatper(Context context, String[] gridViewString, int[] gridViewImageId) {
+    GridViewAdatper(Context context, String[] gridViewString, int[] gridViewImageId) {
         mContext = context;
         this.gridViewImageId = gridViewImageId;
         this.gridViewString = gridViewString;
@@ -50,10 +50,10 @@ public class GridViewAdatper extends BaseAdapter {
         } else {
             gridView = convertView;
         }
-        TextView textView = (TextView) gridView.findViewById(R.id.gridtext);
+        TextView textView = gridView.findViewById(R.id.gridtext);
         textView.setText(gridViewString[pos]);
 
-        ImageView imageView = (ImageView) gridView.findViewById(R.id.gridimage);
+        ImageView imageView = gridView.findViewById(R.id.gridimage);
         imageView.setImageResource(gridViewImageId[pos]);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return gridView;

@@ -32,9 +32,11 @@ public class TypeKeyboard {
 
     private static final int SOFT_KEYBOARD_HEIGHT_DEFAULT = 654;
 
+    private OnPanelVisibilityChangeListener panelVisibilityChangeListener;
+
     private Handler handler;
 
-    public TypeKeyboard(Activity activity, EditText editText, View PanelView, View PanelSwitchView, View contentView) {
+    TypeKeyboard(Activity activity, EditText editText, View PanelView, View PanelSwitchView, View contentView) {
         init(activity, editText, PanelView, PanelSwitchView, contentView);
     }
 
@@ -44,6 +46,7 @@ public class TypeKeyboard {
         this.panelView = PanelView;
         this.contentView = contentView;
 
+        this.editText.performClick();
         this.editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View v, MotionEvent event) {
@@ -111,7 +114,7 @@ public class TypeKeyboard {
     }
 
 
-    public boolean interceptBackPress() {
+    boolean interceptBackPress() {
         if (panelView.isShown()) {
             hidePanel(false);
             return true;
@@ -210,9 +213,12 @@ public class TypeKeyboard {
         void onHidePanel();
     }
 
-    private OnPanelVisibilityChangeListener panelVisibilityChangeListener;
 
+
+    /*
     public void setPanelVisibilityChangeListener(OnPanelVisibilityChangeListener PanelVisibilityChangeListener) {
         this.panelVisibilityChangeListener = PanelVisibilityChangeListener;
     }
+
+     */
 }

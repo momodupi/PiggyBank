@@ -6,13 +6,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static String BOOKNAME = "book";
+    static String BOOKNAME = "book";
 
-    public static String[] COLUMNSNAME = {"book_type", "book_time", "book_amount", "book_reply"};
+    static String[] COLUMNSNAME = {"book_type", "book_time", "book_amount", "book_reply"};
 
     private static Integer Version = 1;
 
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 

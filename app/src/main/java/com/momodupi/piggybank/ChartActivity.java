@@ -1,63 +1,42 @@
 package com.momodupi.piggybank;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
+import android.util.Log;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import com.google.android.material.tabs.TabLayout;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
 public class ChartActivity extends AppCompatActivity {
 
-    private TabLayout chartTabLayout;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+
     private ChartAdapter chartAdapter;
     private Robot robot;
 
-    private String charttype = "month";
-    private String historytime = "";
+    //private String charttype = "month";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
+
+        TabLayout chartTabLayout;
+        RecyclerView.LayoutManager layoutManager;
 
         chartAdapter = new ChartAdapter(this);
         layoutManager = new LinearLayoutManager(this);
@@ -84,19 +63,19 @@ public class ChartActivity extends AppCompatActivity {
                         //Log.d("menu", "month");
                         chartAdapter.deleteAll();
                         showAllMonthTab();
-                        charttype = "month";
+                        //charttype = "month";
                         break;
                     case 1:
                         //Log.d("menu", "year");
                         chartAdapter.deleteAll();
                         showAllYearTab();
-                        charttype = "year";
+                        //charttype = "year";
                         break;
                     case 2:
                         //Log.d("menu", "type");
                         chartAdapter.deleteAll();
 
-                        charttype = "type";
+                        //charttype = "type";
                         break;
                     default:
                         break;
@@ -124,20 +103,17 @@ public class ChartActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // todo: goto back activity from here
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(ChartActivity.this, MainActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            ChartActivity.this.finish();
 
-                Intent intent = new Intent(ChartActivity.this, MainActivity.class);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                ChartActivity.this.finish();
-
-                overridePendingTransition(R.anim.leftin, R.anim.rightout);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+            overridePendingTransition(R.anim.leftin, R.anim.rightout);
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -209,12 +185,7 @@ public class ChartActivity extends AppCompatActivity {
             //Log.d("date", h_time + "  " + ph_time);
             List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
 
-            if (alldata.size() == 0) {
-                isDateSetNull = true;
-            }
-            else {
-                isDateSetNull = false;
-            }
+            isDateSetNull = (alldata.size() == 0);
 
             AccountTypes accountTypes = new AccountTypes(this);
             for (structure_Database sdata : alldata) {
@@ -234,7 +205,7 @@ public class ChartActivity extends AppCompatActivity {
             String[] piex = accountTypes.getGeneralTypeString();
             float[] piey = new float[piex.length];
 
-            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
+            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
 
             for (structure_Database sdata : alldata) {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
@@ -267,8 +238,8 @@ public class ChartActivity extends AppCompatActivity {
     private void showAllMonthTab() {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String datetime[] = robot.getCurrentTime().split(" ");
-        String ymd[] = datetime[0].split("-");
+        String[] datetime = robot.getCurrentTime().split(" ");
+        String[] ymd = datetime[0].split("-");
         //int month = Integer.parseInt(ymd[1]);
 
         String ph_time;
@@ -334,12 +305,7 @@ public class ChartActivity extends AppCompatActivity {
             //Log.d("date", h_time + "  " + ph_time);
             List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
 
-            if (alldata.size() == 0) {
-                isDateSetNull = true;
-            }
-            else {
-                isDateSetNull = false;
-            }
+            isDateSetNull = (alldata.size() == 0);
 
             AccountTypes accountTypes = new AccountTypes(this);
             for (structure_Database sdata : alldata) {
@@ -360,7 +326,7 @@ public class ChartActivity extends AppCompatActivity {
             String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-2);
             float[] piey = new float[piex.length];
 
-            ArrayList<String> type_index = new ArrayList<String>(Arrays.asList(piex));
+            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
 
             for (structure_Database sdata : alldata) {
                 //Log.d("type", accountTypes.getGeneralType(sdata.getType()));
@@ -395,8 +361,8 @@ public class ChartActivity extends AppCompatActivity {
     private void showAllYearTab() {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String datetime[] = robot.getCurrentTime().split(" ");
-        String ymd[] = datetime[0].split("-");
+        String[] datetime = robot.getCurrentTime().split(" ");
+        String[] ymd = datetime[0].split("-");
         //int month = Integer.parseInt(ymd[1]);
 
         String ph_time;

@@ -1,15 +1,11 @@
 package com.momodupi.piggybank;
 
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,13 +18,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import static android.content.Context.MODE_PRIVATE;
+import java.util.Locale;
 
 
-public class Robot {
+class Robot {
     private Context botcontext;
     private String book;
     private String starttime;
@@ -42,7 +35,6 @@ public class Robot {
 
     private boolean isInputCorrect;
 
-    private DatabaseHelper dbbasehelper;
     private SQLiteDatabase sqliteDatabase;
 
     private AccountTypes accountTypes;
@@ -50,15 +42,19 @@ public class Robot {
     private float[] type_total;
 
 
-    public Robot(Context context, String bookname){
+    Robot(Context context, String bookname){
         this.book = bookname;
         this.botcontext = context;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         this.starttime = simpleDateFormat.format(new Date());
         this.histroytime = this.starttime;
 
+        DatabaseHelper dbbasehelper;
         dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
+
+        //String cmd = String.format("SELECT * FROM %s ORDER BY %s DESC", this.book, "book_time");
+        //sqliteDatabase.execSQL(cmd);
 
         accountTypes = new AccountTypes(context);
         type_total = new float[accountTypes.getTpyeString().length];
@@ -95,17 +91,21 @@ public class Robot {
     }
 
 
-    public void read(String type, String time, String amount) {
+    void read(String type, String time, String amount) {
         this.input_type = type;
         this.input_time = time;
         this.input_amount = Float.parseFloat(amount);
 
+        this.isInputCorrect = !(!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 );
+        /*
         if (!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 ) {
             this.isInputCorrect = false;
         }
         else {
             this.isInputCorrect = true;
         }
+
+         */
     }
 
     private boolean messageProcess() {
@@ -115,25 +115,26 @@ public class Robot {
         values.put("book_amount", String.valueOf(this.input_amount));
 
         if (this.isInputCorrect) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String h_time = this.getCurrentTime();
             h_time = h_time.split(" ")[0] + " 00:00:00";
-            Log.d("time", h_time);
+            //Log.d("time", h_time);
 
             try {
                 Date date = simpleDateFormat.parse(h_time);
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
+                if (date != null) {
+                    calendar.setTime(date);
+                }
+                // compare with the data with 4 month ago
                 calendar.add(Calendar.MONTH, -4);
                 String ph_time = simpleDateFormat.format(calendar.getTime());
-
-                Log.d("time", ph_time);
 
                 List<structure_Database> history_list = this.getData(this.input_type, ph_time, h_time);
 
                 if (history_list == null) {
                     this.reply_str = this.getRandomAnswer(0);
-                    Log.d("reply", this.reply_str);
+                    //Log.d("reply", this.reply_str);
                 }
                 else {
                     String [] type_list = accountTypes.getTpyeString();
@@ -153,8 +154,8 @@ public class Robot {
 
                     float avg = type_total[cnt]/history_list.size();
                     this.reply_str = this.getRandomAnswer((this.input_amount - avg)/avg);
-                    Log.d("persentage", String.valueOf((this.input_amount - avg)/avg));
-                    Log.d("reply", this.reply_str);
+                    //Log.d("persentage", String.valueOf((this.input_amount - avg)/avg));
+                    //Log.d("reply", this.reply_str);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -194,11 +195,16 @@ public class Robot {
         cursor.close();
 
         //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
-        return ((checktype.equals(this.input_type))  && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str))));
+        if (checktype != null && checktime != null && checkreply != null) {
+            return ((checktype.equals(this.input_type)) && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str))));
+        }
+        else {
+            return false;
+        }
     }
 
 
-    public String reply() {
+    String reply() {
         if (this.messageProcess()) {
             return this.reply_str;
         }
@@ -207,43 +213,43 @@ public class Robot {
         }
     }
 
-    public String getInputTime() {
+    String getInputTime() {
         return this.input_time;
     }
 
-    public String getInputTpye() {
+    String getInputTpye() {
         return this.input_type;
     }
 
-    public String getBotStartTime() {
+    String getBotStartTime() {
         return this.starttime;
     }
 
-    public String getBotHistoryTime() {
+    String getBotHistoryTime() {
         return this.histroytime;
     }
 
-    public String getCurrentTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String getCurrentTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return simpleDateFormat.format(new java.util.Date());
     }
 
-    public void deleteDataBase() {
+    void deleteDataBase() {
         this.sqliteDatabase.delete(this.book, null, null);
     }
 
-    public void delteItem(String type, String time, String amount) {
+    void deleteItem(String type, String time, String amount) {
         this.sqliteDatabase.delete(this.book, "book_type=? AND book_time=? AND book_amount=?",
                 new String[] {type, time, amount });
     }
 
-    public boolean isTypeLegal(String type) {
+    private boolean isTypeLegal(String type) {
         return Arrays.asList(accountTypes.getTpyeString()).contains(type);
     }
 
 
-    public List<structure_Database> getData(String type, String starttime, String endtime) {
-        List<structure_Database> savelist = new ArrayList<structure_Database>();
+    List<structure_Database> getData(String type, String starttime, String endtime) {
+        List<structure_Database> savelist = new ArrayList<>();
 
         Cursor cursor;
 
@@ -252,21 +258,21 @@ public class Robot {
                     new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                     "book_type=? AND book_time BETWEEN ? AND ?",
                     new String[] { type, starttime, endtime },
-                    null, null, null);
+                    null, null, "book_time ASC");
         }
         else {
             cursor = sqliteDatabase.query(this.book,
                     new String[] { "book_type", "book_time", "book_amount", "book_reply"},
                     "book_time BETWEEN ? AND ?", new String[] { starttime, endtime },
-                    null, null, null);
+                    null, null, "book_time ASC");
         }
 
         cursor.moveToFirst();
 
-        String checktype = null;
-        String checktime = null;
-        float checknum = 0;
-        String checkreply = null;
+        String checktype;
+        String checktime;
+        float checknum;
+        String checkreply;
         this.reply_str = "";
 
         while (!cursor.isAfterLast()) {
@@ -284,7 +290,7 @@ public class Robot {
         return savelist;
     }
 
-    public void showToday(MessageAdapter msa, ListView msgv) {
+    void showToday(MessageAdapter msa, ListView msgv) {
         String h_time = this.starttime.split(" ")[0] + " 00:00:00";
 
         List<structure_Database> todaydata = this.getData("ALL", h_time, this.starttime);
@@ -315,12 +321,12 @@ public class Robot {
     }
 
 
-    public void showHistory(MessageAdapter msa, ListView msgv, String rqsttime) {
+    void showHistory(MessageAdapter msa, ListView msgv, String rqsttime) {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try {
             if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
-                Log.d("time",this.histroytime + "  " + rqsttime);
+                //Log.d("time",this.histroytime + "  " + rqsttime);
 
                 List<structure_Database> historydata = this.getData("ALL", rqsttime, this.histroytime);
 
@@ -341,7 +347,7 @@ public class Robot {
                 }
 
                 this.histroytime = rqsttime;
-                Log.d("time", "history: " + this.histroytime);
+                //Log.d("time", "history: " + this.histroytime);
                 msg_s = new Message(null, this.histroytime, null, "date");
                 msa.addtotop(msg_s);
                 msgv.smoothScrollToPosition(historydata.size());
@@ -356,27 +362,36 @@ public class Robot {
     }
 
 
-    public String showSomeData(String type, String starttime, String endtime) {
+    String showSomeData(String type, String starttime, String endtime) {
         List<structure_Database> datalist = this.getData(type, starttime, endtime);
 
+        StringBuilder buffer = new StringBuilder();
         for(structure_Database msg: datalist) {
             //structure_Database msg = datalist.get(pos);
             String amount_str = String.valueOf(msg.getAmount());
 
             if (type.equals("ALL")) {
+                String str = msg.getType() + "\n" + botcontext.getResources().getString(R.string.moneyunit)
+                        + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
+                buffer.append(str);
+                /*
                 this.reply_str += msg.getType() + "\n" + botcontext.getResources().getString(R.string.moneyunit)
                         + amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
+
+                 */
             }
             else {
-                this.reply_str += amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
+                String str = amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
+                buffer.append(str);
+                //this.reply_str += amount_str + " at " + msg.getTime().substring(0, 16) + "\n\n";
             }
         }
-        return reply_str + "(=ﾟωﾟ)=";
+        return this.reply_str + buffer.toString() + "(=ﾟωﾟ)=";
     }
 
-    public String getRandomAnswer(float persentage) {
+    private String getRandomAnswer(float persentage) {
 
-        String[] answer = null;
+        String[] answer;
         if (persentage > 0.5) {
             answer = botcontext.getResources().getStringArray(R.array.highprice_answer);
         }
@@ -390,9 +405,9 @@ public class Robot {
         return answer[(int) Math.floor(Math.random() * answer.length)];
     }
 
-    public String exportDataBaes(Context context, String path) {
+    String exportDataBaes(Context context, String path) {
         List<structure_Database> alldata = this.getData("ALL", "2000-00-00 00:00:00", this.getCurrentTime());
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("type, time, amount, relay\r\n");
         //Log.d("path", path);
@@ -425,13 +440,13 @@ public class Robot {
         }
     }
 
-    public String importDataBase(Context context, String path) {
+    String importDataBase(Context context, String path) {
         Log.d("path", path);
 
         try {
             FileReader file = new FileReader(path);
             BufferedReader buffer = new BufferedReader(file);
-            String buf_line = buffer.readLine();
+            String buf_line;
 
             this.sqliteDatabase.execSQL("DELETE FROM " + this.book);
 
@@ -472,26 +487,26 @@ class structure_Database {
     private float amount;
     private String reply;
 
-    public structure_Database(String type, String time, float amount, String reply) {
+    structure_Database(String type, String time, float amount, String reply) {
         this.type = type;
         this.time = time;
         this.amount = amount;
         this.reply = reply;
     }
 
-    public String getType() {
+    String getType() {
         return this.type;
     }
 
-    public String getTime() {
+    String getTime() {
         return this.time;
     }
 
-    public String getReply() {
+    String getReply() {
         return this.reply;
     }
 
-    public float getAmount() {
+    float getAmount() {
         return this.amount;
     }
 }

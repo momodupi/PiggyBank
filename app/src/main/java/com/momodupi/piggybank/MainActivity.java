@@ -1,14 +1,11 @@
 package com.momodupi.piggybank;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,21 +35,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    static Integer imgbtn_anim[] = {0,0,0};
+    static Integer[] imgbtn_anim = {0,0,0};
 
-    private Toolbar toolbar;
     public String type_input = null;
-
-    private GridView typegridview;
-    private GridViewAdatper tpyrgridview_act;
-
-    //private LinearLayout btmFrame;
-    private LinearLayout panelFrame;
 
     private ImageButton typeBtn;
     private EditText numText;
@@ -67,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AccountTypes accounttype;
 
-    static public Robot robot;
+    private Robot robot;
 
     private String edittime = "noedit";
     private int editposition;
@@ -82,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GridView typegridview;
+        GridViewAdatper tpyrgridview_act;
+        LinearLayout panelFrame;
+        Toolbar toolbar;
+
         robot = new Robot(this, DatabaseHelper.BOOKNAME);
         //robot.deleteDataBase();
 
@@ -92,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         messageFrame = findViewById(R.id.message_frame);
         messageFrame.setColorSchemeColors(
-                getResources().getColor(R.color.chartlightblue500),
-                getResources().getColor(R.color.chartgray500));
+                this.getColor(R.color.chartlightblue500),
+                this.getColor(R.color.chartgray500));
 
         //btmFrame = findViewById(R.id.btm_frame);
         panelFrame = findViewById(R.id.panel_frame);
@@ -118,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         inAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
 
         messageAdapter = new MessageAdapter(this);
-        messagesView = (ListView) findViewById(R.id.message_list);
+        messagesView = findViewById(R.id.message_list);
         messagesView.setAdapter(messageAdapter);
 
 
@@ -128,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String h_time = robot.getBotHistoryTime();
                 h_time = h_time.split(" ")[0] + " 00:00:00";
                 Log.d("time", h_time);
@@ -136,7 +132,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Date date = simpleDateFormat.parse(h_time);
                     Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
+                    if (date != null) {
+                        calendar.setTime(date);
+                    }
+
                     calendar.add(Calendar.DATE, -1);
                     String ph_time = simpleDateFormat.format(calendar.getTime());
                     //Log.d("time", ph_time + "  &&&&  " + h_time);
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             int id = menuItem.getItemId();
                             if (id == R.id.popdelete) {
-                                robot.delteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
+                                robot.deleteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
                                 messageAdapter.remove(selectemsg);
                             }
                             else if (id == R.id.popedit) {
@@ -185,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                                 imgbtn_anim[2] = accounttype.findIconbySring(selectemsg.getType());
                                 typeBtn.startAnimation(outAnimation);
 
-                                robot.delteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
+                                robot.deleteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
                                 messageAdapter.remove(selectemsg);
                             }
                             return false;
@@ -217,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 String num_str = numText.getText().toString();
                 //Float amount = Float.parseFloat(str);
                 if (!num_str.isEmpty() && type_input != null) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     String datetime = simpleDateFormat.format(new java.util.Date());
 
                     if (!edittime.equals("noedit")) {
@@ -239,7 +238,9 @@ public class MainActivity extends AppCompatActivity {
 
                     numText.setText(null);
                     inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    if (view.getWindowToken() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                 }
                 else {
                     Toast.makeText(MainActivity.this, "(´ﾟДﾟ`)", Toast.LENGTH_SHORT).show();
@@ -250,15 +251,19 @@ public class MainActivity extends AppCompatActivity {
 
         numText.addTextChangedListener(new TextWatcher() {
             boolean text_empty_flag = true;
-            Integer savbtn_tag = (Integer) saveBtn.getTag();
+            //Integer savbtn_tag = (Integer) saveBtn.getTag();
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                /*
                 if (charSequence.length() != 0) {
                     text_empty_flag = false;
                 }
                 else {
                     text_empty_flag = true;
                 }
+
+                 */
+                text_empty_flag = (charSequence.length() != 0);
             }
 
             @Override
@@ -292,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 ImageButton btn = findViewById(imgbtn_anim[0]);
-                if (imgbtn_anim[2] != imgbtn_anim[1]) {
+                if (!imgbtn_anim[2].equals(imgbtn_anim[1])) {
                     btn.setImageResource(imgbtn_anim[2]);
                     btn.setTag(imgbtn_anim[2]);
                     btn.startAnimation(inAnimation);
@@ -331,8 +336,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        Log.d("item", item.toString());
+        //int id = item.getItemId();
+        //Log.d("item", item.toString());
 
         Intent intent;
 
@@ -396,16 +401,16 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Uri select = data.getData();
-            Log.d("path", select.toString());
+            //Log.d("path", select.toString());
             String path = FileUtil.getFullPathFromTreeUri(select, this);
             //String path = select.getPath();
             sendMessage(robot.exportDataBaes(this, path), null, "ALL", "bot");
         }
         else if (requestCode == 2 && resultCode == RESULT_OK) {
             Uri select = data.getData();
-            Log.d("path", select.toString());
+            //Log.d("path", select.toString());
             String path = FileUtil.getFullPathFromUri(select, this);
-            Log.d("path", path);
+            //Log.d("path", path);
 
             messageAdapter = null;
             messageAdapter = new MessageAdapter(this);

@@ -17,32 +17,33 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageAdapter extends BaseAdapter {
 
     List<Message> messages = new ArrayList<Message>();
     Context context;
 
-    public MessageAdapter(Context context) {
+    MessageAdapter(Context context) {
         this.context = context;
     }
 
-    public void add(Message message) {
+    void add(Message message) {
         this.messages.add(message);
         notifyDataSetChanged();
     }
 
-    public void addtotop(Message message) {
+    void addtotop(Message message) {
         this.messages.add(0, message);
         notifyDataSetChanged();
     }
 
-    public void addtoppostition(Message message, int pos) {
+    void addtoppostition(Message message, int pos) {
         this.messages.add(pos, message);
         notifyDataSetChanged();
     }
 
-    public void remove(Message message) {
+    void remove(Message message) {
         int pos = messages.indexOf(message);
         this.messages.remove(pos);
 
@@ -74,7 +75,7 @@ public class MessageAdapter extends BaseAdapter {
         LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         Message message = messages.get(i);
 
-        String output_str = "";
+        String output_str;
         //a chat bubble on right
         switch (message.getUser()) {
             case "master": {
@@ -87,7 +88,7 @@ public class MessageAdapter extends BaseAdapter {
                         + context.getResources().getString(R.string.moneyunit) + message.getText();
                 holder.msg.setText(output_str);
 
-                String time_s[] = message.getTime().split(" ")[1].split(":");
+                String[] time_s = message.getTime().split(" ")[1].split(":");
                 output_str = time_s[0]+":"+time_s[1];
                 holder.time.setText(output_str);
 
@@ -111,7 +112,7 @@ public class MessageAdapter extends BaseAdapter {
                 holder.msg.setText(message.getText());
 
                 AccountTypes accountTypes = new AccountTypes(context);
-                if (message.getType() == "ALL") {
+                if (message.getType().equals("ALL")) {
                     holder.avatar.setImageResource(R.mipmap.moneybank);
                 }
                 else {
@@ -125,10 +126,10 @@ public class MessageAdapter extends BaseAdapter {
                 convertView.setTag(holder);
                 //holder.time.setText(message.getText());
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 try {
                     Date transdate = simpleDateFormat.parse(message.getTime());
-                    simpleDateFormat = new SimpleDateFormat("MMM dd");
+                    simpleDateFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
                     output_str = simpleDateFormat.format(transdate);
                     holder.time.setText(output_str);
                 }  catch (Exception e) {
@@ -148,8 +149,8 @@ public class MessageAdapter extends BaseAdapter {
 
 
 class MessageViewHolder {
-    public ImageView avatar;
-    public TextView time;
-    public TextView name;
-    public TextView msg;
+    ImageView avatar;
+    TextView time;
+    TextView name;
+    TextView msg;
 }

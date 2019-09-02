@@ -2,26 +2,18 @@ package com.momodupi.piggybank;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.DashPathEffect;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.text.format.DateFormat;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -37,17 +29,10 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.math.BigDecimal;
-import java.text.BreakIterator;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -62,7 +47,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
     private List<ChartData> dataSet = new ArrayList<>();
     private Context context;
 
-    public ChartAdapter(Context context){
+    ChartAdapter(Context context){
         this.context = context;
     }
 
@@ -163,7 +148,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    public void addItem(ChartData item){
+    void addItem(ChartData item){
         dataSet.add(item);
         notifyDataSetChanged();
     }
@@ -179,7 +164,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         notifyItemRangeChanged(0, dataSet.size() - 1);
     }
 
-    public void deleteAll() {
+    void deleteAll() {
         dataSet.clear();
         notifyDataSetChanged();
     }
@@ -198,7 +183,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             return;
         }
 
-        int x_buf[] = new int[itemdata.getLineX().length];
+        int[] x_buf = new int[itemdata.getLineX().length];
         for (int cnt=0; cnt<itemdata.getLineX().length; cnt++) {
             x_buf[cnt] = itemdata.getLineX()[cnt];
         }
@@ -242,7 +227,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             }
 
             XAxisTextSize = 10f;
-            BarTextSize = 8f;
+            BarTextSize = 7f;
         }
 
 /*
@@ -260,13 +245,13 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         LineDataSet lineDataSet = new LineDataSet(lineoutput, context.getResources().getString(R.string.chartline));
 
-        lineDataSet.setColor(context.getResources().getColor(R.color.chartorange300));
+        lineDataSet.setColor(context.getColor(R.color.chartorange300));
         //lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         lineDataSet.setDrawCircles(false);
         lineDataSet.setDrawCircleHole(false);
         //lineDataSet.setCircleRadius(1);
         lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleColor(context.getResources().getColor(R.color.chartorange300));
+        lineDataSet.setCircleColor(context.getColor(R.color.chartorange300));
         lineDataSet.setCubicIntensity(0.15f);
         //lineDataSet.setValueTextSize(10);
         //lineDataSet.setValueTextColor(context.getResources().getColor(R.color.chartlightgreen300));
@@ -294,48 +279,57 @@ public class ChartAdapter extends RecyclerView.Adapter {
             barDataSet = new BarDataSet(baroutput, context.getResources().getString(R.string.chartoutcome));
             barDataSet_income = new BarDataSet(baroutput_income, context.getResources().getString(R.string.chartincome));
 
-            barDataSet_income.setColor(context.getResources().getColor(R.color.chartblue500Transparent));
-            barDataSet_income.setBarShadowColor(context.getResources().getColor(R.color.chartblue500Transparent));
+            barDataSet_income.setColor(context.getColor(R.color.chartblue500Transparent));
+            barDataSet_income.setBarShadowColor(context.getColor(R.color.chartblue500Transparent));
             barDataSet_income.setHighlightEnabled(false);
             barDataSet_income.setValueTextSize(BarTextSize);
-            barDataSet_income.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
-            barDataSet_income.setHighLightAlpha(50);
+            barDataSet_income.setValueTextColor(context.getColor(R.color.colorAccentLight));
+            //barDataSet_income.setHighLightAlpha(50);
         }
 
-        barDataSet.setColor(context.getResources().getColor(R.color.chartorange800));
-        barDataSet.setBarShadowColor(context.getResources().getColor(R.color.chartorange500));
+        barDataSet.setColor(context.getColor(R.color.chartorange800Transparent));
+        barDataSet.setBarShadowColor(context.getColor(R.color.chartorange800Transparent));
         barDataSet.setHighlightEnabled(false);
         barDataSet.setValueTextSize(BarTextSize);
-        barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
+        barDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
 
         BarData barchart;
         if (itemdata.getTimeType().equals("year")) {
             barchart = new BarData(barDataSet, barDataSet_income);
-            //barchart.groupBars(0, 0.2f, 0.3f);
+            barchart.setBarWidth(0.4f);
+            barchart.groupBars(0f, 0.2f, 0f);
         }
         else {
             barchart = new BarData(barDataSet);
         }
 
-
         XAxis xAxis = hld.combinedchart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        //xAxis.setGranularityEnabled(true);
-        //xAxis.setSpaceMax(0.1f);
-        xAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
-        xAxis.setAxisLineColor(context.getResources().getColor(R.color.colorAccent));
+
+        xAxis.setTextColor(context.getColor(R.color.colorAccent));
+        xAxis.setAxisLineColor(context.getColor(R.color.colorAccent));
         xAxis.setAxisLineWidth(1f);
         xAxis.setTextSize(XAxisTextSize);
         //xAxis.setLabelCount(itemdata.getLineX().length);
         xAxis.setLabelCount(Xcount);
-        xAxis.setAxisMinimum(1-0.6f);
-        //xAxis.setAxisMaximum(itemdata.getLineX().length);
-        xAxis.setAxisMaximum(Xcount+0.6f);
 
+        //xAxis.setAxisMaximum(itemdata.getLineX().length);
+        if (itemdata.getTimeType().equals("year")) {
+            xAxis.setAxisMinimum(1);
+            xAxis.setAxisMaximum(13);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(true);
+            //xAxis.setSpaceMax(0.1f);
+            //xAxis.setGranularity(1);
+        }
+        else {
+            xAxis.setAxisMinimum(0.4f);
+            xAxis.setAxisMaximum(Xcount+0.6f);
+        }
 
         if (itemdata.getTimeType().equals("year")) {
-            ValueFormatter xAxisFormatter = new DayAxisValueFormatter(hld.combinedchart);
+            ValueFormatter xAxisFormatter = new DayAxisValueFormatter();
             xAxis.setValueFormatter(xAxisFormatter);
         }
         else {
@@ -344,13 +338,13 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         YAxis yAxis = hld.combinedchart.getAxisLeft();
         yAxis.setDrawGridLines(true);
-        yAxis.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        yAxis.setTextColor(context.getColor(R.color.colorAccent));
         //yAxis.setEnabled(false);
         yAxis.setDrawAxisLine(false);
         yAxis.setMinWidth(0);
         yAxis.setLabelCount(5);
         //yAxis.setMaxWidth(Math.round(max_y));
-        yAxis.setGridColor(context.getResources().getColor(R.color.colorAccent));
+        yAxis.setGridColor(context.getColor(R.color.colorAccent));
         //yAxis.enableGridDashedLine(20, 40, 0);
         //yAxis.setDrawZeroLine(false);
         //yAxis.setZeroLineWidth(0);
@@ -361,7 +355,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         Legend legend = hld.combinedchart.getLegend();
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        legend.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        legend.setTextColor(context.getColor(R.color.colorAccent));
 
         Description description = new Description();
         //description.setText("test");
@@ -433,9 +427,9 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         AccountTypes accountTypes = new AccountTypes(context);
 
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
         for (int c : accountTypes.getGeneralTypeColor()) {
-            colors.add(context.getResources().getColor(c));
+            colors.add(context.getColor(c));
         }
         //Log.d("color", colors.toString());
 
@@ -443,7 +437,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         pieDataSet.setDrawValues(false);
         //pieDataSet.setSelectionShift(10f);
-        pieDataSet.setValueTextColor(context.getResources().getColor(R.color.colorAccentLight));
+        pieDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
         //pieDataSet.setValueTextSize(12f);
         //pieDataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
@@ -455,11 +449,11 @@ public class ChartAdapter extends RecyclerView.Adapter {
         hld.piechart.animateY(500);
 
         hld.piechart.setDrawHoleEnabled(true);
-        hld.piechart.setHoleColor(context.getResources().getColor(R.color.colorPrimary));
+        hld.piechart.setHoleColor(context.getColor(R.color.colorPrimary));
         hld.piechart.setHoleRadius(60);
         hld.piechart.setCenterText("");
         hld.piechart.setCenterTextSize(14);
-        hld.piechart.setCenterTextColor(context.getResources().getColor(R.color.colorAccentLight));
+        hld.piechart.setCenterTextColor(context.getColor(R.color.colorAccentLight));
 
         //hld.piechart.setEntryLabelColor(context.getResources().getColor(R.color.colorAccentLight));
         hld.piechart.setDrawEntryLabels(false);
@@ -471,7 +465,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         //legend.setDirection(Legend.LegendDirection.LEFT_TO_RIGHT);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setTextColor(context.getResources().getColor(R.color.colorAccent));
+        legend.setTextColor(context.getColor(R.color.colorAccent));
 
         Description description = new Description();
         description.setEnabled(false);
@@ -498,10 +492,12 @@ public class ChartAdapter extends RecyclerView.Adapter {
         });
     }
 
-
+/*
     private static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
+
+ */
 
     private static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
@@ -512,20 +508,19 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
 
 class ChartViewHolder extends RecyclerView.ViewHolder {
-    //public LineChart linechart;
-    public CombinedChart combinedchart;
-    public PieChart piechart;
-    public BarChart barchart;
-    public TextView chartlabel;
-    public TextView titleoutcome;
-    public TextView titleincome;
+    CombinedChart combinedchart;
+    PieChart piechart;
+    BarChart barchart;
+    TextView chartlabel;
+    TextView titleoutcome;
+    TextView titleincome;
 
-    public LinearLayout combinedframe;
-    public LinearLayout pieframe;
-    public LinearLayout barframe;
+    LinearLayout combinedframe;
+    LinearLayout pieframe;
+    LinearLayout barframe;
 
 
-    public ChartViewHolder(View itemView) {
+    ChartViewHolder(View itemView) {
         super(itemView);
         chartlabel = itemView.findViewById(R.id.chartlabel);
         titleoutcome = itemView.findViewById(R.id.chartoutcome);
@@ -543,10 +538,7 @@ class ChartViewHolder extends RecyclerView.ViewHolder {
 
 
 class DayAxisValueFormatter extends ValueFormatter {
-    private final BarLineChartBase<?> chart;
-    public DayAxisValueFormatter(BarLineChartBase<?> chart) {
-        this.chart = chart;
-    }
+
     @Override
     public String getFormattedValue(float value) {
 

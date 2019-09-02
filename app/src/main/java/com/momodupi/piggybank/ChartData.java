@@ -16,7 +16,7 @@ public class ChartData {
     private float income = 0;
 
 
-    public ChartData(LineChartData l, PieChartData p, BarChartData b, String time, String timetype) {
+    ChartData(LineChartData l, PieChartData p, BarChartData b, String time, String timetype) {
         this.lineChartData = l;
         this.pieChartData = p;
         this.barChartData = b;
@@ -24,27 +24,27 @@ public class ChartData {
         this.timeType = timetype;
     }
 
-    public void setTotalIncome(int income) {
+    void setTotalIncome(int income) {
         this.income = income;
     }
 
-    public float getTotalIncome() {
+    float getTotalIncome() {
         return this.income;
     }
 
-    public int[] getLineX() {
+    int[] getLineX() {
         return this.lineChartData.X;
     }
 
-    public float[] getLineY() {
+    float[] getLineY() {
         return this.lineChartData.Y;
     }
 
-    public String[] getPieX() {
+    String[] getPieX() {
         return this.pieChartData.X;
     }
 
-    public float[] getPieY() {
+    float[] getPieY() {
         return this.pieChartData.Y;
     }
 
@@ -52,32 +52,32 @@ public class ChartData {
         return this.barChartData.X;
     }
 
-    public float[] getBarY() {
+    float[] getBarY() {
         return this.barChartData.Y;
     }
 
-    public String getTime() {
+    String getTime() {
         return this.time;
     }
 
 
-    public String getTimeType() {
+    String getTimeType() {
         return this.timeType;
     }
 }
 
 
 class LineChartData {
-    public int[] X;
-    public float[] Y;
+    int[] X;
+    float[] Y;
 }
 
 class PieChartData {
-    public String[] X;
-    public float[] Y;
+    String[] X;
+    float[] Y;
 }
 
 class BarChartData {
-    public int[] X;
-    public float[] Y;
+    int[] X;
+    float[] Y;
 }

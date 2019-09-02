@@ -6,8 +6,9 @@ import android.util.DisplayMetrics;
 import android.view.Window;
 
 
-public class ScreenUtils {
+class ScreenUtils {
 
+    /*
     public static int getTotalScreenHeight(Activity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
@@ -20,17 +21,19 @@ public class ScreenUtils {
         return displayMetrics.widthPixels;
     }
 
-    public static int getAvailableScreenHeight(Activity activity) {
+     */
+
+    static int getAvailableScreenHeight(Activity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
     }
 
-    public static int getStatusBarHeight(Activity activity) {
+    static int getStatusBarHeight(Activity activity) {
         int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return activity.getResources().getDimensionPixelSize(resourceId);
     }
-
+/*
     public static int getVirtualBarHeightIfRoom(Activity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -58,5 +61,7 @@ public class ScreenUtils {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
+
+ */
 
 }

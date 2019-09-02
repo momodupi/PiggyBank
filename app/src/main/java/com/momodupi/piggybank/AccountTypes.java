@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class AccountTypes {
+class AccountTypes {
 
     private int[] type_icon_sets = {
             R.mipmap.clothes, R.mipmap.shoes, R.mipmap.luxury, R.mipmap.accessories,
@@ -60,11 +60,10 @@ public class AccountTypes {
             R.color.chartyellow500, R.color.chartorange800, R.color.chartred800,
     };
 
-    private ArrayList<Typetuple> type_sets = null;
+    private ArrayList<Typetuple> type_sets;
     //private Context context;
 
-
-    public AccountTypes(Context context) {
+    AccountTypes(Context context) {
 
         //this.type_string_sets = context.getResources().getStringArray(R.array.type_name);
 
@@ -94,7 +93,7 @@ public class AccountTypes {
             this.type_string_sets = this.combineString(this.type_string_sets, (String[]) i);
         }
 
-        this.type_sets = new ArrayList<Typetuple>();
+        this.type_sets = new ArrayList<>();
         for (int i=0; i<this.type_string_sets.length; i++) {
             Typetuple t = new Typetuple();
             t.type_str = this.type_string_sets[i];
@@ -104,23 +103,26 @@ public class AccountTypes {
     }
 
 
-    public String[] getTpyeString() {
+    String[] getTpyeString() {
         return this.type_string_sets;
     }
 
-    public String[] getGeneralTypeString() {
+    String[] getGeneralTypeString() {
         return this.general_type_sets;
     }
 
-    public int[] getGeneralTypeColor() {
-        int color[] = new int[this.general_type_color_sets.length];
+    int[] getGeneralTypeColor() {
+        /*
+        int[] color = new int[this.general_type_color_sets.length];
         for (int cnt=0; cnt<this.general_type_color_sets.length; cnt++) {
             color[cnt] = this.general_type_color_sets[cnt];
         }
+
+         */
         return this.general_type_color_sets;
     }
 
-    public String getGeneralType(String type) {
+    String getGeneralType(String type) {
         if (Arrays.asList(this.type_clothing).contains(type)) {
             return this.general_type_sets[0];
         }
@@ -151,16 +153,19 @@ public class AccountTypes {
         else if (Arrays.asList(this.type_misfortune).contains(type)) {
             return this.general_type_sets[9];
         }
-        else {
+        else if (Arrays.asList(this.type_income).contains(type)) {
             return this.general_type_sets[10];
+        }
+        else {
+            return null;
         }
     }
 
-    public int[] getTpyeIcon() {
+    int[] getTpyeIcon() {
         return this.type_icon_sets;
     }
 
-    public int findIconbySring(String type) {
+    int findIconbySring(String type) {
         for (Typetuple t: this.type_sets) {
             if (t.type_str.equals(type)) {
                 return t.type_icon;
@@ -189,6 +194,6 @@ public class AccountTypes {
 }
 
 class Typetuple {
-    public String type_str;
-    public int type_icon;
+    String type_str;
+    int type_icon;
 }
