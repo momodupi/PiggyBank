@@ -292,6 +292,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
         barDataSet.setHighlightEnabled(false);
         barDataSet.setValueTextSize(BarTextSize);
         barDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
+        barDataSet.setValueFormatter(new IntegerAxisValueFormatter());
 
         BarData barchart;
         if (itemdata.getTimeType().equals("year")) {
@@ -551,3 +552,12 @@ class DayAxisValueFormatter extends ValueFormatter {
         return String.format(Locale.getDefault(), format, calendar);
     }
 }
+
+class IntegerAxisValueFormatter extends ValueFormatter {
+
+    @Override
+    public String getFormattedValue(float value) {
+        return String.valueOf((int) value);
+    }
+}
+
