@@ -103,7 +103,7 @@ class AccountTypes {
     }
 
 
-    String[] getTpyeString() {
+    String[] getTypeString() {
         return this.type_string_sets;
     }
 
@@ -112,13 +112,6 @@ class AccountTypes {
     }
 
     int[] getGeneralTypeColor() {
-        /*
-        int[] color = new int[this.general_type_color_sets.length];
-        for (int cnt=0; cnt<this.general_type_color_sets.length; cnt++) {
-            color[cnt] = this.general_type_color_sets[cnt];
-        }
-
-         */
         return this.general_type_color_sets;
     }
 
@@ -161,7 +154,7 @@ class AccountTypes {
         }
     }
 
-    int[] getTpyeIcon() {
+    int[] getTypeIcon() {
         return this.type_icon_sets;
     }
 
@@ -169,6 +162,15 @@ class AccountTypes {
         for (Typetuple t: this.type_sets) {
             if (t.type_str.equals(type)) {
                 return t.type_icon;
+            }
+        }
+        return 0;
+    }
+
+    int findPositionbySring(String type) {
+        for (int pos=0; pos<this.type_string_sets.length; pos++) {
+            if (this.type_string_sets[pos].equals(type)) {
+                return pos;
             }
         }
         return 0;

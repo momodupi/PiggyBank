@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
                 this.setCombinedChart(hld, itemdata);
                 this.setPieChart(hld, itemdata);
 
+                Log.d("state", "month");
 
                 break;
             case "year":
@@ -122,12 +124,28 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
                 this.setCombinedChart(hld, itemdata);
                 this.setPieChart(hld, itemdata);
+
+                Log.d("state", "year");
+
                 break;
             case "others":
-                hld.chartlabel.setText("");
+                layoutParams = (LinearLayout.LayoutParams) hld.combinedframe.getLayoutParams();
+                layoutParams.height = 0;
+                layoutParams = (LinearLayout.LayoutParams) hld.pieframe.getLayoutParams();
+                layoutParams.height = 0;
+                layoutParams = (LinearLayout.LayoutParams) hld.barframe.getLayoutParams();
+                layoutParams.height = dpToPx(600);
+
+                hld.chartlabel.setText("All types");
+                hld.titleincome.setHeight(0);
+                hld.titleoutcome.setHeight(0);
+                this.setBarChart(hld, itemdata);
+
+                Log.d("state", "others");
 
                 break;
             default:
+                Log.d("state", "default");
                 break;
         }
     }
@@ -294,14 +312,14 @@ public class ChartAdapter extends RecyclerView.Adapter {
         barDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
         barDataSet.setValueFormatter(new IntegerAxisValueFormatter());
 
-        BarData barchart;
+        BarData barData;
         if (itemdata.getTimeType().equals("year")) {
-            barchart = new BarData(barDataSet, barDataSet_income);
-            barchart.setBarWidth(0.4f);
-            barchart.groupBars(0f, 0.2f, 0f);
+            barData = new BarData(barDataSet, barDataSet_income);
+            barData.setBarWidth(0.4f);
+            barData.groupBars(0f, 0.2f, 0f);
         }
         else {
-            barchart = new BarData(barDataSet);
+            barData = new BarData(barDataSet);
         }
 
         XAxis xAxis = hld.combinedchart.getXAxis();
@@ -376,7 +394,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
             combinedData.setData(lineData);
         }
 
-        combinedData.setData(barchart);
+        combinedData.setData(barData);
 
         hld.combinedchart.setScaleEnabled(true);
         hld.combinedchart.setData(combinedData);
@@ -493,6 +511,78 @@ public class ChartAdapter extends RecyclerView.Adapter {
         });
     }
 
+
+    private void setBarChart(ChartViewHolder hld, ChartData itemdata) {
+        //List<Entry> lineoutput = new ArrayList<>();
+        List<BarEntry> baroutput = new ArrayList<>();
+        //List<BarEntry> baroutput_income = new ArrayList<>();
+
+        for (int cnt=0; cnt<itemdata.getBarX().length; cnt++) {
+            baroutput.add(new BarEntry(itemdata.getBarX()[cnt], itemdata.getBarY()[cnt]));
+            Log.d("state", "in chart: "+ itemdata.getBarX()[cnt] + "  " + itemdata.getBarY()[cnt]);
+        }
+
+        BarDataSet barDataSet = new BarDataSet(baroutput, context.getResources().getString(R.string.chartbard));
+
+        barDataSet.setHighlightEnabled(true);
+        barDataSet.setValueTextSize(8f);
+        barDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
+        //barDataSet.setValueFormatter(new IntegerAxisValueFormatter());
+
+        BarData barData = new BarData(barDataSet);
+
+        hld.barchart.getAxisRight().setEnabled(false);
+
+        XAxis xAxis = hld.barchart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        xAxis.setTextColor(context.getColor(R.color.colorAccent));
+        xAxis.setAxisLineColor(context.getColor(R.color.colorAccent));
+        xAxis.setAxisLineWidth(2f);
+        ValueFormatter xAxisFormatter = new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                AccountTypes accountTypes = new AccountTypes(context);
+                Log.d("int", value + "  " + accountTypes.getTypeString()[(int) value]);
+                return accountTypes.getTypeString()[(int) value];
+            }
+        };
+        xAxis.setValueFormatter(xAxisFormatter);
+        xAxis.setTextSize(6f);
+        //xAxis.setLabelCount(itemdata.getLineX().length);
+        //AccountTypes accountTypes = new AccountTypes(context);
+        Log.d("count", itemdata.getBarX().length+ "");
+        xAxis.setLabelCount(itemdata.getBarX().length);
+
+        xAxis.setAxisMaximum(itemdata.getLineX().length-1);
+        xAxis.setAxisMinimum(0);
+
+        YAxis yAxis = hld.barchart.getAxisLeft();
+        yAxis.setDrawGridLines(true);
+        yAxis.setTextColor(context.getColor(R.color.colorAccent));
+        //yAxis.setEnabled(false);
+        yAxis.setDrawAxisLine(false);
+        //yAxis.setMinWidth(0);
+        //yAxis.setLabelCount(5);
+        //yAxis.setMaxWidth(Math.round(max_y));
+        yAxis.setGridColor(context.getColor(R.color.colorAccent));
+        //yAxis.enableGridDashedLine(20, 40, 0);
+        //yAxis.setDrawZeroLine(false);
+        //yAxis.setZeroLineWidth(0);
+        //yAxis.setZeroLineColor(context.getResources().getColor(R.color.colorPrimary));
+
+        hld.barchart.getAxisRight().setEnabled(false);
+
+        Legend legend = hld.barchart.getLegend();
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setTextColor(context.getColor(R.color.colorAccent));
+
+        hld.barchart.setScaleEnabled(true);
+        hld.barchart.setData(barData);
+    }
+
 /*
     private static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
@@ -552,6 +642,8 @@ class DayAxisValueFormatter extends ValueFormatter {
         return String.format(Locale.getDefault(), format, calendar);
     }
 }
+
+
 
 class IntegerAxisValueFormatter extends ValueFormatter {
 

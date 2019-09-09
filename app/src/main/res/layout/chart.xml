@@ -84,10 +84,10 @@
             android:layout_marginBottom="6dp"
             android:orientation="vertical">
 
-            <com.github.mikephil.charting.charts.BarChart
+            <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:id="@+id/barchart"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="600dp" />
         </LinearLayout>
 
         <LinearLayout

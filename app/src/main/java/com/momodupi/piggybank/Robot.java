@@ -57,7 +57,7 @@ class Robot {
         //sqliteDatabase.execSQL(cmd);
 
         accountTypes = new AccountTypes(context);
-        type_total = new float[accountTypes.getTpyeString().length];
+        type_total = new float[accountTypes.getTypeString().length];
 
         /*
         SharedPreferences preferences = botcontext.getSharedPreferences("robot", MODE_PRIVATE);
@@ -137,7 +137,7 @@ class Robot {
                     //Log.d("reply", this.reply_str);
                 }
                 else {
-                    String [] type_list = accountTypes.getTpyeString();
+                    String [] type_list = accountTypes.getTypeString();
 
                     int cnt = 0;
                     for (String t : type_list) {
@@ -244,7 +244,7 @@ class Robot {
     }
 
     private boolean isTypeLegal(String type) {
-        return Arrays.asList(accountTypes.getTpyeString()).contains(type);
+        return Arrays.asList(accountTypes.getTypeString()).contains(type);
     }
 
 

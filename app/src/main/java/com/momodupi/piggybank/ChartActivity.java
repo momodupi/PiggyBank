@@ -1,5 +1,6 @@
 package com.momodupi.piggybank;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,26 +57,21 @@ public class ChartActivity extends AppCompatActivity {
         chartTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
                 Log.d("tab", tab.getPosition()+"");
 
                 switch (tab.getPosition()) {
                     case 0:
-                        //Log.d("menu", "month");
-                        chartAdapter.deleteAll();
+                        //chartAdapter.deleteAll();
                         showAllMonthTab();
-                        //charttype = "month";
                         break;
                     case 1:
-                        //Log.d("menu", "year");
-                        chartAdapter.deleteAll();
+                        //chartAdapter.deleteAll();
                         showAllYearTab();
-                        //charttype = "year";
                         break;
                     case 2:
-                        //Log.d("menu", "type");
-                        chartAdapter.deleteAll();
-
-                        //charttype = "type";
+                        //chartAdapter.deleteAll();
+                        showAllOthersTab();
                         break;
                     default:
                         break;
@@ -236,6 +232,8 @@ public class ChartActivity extends AppCompatActivity {
     }
 
     private void showAllMonthTab() {
+        chartAdapter = new ChartAdapter(this);
+        recyclerView.setAdapter(chartAdapter);
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String[] datetime = robot.getCurrentTime().split(" ");
@@ -359,6 +357,8 @@ public class ChartActivity extends AppCompatActivity {
 
 
     private void showAllYearTab() {
+        chartAdapter = new ChartAdapter(this);
+        recyclerView.setAdapter(chartAdapter);
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String[] datetime = robot.getCurrentTime().split(" ");
@@ -379,4 +379,54 @@ public class ChartActivity extends AppCompatActivity {
         recyclerView.smoothScrollToPosition(chartAdapter.getItemCount());
     }
 
+
+    private void setOthersTab(ChartAdapter chartAdapter, String h_time) {
+        LineChartData lineChartData = new LineChartData();
+        PieChartData pieChartData = new PieChartData();
+        BarChartData barChartData = new BarChartData();
+
+        String ph_time = "2010-01-01 00:00:00";
+
+        //Log.d("date", h_time + "  " + ph_time);
+        List<structure_Database> alldata = robot.getData("ALL", ph_time, h_time);
+
+        boolean isDateSetNull = (alldata.size() == 0);
+
+        AccountTypes accountTypes = new AccountTypes(this);
+        //String type_string[] = new String[accountTypes.getTypeString().length];
+        int[] linex = new int[1];
+        float[] liney = new float[1];
+        String[] piex = new String[1];
+        float[] piey = new float[1];
+        int[] barx = new int[accountTypes.getTypeString().length];
+        float[] bary = new float[accountTypes.getTypeString().length];
+
+        for (int cnt=0; cnt<accountTypes.getTypeString().length; cnt++) {
+            barx[cnt] = cnt;
+        }
+
+        for (structure_Database sdata : alldata) {
+            bary[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
+        }
+
+        lineChartData.X = barx;
+        lineChartData.Y = bary;
+
+        pieChartData.X = null;
+        pieChartData.Y = null;
+
+        barChartData.X = barx;
+        barChartData.Y = bary;
+
+        ChartData chartData = new ChartData(lineChartData, pieChartData, barChartData, ph_time, "others");
+
+        chartAdapter.addItem(chartData);
+    }
+
+    private void showAllOthersTab() {
+
+        chartAdapter = new ChartAdapter(this);
+        recyclerView.setAdapter(chartAdapter);
+        setOthersTab(chartAdapter, robot.getCurrentTime());
+    }
 }

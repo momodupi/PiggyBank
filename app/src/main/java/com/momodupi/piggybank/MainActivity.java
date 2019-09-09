@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         //robot.deleteDataBase();
 
         accounttype = new AccountTypes(this);
-        tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTpyeString(), accounttype.getTpyeIcon());
+        tpyrgridview_act = new GridViewAdatper(MainActivity.this, accounttype.getTypeString(), accounttype.getTypeIcon());
         typegridview = findViewById(R.id.type_grid);
         typegridview.setAdapter(tpyrgridview_act);
 
@@ -200,10 +200,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //type_btn.setImageResource(gridViewImageId[position]);
-                type_input = accounttype.getTpyeString()[position];
+                type_input = accounttype.getTypeString()[position];
                 imgbtn_anim[0] = R.id.type_button;
                 imgbtn_anim[1] = (Integer) typeBtn.getTag();
-                imgbtn_anim[2] = accounttype.getTpyeIcon()[position];
+                imgbtn_anim[2] = accounttype.getTypeIcon()[position];
                 typeBtn.startAnimation(outAnimation);
                 Toast.makeText(MainActivity.this, "Select: " + type_input + "!", Toast.LENGTH_SHORT).show();
             }
