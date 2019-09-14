@@ -29,9 +29,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="36dp"
             android:layout_marginLeft="12dp"
             android:layout_marginBottom="6dp"
+            android:id="@+id/charthead"
             android:orientation="horizontal">
 
             <ImageView
@@ -74,20 +75,6 @@
                 android:id="@+id/combinedchart"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/barframe"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:orientation="vertical">
-
-            <com.github.mikephil.charting.charts.HorizontalBarChart
-                android:id="@+id/barchart"
-                android:layout_width="match_parent"
-                android:layout_height="600dp" />
         </LinearLayout>
 
         <LinearLayout

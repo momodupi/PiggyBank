@@ -184,6 +184,11 @@ public class ChartActivity extends AppCompatActivity {
             isDateSetNull = (alldata.size() == 0);
 
             AccountTypes accountTypes = new AccountTypes(this);
+            String[] piex = accountTypes.getGeneralTypeString();
+            float[] piey = new float[piex.length];
+
+            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
+
             for (structure_Database sdata : alldata) {
                 day = sdata.getTime().split(" ")[0].split("-")[2];
                 if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
@@ -192,18 +197,7 @@ public class ChartActivity extends AppCompatActivity {
                 else {
                     incomem += sdata.getAmount();
                 }
-            }
 
-            lineChartData.X = linex;
-            lineChartData.Y = liney;
-
-
-            String[] piex = accountTypes.getGeneralTypeString();
-            float[] piey = new float[piex.length];
-
-            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
-
-            for (structure_Database sdata : alldata) {
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 if (pos >= 0 && pos < piex.length) {
                     if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
@@ -211,6 +205,9 @@ public class ChartActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            lineChartData.X = linex;
+            lineChartData.Y = liney;
 
             pieChartData.X = piex;
             pieChartData.Y = piey;
@@ -306,6 +303,10 @@ public class ChartActivity extends AppCompatActivity {
             isDateSetNull = (alldata.size() == 0);
 
             AccountTypes accountTypes = new AccountTypes(this);
+            String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-2);
+            float[] piey = new float[piex.length];
+            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
+
             for (structure_Database sdata : alldata) {
                 month = sdata.getTime().split(" ")[0].split("-")[1];
                 if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
@@ -315,19 +316,7 @@ public class ChartActivity extends AppCompatActivity {
                     incomey += sdata.getAmount();
                     bary[Integer.parseInt(month)] += sdata.getAmount();
                 }
-            }
 
-            lineChartData.X = linex;
-            lineChartData.Y = liney;
-
-            //AccountTypes accountTypes = new AccountTypes(this);
-            String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-2);
-            float[] piey = new float[piex.length];
-
-            ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
-
-            for (structure_Database sdata : alldata) {
-                //Log.d("type", accountTypes.getGeneralType(sdata.getType()));
                 int pos = type_index.indexOf(accountTypes.getGeneralType(sdata.getType()));
                 if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
                     if (pos >= 0 && pos < piex.length) {
@@ -335,6 +324,9 @@ public class ChartActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            lineChartData.X = linex;
+            lineChartData.Y = liney;
 
             pieChartData.X = piex;
             pieChartData.Y = piey;
@@ -394,26 +386,29 @@ public class ChartActivity extends AppCompatActivity {
 
         AccountTypes accountTypes = new AccountTypes(this);
         //String type_string[] = new String[accountTypes.getTypeString().length];
-        int[] linex = new int[1];
-        float[] liney = new float[1];
-        String[] piex = new String[1];
-        float[] piey = new float[1];
-        int[] barx = new int[accountTypes.getTypeString().length];
-        float[] bary = new float[accountTypes.getTypeString().length];
+        int[] linex = new int[24];
+        float[] liney = new float[24];
+        String[] piex = accountTypes.getTypeString();
+        float[] piey = new float[accountTypes.getTypeString().length];
+        int[] barx = new int[1];
+        float[] bary = new float[1];
 
-        for (int cnt=0; cnt<accountTypes.getTypeString().length; cnt++) {
-            barx[cnt] = cnt;
+        for (int cnt=0; cnt<24; cnt++) {
+            linex[cnt] = cnt;
         }
 
         for (structure_Database sdata : alldata) {
-            bary[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
+            String hour = sdata.getTime().split(" ")[1].split(":")[0];
+            //bary[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
+            liney[Integer.valueOf(hour)] += sdata.getAmount();
+            piey[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
         }
 
-        lineChartData.X = barx;
-        lineChartData.Y = bary;
+        lineChartData.X = linex;
+        lineChartData.Y = liney;
 
-        pieChartData.X = null;
-        pieChartData.Y = null;
+        pieChartData.X = piex;
+        pieChartData.Y = piey;
 
         barChartData.X = barx;
         barChartData.Y = bary;
