@@ -1,6 +1,8 @@
 package com.momodupi.piggybank;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,12 +20,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton typeBtn;
     private EditText numText;
     private ImageButton saveBtn;
+    private ImageButton timeBtn;
 
     private Animation outAnimation;
     private Animation inAnimation;
@@ -109,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         saveBtn.setImageResource(R.mipmap.etransfer);
         saveBtn.setTag(R.mipmap.etransfer);
 
+        timeBtn = findViewById(R.id.time_btn);
+        timeBtn.setTag(R.mipmap.transparent);
+        timeBtn.setImageResource(R.mipmap.transparent);
+        timeBtn.setVisibility(View.INVISIBLE);
+
         // Create the Animation objects.
         outAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
         inAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
@@ -136,10 +146,16 @@ public class MainActivity extends AppCompatActivity {
                         calendar.setTime(date);
                     }
 
-                    calendar.add(Calendar.DATE, -1);
-                    String ph_time = simpleDateFormat.format(calendar.getTime());
+                    //calendar.add(Calendar.DATE, -1);
+                    //String ph_time = simpleDateFormat.format(calendar.getTime());
                     //Log.d("time", ph_time + "  &&&&  " + h_time);
-                    robot.showHistory(messageAdapter, messagesView, ph_time);
+                    //robot.showHistory(messageAdapter, messagesView, ph_time);
+                    for (int pd=1; pd<=7; pd++) {
+                        calendar.add(Calendar.DATE, -1);
+                        String ph_time = simpleDateFormat.format(calendar.getTime());
+                        //Log.d("time", ph_time + "  &&&&  " + h_time);
+                        robot.showHistory(messageAdapter, messagesView, ph_time);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();
@@ -184,6 +200,12 @@ public class MainActivity extends AppCompatActivity {
                                 imgbtn_anim[2] = accounttype.findIconbySring(selectemsg.getType());
                                 typeBtn.startAnimation(outAnimation);
 
+                                timeBtn.setVisibility(View.VISIBLE);
+                                imgbtn_anim[0] = R.id.time_btn;
+                                imgbtn_anim[1] = (Integer) timeBtn.getTag();
+                                imgbtn_anim[2] = R.mipmap.time;
+                                timeBtn.startAnimation(outAnimation);
+
                                 robot.deleteItem(selectemsg.getType(), selectemsg.getTime(), selectemsg.getText());
                                 messageAdapter.remove(selectemsg);
                             }
@@ -216,25 +238,40 @@ public class MainActivity extends AppCompatActivity {
                 String num_str = numText.getText().toString();
                 //Float amount = Float.parseFloat(str);
                 if (!num_str.isEmpty() && type_input != null) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String datetime = simpleDateFormat.format(new java.util.Date());
 
                     if (!edittime.equals("noedit")) {
-                        datetime = edittime;
-                        sendMessageToPosition(num_str, datetime, type_input, "master", editposition);
-                        robot.read(type_input, datetime, num_str);
+                        //datetime = edittime;
+                        //sendMessageToPosition(num_str, datetime, type_input, "master", editposition);
+                        //robot.read(type_input, datetime, num_str);
+                        sendMessageToPosition(num_str, edittime, type_input, "master", editposition);
+                        robot.read(type_input, edittime, num_str);
 
                         sendMessageToPosition(robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot", editposition+1);
+
                         Log.d("send", "edit: true");
                         edittime = "noedit";
+
+                        messageAdapter = new MessageAdapter(MainActivity.this);
+                        messagesView.setAdapter(messageAdapter);
+
+                        robot.showToday(messageAdapter, messagesView);
                     }
                     else {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String datetime = simpleDateFormat.format(new java.util.Date());
+
                         sendMessage(num_str, datetime, type_input, "master");
                         robot.read(type_input, datetime, num_str);
 
                         sendMessage(robot.reply(), robot.getInputTime(), robot.getInputTpye(), "bot");
                         Log.d("send", "edit: false");
                     }
+
+                    imgbtn_anim[0] = R.id.time_btn;
+                    imgbtn_anim[1] = (Integer) timeBtn.getTag();
+                    imgbtn_anim[2] = R.mipmap.transparent;
+                    timeBtn.startAnimation(outAnimation);
+                    timeBtn.setVisibility(View.INVISIBLE);
 
                     numText.setText(null);
                     inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -249,20 +286,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        timeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+                int yy = c.get(Calendar.YEAR);
+                int mm = c.get(Calendar.MONTH);
+                int dd = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                    new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            edittime = year + "-" + String.format("%02d", monthOfYear+1) + "-" + String.format("%02d", dayOfMonth) + " " + edittime.split(" ")[1];
+
+                            int h = c.get(Calendar.HOUR_OF_DAY);
+                            int m = c.get(Calendar.MINUTE);
+                            TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this,
+                                    new TimePickerDialog.OnTimeSetListener() {
+
+                                        @Override
+                                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                            edittime = edittime.split(" ")[0] + " " + String.format("%02d", hourOfDay+1) + ":" + String.format("%02d", minute) + ":00";
+                                        }
+                                    }, h, m, false);
+                            timePickerDialog.show();
+                        }
+                    }, yy, mm, dd);
+                datePickerDialog.show();
+
+                Log.d("edittime", edittime);
+            }
+        });
+
         numText.addTextChangedListener(new TextWatcher() {
             boolean text_empty_flag = true;
             //Integer savbtn_tag = (Integer) saveBtn.getTag();
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                /*
-                if (charSequence.length() != 0) {
-                    text_empty_flag = false;
-                }
-                else {
-                    text_empty_flag = true;
-                }
-
-                 */
                 text_empty_flag = (charSequence.length() != 0);
             }
 

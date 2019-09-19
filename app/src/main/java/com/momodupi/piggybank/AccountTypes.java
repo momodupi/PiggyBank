@@ -25,7 +25,7 @@ class AccountTypes {
             R.mipmap.mobilepayment, R.mipmap.post, R.mipmap.delivery,
             R.mipmap.training, R.mipmap.game, R.mipmap.software,
             R.mipmap.tourism, R.mipmap.movie, R.mipmap.bar,
-            R.mipmap.courses, R.mipmap.books, R.mipmap.delivery,
+            R.mipmap.courses, R.mipmap.books, R.mipmap.stationery,
             R.mipmap.party, R.mipmap.gift, R.mipmap.donation,
             R.mipmap.treatment, R.mipmap.pills, R.mipmap.supplements,
             R.mipmap.insurance, R.mipmap.accidents, R.mipmap.tickets,
@@ -45,7 +45,7 @@ class AccountTypes {
     private String[] type_misfortune;
     private String[] type_income;
 
-
+    private Object[] general_type_sets_obj;
 
     private String[] general_type_sets = {
             "Clothing", "Food", "Housing",
@@ -61,6 +61,7 @@ class AccountTypes {
     };
 
     private ArrayList<Typetuple> type_sets;
+
     //private Context context;
 
     AccountTypes(Context context) {
@@ -79,7 +80,7 @@ class AccountTypes {
         this.type_misfortune = context.getResources().getStringArray(R.array.type_misfortune);
         this.type_income = context.getResources().getStringArray(R.array.type_income);
 
-        Object[] general_type_sets_obj = {
+        general_type_sets_obj = new Object[] {
                 this.type_clothing, this.type_food,
                 this.type_housing, this.type_transportation,
                 this.type_communication, this.type_entertainment,
@@ -89,7 +90,7 @@ class AccountTypes {
         };
 
         this.type_string_sets = null;
-        for (Object i : general_type_sets_obj) {
+        for (Object i : this.general_type_sets_obj) {
             this.type_string_sets = this.combineString(this.type_string_sets, (String[]) i);
         }
 
@@ -154,6 +155,10 @@ class AccountTypes {
         }
     }
 
+    String[] getStringFromGeneralSets(int i) {
+        return (String[]) this.general_type_sets_obj[i];
+    }
+
     int[] getTypeIcon() {
         return this.type_icon_sets;
     }
@@ -167,7 +172,7 @@ class AccountTypes {
         return 0;
     }
 
-    int findPositionbySring(String type) {
+    int findPositionBySring(String type) {
         for (int pos=0; pos<this.type_string_sets.length; pos++) {
             if (this.type_string_sets[pos].equals(type)) {
                 return pos;

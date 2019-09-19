@@ -303,7 +303,7 @@ public class ChartActivity extends AppCompatActivity {
             isDateSetNull = (alldata.size() == 0);
 
             AccountTypes accountTypes = new AccountTypes(this);
-            String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-2);
+            String[] piex = Arrays.copyOfRange(accountTypes.getGeneralTypeString(), 0, accountTypes.getGeneralTypeString().length-1);
             float[] piey = new float[piex.length];
             ArrayList<String> type_index = new ArrayList<>(Arrays.asList(piex));
 
@@ -401,7 +401,11 @@ public class ChartActivity extends AppCompatActivity {
             String hour = sdata.getTime().split(" ")[1].split(":")[0];
             //bary[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
             liney[Integer.valueOf(hour)] += sdata.getAmount();
-            piey[accountTypes.findPositionbySring(sdata.getType())] += sdata.getAmount();
+            //piey[accountTypes.findPositionBySring(sdata.getType())] += sdata.getAmount();
+
+            if (!accountTypes.getGeneralType(sdata.getType()).equals("Income")) {
+                piey[accountTypes.findPositionBySring(sdata.getType())] += sdata.getAmount();
+            }
         }
 
         lineChartData.X = linex;

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +27,7 @@ class Robot {
     private String book;
     private String starttime;
     private String histroytime;
+    private String oldesttime;
 
     private String reply_str;
 
@@ -59,35 +61,20 @@ class Robot {
         accountTypes = new AccountTypes(context);
         type_total = new float[accountTypes.getTypeString().length];
 
+        //sqliteDatabase.rawQuery("SELECT MIN(" + dbbasehelper.COLUMNSNAME[1] + ") FROM " + this.book, null);
         /*
-        SharedPreferences preferences = botcontext.getSharedPreferences("robot", MODE_PRIVATE);
+        Cursor cursor = this.sqliteDatabase.query(this.book,
+                new String[] { "book_type", "book_time", "book_amount", "book_reply"},
+                "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
+                new String[] { this.input_type, this.input_time, String.valueOf(this.input_amount), this.reply_str },
+                null, null, null);
 
-        String [] type_list = botcontext.getResources().getStringArray(R.array.type_name);
-        type_total = new float[type_list.length];
 
-        if (!preferences.getBoolean("nonvirgin", false)) {
-            SharedPreferences.Editor editor = botcontext.getSharedPreferences("robot", MODE_PRIVATE).edit();
-
-            editor.putBoolean("nonvirgin", true);
-
-            StringBuilder save_str = new StringBuilder();
-
-            for (int cnt = 0; cnt<type_list.length; cnt++) {
-                save_str.append(type_total[cnt]).append(",");
-            }
-
-            editor.putString("answer_average", save_str.toString());
-            editor.apply();
-        }
-
-        String str_buf = preferences.getString("answer_average", "");
-        Log.d("save avr", str_buf);
-        StringTokenizer str_token = new StringTokenizer(str_buf, ",");
-        for (int cnt = 0; cnt<type_total.length; cnt++) {
-            type_total[cnt] = Float.parseFloat(str_token.nextToken());
-            Log.d("avr", String.valueOf(type_total[cnt]));
-        }
-        */
+         */
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT MIN(book_time) FROM " + this.book, null);
+        cursor.moveToFirst();
+        this.oldesttime = cursor.getString(0);
+        cursor.close();
     }
 
 
@@ -97,15 +84,6 @@ class Robot {
         this.input_amount = Float.parseFloat(amount);
 
         this.isInputCorrect = !(!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 );
-        /*
-        if (!this.isTypeLegal(this.input_type) || this.input_time.isEmpty() || this.input_amount <= 0 ) {
-            this.isInputCorrect = false;
-        }
-        else {
-            this.isInputCorrect = true;
-        }
-
-         */
     }
 
     private boolean messageProcess() {
@@ -194,6 +172,7 @@ class Robot {
         }
         cursor.close();
 
+        Log.d("read", checktype + "  " + checktime + "  " + checknum + "  " + checkreply);
         //Log.d("sqlite read", (checktype.equals(type_input))  + " " + checktime.equals(datetime) + " " + (checknum==Float.parseFloat(num_str)));
         if (checktype != null && checktime != null && checkreply != null) {
             return ((checktype.equals(this.input_type)) && checktime.equals(this.input_time) && (checknum == this.input_amount && (checkreply.equals(this.reply_str))));
@@ -324,36 +303,40 @@ class Robot {
     void showHistory(MessageAdapter msa, ListView msgv, String rqsttime) {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
         try {
-            if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
-                //Log.d("time",this.histroytime + "  " + rqsttime);
+            if (!simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.oldesttime))) {
 
-                List<structure_Database> historydata = this.getData("ALL", rqsttime, this.histroytime);
+                if (simpleDateFormat.parse(rqsttime).before(simpleDateFormat.parse(this.histroytime))) {
+                    //Log.d("time",this.histroytime + "  " + rqsttime);
 
-                Message msg_s;
-                Collections.reverse(historydata);
+                    List<structure_Database> historydata = this.getData("ALL", rqsttime, this.histroytime);
 
-                for(structure_Database msg: historydata) {
-                    //structure_Database msg = historydata.get(pos);
-                    String amount_str = String.valueOf(msg.getAmount());
+                    Message msg_s;
+                    Collections.reverse(historydata);
 
-                    msg_s = new Message(msg.getReply(), msg.getTime(), msg.getType(), "bot");
+                    for (structure_Database msg : historydata) {
+                        //structure_Database msg = historydata.get(pos);
+                        String amount_str = String.valueOf(msg.getAmount());
+
+                        msg_s = new Message(msg.getReply(), msg.getTime(), msg.getType(), "bot");
+                        msa.addtotop(msg_s);
+                        msgv.setSelection(msa.getCount() - 1);
+
+                        msg_s = new Message(amount_str, msg.getTime(), msg.getType(), "master");
+                        msa.addtotop(msg_s);
+                        msgv.setSelection(msa.getCount() - 1);
+                    }
+
+                    this.histroytime = rqsttime;
+                    //Log.d("time", "history: " + this.histroytime);
+                    msg_s = new Message(null, this.histroytime, null, "date");
                     msa.addtotop(msg_s);
-                    msgv.setSelection(msa.getCount() - 1);
-
-                    msg_s = new Message(amount_str, msg.getTime(), msg.getType(), "master");
-                    msa.addtotop(msg_s);
-                    msgv.setSelection(msa.getCount() - 1);
+                    msgv.smoothScrollToPosition(historydata.size());
                 }
-
-                this.histroytime = rqsttime;
-                //Log.d("time", "history: " + this.histroytime);
-                msg_s = new Message(null, this.histroytime, null, "date");
-                msa.addtotop(msg_s);
-                msgv.smoothScrollToPosition(historydata.size());
             }
             else {
-                return;
+                Toast.makeText(botcontext, botcontext.getString(R.string.nomoredata), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -414,8 +397,9 @@ class Robot {
 
         for(structure_Database msg: alldata){
             String amount_str = String.valueOf(msg.getAmount());
-            buffer.append(msg.getType() + "," + msg.getTime() +
-                    "," + amount_str + ","+ msg.getReply() + "\r\n");
+            String addstr = msg.getType() + "," + msg.getTime() +
+                    "," + amount_str + ","+ msg.getReply() + "\r\n";
+            buffer.append(addstr);
         }
 
         try {

@@ -41,6 +41,19 @@
         android:layout_width="12dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
+        <ImageButton
+            android:id="@+id/time_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="12dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <ImageButton
             android:id="@+id/save_btn"

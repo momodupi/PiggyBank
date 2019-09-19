@@ -2,6 +2,7 @@ package com.momodupi.piggybank;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -18,6 +20,7 @@ import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -274,6 +277,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         for (int i = 0; i < 13; i++) {
             if (i < itemdata.getLineY().length) {
+                total += itemdata.getLineY()[i];
                 baroutput.add(new BarEntry(itemdata.getLineX()[i], itemdata.getLineY()[i]));
                 baroutput_income.add(new BarEntry(itemdata.getLineX()[i], itemdata.getBarY()[i]));
             }
@@ -453,7 +457,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
         for (int i = 0; i < itemdata.getPieY().length; i++) {
             output.add(new PieEntry(itemdata.getPieY()[i], itemdata.getPieX()[i]));
-            //Log.d("amount", " "+itemdata.getPieY()[i]);
+            //Log.d("amount", " "+itemdata.getPieX()[i]);
         }
 
 
@@ -462,13 +466,69 @@ public class ChartAdapter extends RecyclerView.Adapter {
         AccountTypes accountTypes = new AccountTypes(context);
 
         ArrayList<Integer> colors = new ArrayList<>();
-        for (int c : accountTypes.getGeneralTypeColor()) {
-            colors.add(context.getColor(c));
-        }
-        //Log.d("color", colors.toString());
 
+        if (itemdata.getTimeType().equals("others")) {
+            for (int pos=0; pos<accountTypes.getGeneralTypeColor().length; pos++) {
+                int color1 = ContextCompat.getColor(context, accountTypes.getGeneralTypeColor()[pos]);
+                int color2;
+                if (pos == accountTypes.getGeneralTypeColor().length-1) {
+                    color2 = ContextCompat.getColor(context, accountTypes.getGeneralTypeColor()[0]);
+                }
+                else {
+                    color2 = ContextCompat.getColor(context, accountTypes.getGeneralTypeColor()[pos+1]);
+                }
+                Log.d("color", "1:"+"#"+Integer.toHexString(color1) + " 2:"+"#"+Integer.toHexString(color2));
+
+                int red1 = Color.red(color1);
+                int green1 = Color.green(color1);
+                int blue1 = Color.blue(color1);
+
+                int redd = Color.red(color2) - Color.red(color1);
+                int greend = Color.green(color2) - Color.green(color1);
+                int blued = Color.blue(color2) - Color.blue(color1);
+
+                int sizeofcolor = accountTypes.getStringFromGeneralSets(pos).length;
+                for (int i=0; i<sizeofcolor; i++) {
+                    //colors.add(context.getColor(c));
+                    //Log.d("color", ""+"#"+Integer.toHexString(ContextCompat.getColor(context, c)));
+                    //colors.add(Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(context, c)+i*120)));
+                    //colors.add(Color.parseColor("#" + Integer.toHexString(color1 + i*(color2-color1)/sizeofcolor)));
+                    colors.add(Color.rgb(red1+i*redd/sizeofcolor, green1+i*greend/sizeofcolor, blue1+i*blued/sizeofcolor));
+                    //Log.d("color", ""+"#"+Integer.toHexString(color1 + (color2-color1)/sizeofcolor));
+                }
+            }
+            Legend legend = hld.piechart.getLegend();
+
+            ArrayList<LegendEntry> legendEntry = new ArrayList<>();
+
+            for (int i=0; i<accountTypes.getGeneralTypeString().length-1; i++) {
+                LegendEntry l = new LegendEntry(accountTypes.getGeneralTypeString()[i],
+                        Legend.LegendForm.DEFAULT,10f,2f,null,
+                        context.getColor(accountTypes.getGeneralTypeColor()[i]));
+                legendEntry.add(l);
+            }
+
+            legend.setCustom(legendEntry);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            //legend.setDirection(Legend.LegendDirection.LEFT_TO_RIGHT);
+            legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+            legend.setTextColor(context.getColor(R.color.colorAccent));
+        }
+        else {
+            for (int c : accountTypes.getGeneralTypeColor()) {
+                colors.add(context.getColor(c));
+            }
+            Legend legend = hld.piechart.getLegend();
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            //legend.setDirection(Legend.LegendDirection.LEFT_TO_RIGHT);
+            legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+            legend.setTextColor(context.getColor(R.color.colorAccent));
+        }
         pieDataSet.setColors(colors);
 
+        pieDataSet.setSliceSpace(1f);
         pieDataSet.setDrawValues(false);
         //pieDataSet.setSelectionShift(10f);
         pieDataSet.setValueTextColor(context.getColor(R.color.colorAccentLight));
@@ -493,13 +553,6 @@ public class ChartAdapter extends RecyclerView.Adapter {
         hld.piechart.setDrawEntryLabels(false);
         //hld.piechart.setEntryLabelTextSize(8f);
         hld.piechart.setTouchEnabled(true);
-
-        Legend legend = hld.piechart.getLegend();
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        //legend.setDirection(Legend.LegendDirection.LEFT_TO_RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setTextColor(context.getColor(R.color.colorAccent));
 
         Description description = new Description();
         description.setEnabled(false);

@@ -19,6 +19,7 @@
     <string name="presstoexit">Press twice to exit!</string>
 
     <string name="loadingfailed">(ﾟДﾟ≡ﾟДﾟ)Loading failed!</string>
+    <string name="nomoredata">(*´д`)No earlier history!</string>
     <string name="needpermission">(´ﾟДﾟ`)\nI need storage permission to backup!</string>
     <string name="backups">(＾o＾)ﾉ\nBackup Succeed!</string>
     <string name="backupf">|-` )\nBackup Failed!</string>

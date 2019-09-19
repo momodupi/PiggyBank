@@ -21,6 +21,7 @@
     <string name="presstoexit">按两次退出！</string>
 
     <string name="loadingfailed">(ﾟДﾟ≡ﾟДﾟ)载入失败</string>
+    <string name="nomoredata">(*´д`)没有更早的记录了！</string>
     <string name="needpermission">(´ﾟДﾟ`)\n我需要存储权限来备份！</string>
     <string name="backups">(＾o＾)ﾉ\n备份成功！</string>
     <string name="backupf">|-` )\n备份失败！</string>
