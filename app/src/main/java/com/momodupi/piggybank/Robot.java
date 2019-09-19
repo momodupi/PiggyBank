@@ -71,12 +71,19 @@ class Robot {
 
 
          */
+
         Cursor cursor = sqliteDatabase.rawQuery("SELECT * FROM " + this.book + " ORDER BY book_time ASC LIMIT 2", null);
-        cursor.moveToFirst();
-        cursor.moveToNext();
-        this.oldesttime = cursor.getString(1);
-        Log.d("old time", cursor.getString(1));
-        cursor.close();
+
+        if (cursor.getCount() >= 2) {
+            cursor.moveToFirst();
+            cursor.moveToNext();
+            this.oldesttime = cursor.getString(1);
+            Log.d("old time", cursor.getString(1));
+            cursor.close();
+        }
+        else {
+            this.oldesttime = this.getCurrentTime();
+        }
     }
 
 
@@ -454,6 +461,19 @@ class Robot {
             //sqliteDatabase.endTransaction();
             this.starttime = this.getCurrentTime();
             this.histroytime = this.starttime;
+
+            Cursor cursor = sqliteDatabase.rawQuery("SELECT * FROM " + this.book + " ORDER BY book_time ASC LIMIT 2", null);
+
+            if (cursor.getCount() >= 2) {
+                cursor.moveToFirst();
+                cursor.moveToNext();
+                this.oldesttime = cursor.getString(1);
+                Log.d("old time", cursor.getString(1));
+                cursor.close();
+            }
+            else {
+                this.oldesttime = this.getCurrentTime();
+            }
 
             return context.getResources().getString(R.string.recoverys);
         }
