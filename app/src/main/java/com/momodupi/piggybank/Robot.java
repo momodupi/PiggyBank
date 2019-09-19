@@ -71,9 +71,11 @@ class Robot {
 
 
          */
-        Cursor cursor = sqliteDatabase.rawQuery("SELECT MIN(book_time) FROM " + this.book, null);
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT * FROM " + this.book + " ORDER BY book_time ASC LIMIT 2", null);
         cursor.moveToFirst();
-        this.oldesttime = cursor.getString(0);
+        cursor.moveToNext();
+        this.oldesttime = cursor.getString(1);
+        Log.d("old time", cursor.getString(1));
         cursor.close();
     }
 
@@ -301,6 +303,7 @@ class Robot {
 
 
     void showHistory(MessageAdapter msa, ListView msgv, String rqsttime) {
+        Log.d("history time", rqsttime + "  " + this.oldesttime + "   " + this.histroytime);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
