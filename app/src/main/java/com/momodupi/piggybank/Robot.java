@@ -55,22 +55,8 @@ class Robot {
         dbbasehelper = new DatabaseHelper(context, this.book, null, 1);
         sqliteDatabase = dbbasehelper.getWritableDatabase();
 
-        //String cmd = String.format("SELECT * FROM %s ORDER BY %s DESC", this.book, "book_time");
-        //sqliteDatabase.execSQL(cmd);
-
         accountTypes = new AccountTypes(context);
         type_total = new float[accountTypes.getTypeString().length];
-
-        //sqliteDatabase.rawQuery("SELECT MIN(" + dbbasehelper.COLUMNSNAME[1] + ") FROM " + this.book, null);
-        /*
-        Cursor cursor = this.sqliteDatabase.query(this.book,
-                new String[] { "book_type", "book_time", "book_amount", "book_reply"},
-                "book_type=? AND book_time=? AND book_amount=? AND book_reply=?",
-                new String[] { this.input_type, this.input_time, String.valueOf(this.input_amount), this.reply_str },
-                null, null, null);
-
-
-         */
 
         Cursor cursor = sqliteDatabase.rawQuery("SELECT * FROM " + this.book + " ORDER BY book_time ASC LIMIT 2", null);
 
@@ -305,7 +291,7 @@ class Robot {
         }
         msg_s = new Message(null, this.histroytime, null, "date");
         msa.addtotop(msg_s);
-        msgv.smoothScrollToPosition(msa.getCount() - 1);
+        //msgv.smoothScrollToPosition(msa.getCount() - 1);
     }
 
 
@@ -325,6 +311,7 @@ class Robot {
                     Message msg_s;
                     Collections.reverse(historydata);
 
+                    //int msasize = msa.getCount()-1;
                     for (structure_Database msg : historydata) {
                         //structure_Database msg = historydata.get(pos);
                         String amount_str = String.valueOf(msg.getAmount());
@@ -340,9 +327,11 @@ class Robot {
 
                     this.histroytime = rqsttime;
                     //Log.d("time", "history: " + this.histroytime);
-                    msg_s = new Message(null, this.histroytime, null, "date");
-                    msa.addtotop(msg_s);
-                    msgv.smoothScrollToPosition(historydata.size());
+                    if (historydata.size() != 0) {
+                        msg_s = new Message(null, this.histroytime, null, "date");
+                        msa.addtotop(msg_s);
+                    }
+                    //msgv.smoothScrollToPosition(historydata.size());
                 }
             }
             else {

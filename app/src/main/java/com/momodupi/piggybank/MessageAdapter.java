@@ -35,12 +35,12 @@ public class MessageAdapter extends BaseAdapter {
 
     void addtotop(Message message) {
         this.messages.add(0, message);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     void addtoppostition(Message message, int pos) {
         this.messages.add(pos, message);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     void remove(Message message) {

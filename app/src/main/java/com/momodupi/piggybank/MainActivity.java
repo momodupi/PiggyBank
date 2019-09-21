@@ -130,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
 
         robot.showToday(messageAdapter, messagesView);
 
-
         messageFrame.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -150,12 +149,20 @@ public class MainActivity extends AppCompatActivity {
                     //String ph_time = simpleDateFormat.format(calendar.getTime());
                     //Log.d("time", ph_time + "  &&&&  " + h_time);
                     //robot.showHistory(messageAdapter, messagesView, ph_time);
+
+                    int historysize = messageAdapter.getCount();
                     for (int pd=1; pd<=7; pd++) {
                         calendar.add(Calendar.DATE, -1);
                         String ph_time = simpleDateFormat.format(calendar.getTime());
                         //Log.d("time", ph_time + "  &&&&  " + h_time);
                         robot.showHistory(messageAdapter, messagesView, ph_time);
                     }
+                    Log.d("history size", historysize + "");
+                    messageAdapter.notifyDataSetChanged();
+                    messagesView.setSelection(messageAdapter.getCount() - historysize);
+                    messagesView.smoothScrollToPosition(messageAdapter.getCount() - historysize - 2);
+
+                    Log.d("move to", messageAdapter.getCount() - historysize + "");
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.loadingfailed), Toast.LENGTH_SHORT).show();

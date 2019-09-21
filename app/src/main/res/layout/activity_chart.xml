@@ -38,9 +38,10 @@
             android:text="@string/tabtype" />
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chartframe"
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/tabframe">
+    </androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>

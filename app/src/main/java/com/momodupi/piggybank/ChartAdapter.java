@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -58,7 +57,7 @@ public class ChartAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(this.context).inflate(R.layout.chart, parent, false);
+        View itemView = LayoutInflater.from(this.context).inflate(R.layout.combinepie_chart, parent, false);
         return new ChartViewHolder(itemView);
     }
 
@@ -103,6 +102,8 @@ public class ChartAdapter extends RecyclerView.Adapter {
             case "others":
                 hld.setChartHeadVisible(false);
                 this.setOthersCombinedChart(hld, itemdata);
+
+                hld.chartlabel.setText(context.getString(R.string.tabtype));
                 break;
             default:
                 hld.setChartHeadVisible(true);

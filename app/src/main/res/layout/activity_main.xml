@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2"
+            android:transcriptMode="disabled"
             android:divider="#ffffff"
             android:listSelector="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
