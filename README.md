@@ -1,5 +1,5 @@
 # PiggyBank
-Saving from accounting!
+Saving starts from accounting!
 
 
 ## Acknowledge
